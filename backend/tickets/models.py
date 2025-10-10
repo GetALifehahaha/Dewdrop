@@ -1,8 +1,7 @@
-from random import choice
 from django.db import models
 
 # Create your models here.
-class Personnel(models.Model):
+class Agent(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
@@ -20,10 +19,9 @@ class Ticket(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    severity = models.CharField(choices=SEVERITY, max_length=2)
-    # reporter = 
+    severity = models.CharField(choices=SEVERITY, max_length=2) 
     
-    assigned_personnel = models.ForeignKey(Personnel, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
+    assigned_agent = models.ForeignKey(Agent, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
     
     STATUS = [
         ('op', 'Open'),

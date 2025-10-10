@@ -20,12 +20,19 @@ from django.urls import path, include
 from rest_framework import routers
 
 from authentication.views import UserViewSets 
+from tickets.views import TicketViewSet, AgentViewSet
 
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSets)
+
+auth_routers = routers.DefaultRouter()
+auth_routers.register(r'users', UserViewSets)
+
+ticket_routers = routers.DefaultRouter()
+ticket_routers.register(r'ticket', TicketViewSet)
+ticket_routers.register(r'agent', AgentViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace="rest_framework"))
+    path('auth/', include(auth_routers.urls)),
+    path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),
+    path('tickets/', include(ticket_routers.urls))
 ]
