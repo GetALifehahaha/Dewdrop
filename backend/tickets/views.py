@@ -1,8 +1,8 @@
-from django.shortcuts import render
 from rest_framework import permissions, viewsets
 from .serializers import TicketSerializer, AgentSerializer
 from .models import Ticket, Agent
 # for priority queue
+
 from django.db.models import Case, When, Value, IntegerField
 # Create your views here.
 
@@ -15,10 +15,10 @@ class TicketViewSet(viewsets.ModelViewSet):
         ),
         '-created_at')
     serializer_class = TicketSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
     
     
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all().order_by('first_name')
     serializer_class = AgentSerializer
-    permission_classes = [permissions.DjangoModelPermissions]
+    permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]

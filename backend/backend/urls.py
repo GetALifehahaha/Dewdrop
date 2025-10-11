@@ -18,21 +18,22 @@ from os import name
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView 
 
-from authentication.views import UserViewSets 
+from authentication.views import CreateUserView
 from tickets.views import TicketViewSet, AgentViewSet
 
-
-auth_routers = routers.DefaultRouter()
-auth_routers.register(r'users', UserViewSets)
-
 ticket_routers = routers.DefaultRouter()
-ticket_routers.register(r'ticket', TicketViewSet)
-ticket_routers.register(r'agent', AgentViewSet)
+ticket_routers.register(r'tickets', TicketViewSet)
+ticket_routers.register(r'agents', AgentViewSet)
 
+# setup url patterns for authentication
+# then for tickets later
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include(auth_routers.urls)),
+    path('tickets/', include(ticket_routers.urls)),
+    path('authentication/user/register/', CreateUserView.as_view(), name="register"),
+    path('authentication/token/', TokenObtainPairView.as_view(), name="get_token"),
+    path('authentication/token/refresh/', TokenRefreshView.as_view(), name="refresh_token"),
     path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),
-    path('tickets/', include(ticket_routers.urls))
 ]
