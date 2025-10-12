@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Agent(models.Model):
@@ -19,17 +20,19 @@ class Ticket(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    requester = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
     severity = models.CharField(choices=SEVERITY, max_length=2) 
     
     assigned_agent = models.ForeignKey(Agent, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
     
     STATUS = [
-        ('op', 'Open'),
-        ('ip', 'In Progress'),
-        ('rs', 'Resolved'),
+        ('pending', 'Pending'),
+        ('assessing', 'Assessing'),
+        ('assigned', 'Assigned'),
+        ('resolved', 'Resolved'),
     ]
     
-    status = models.CharField(choices=STATUS, max_length=2)
+    status = models.CharField(choices=STATUS, max_length=10, default='pending')
     resolved_at = models.DateTimeField(null=True, blank=True)
     
     def __str__(self):

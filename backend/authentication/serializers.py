@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        requester, _ = Group.objects.get_or_create(name="requester")
+        requester, _ = Group.objects.get_or_create(name="Requesters")
         user.groups.add(requester)
         
         return user
