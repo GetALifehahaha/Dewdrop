@@ -14,10 +14,10 @@ class TicketSerializer(serializers.ModelSerializer):
         
         allowed_fields = []
         
-        if user.groups.filter(name="Requester").exists():
+        if user.groups.filter(name="Requesters").exists():
             allowed_fields = ['title', 'description', 'severity']
                     
-        elif user.groups.filter(name="Manager").exists():
+        elif user.groups.filter(name="Managers").exists():
             if self.context['request'].method == 'POST':
                 raise ValidationError("Managers cannot create tickets!")
                 
