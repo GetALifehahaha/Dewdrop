@@ -9,7 +9,7 @@ from .models import Ticket, Agent
 from django.db.models import Case, When, Value, IntegerField
 # Create your views here.
 
-class TicketViewSet(generics.RetrieveUpdateDestroyAPIView):
+class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
@@ -32,19 +32,32 @@ class TicketViewSet(generics.RetrieveUpdateDestroyAPIView):
             
         return Ticket.objects.none()
     
-    def update(self, request):
+    def partial_update(self, request, *args, **kwargs):
         user = self.request.user
         ticket = self.get_object()
 
         if user.groups.filter(name="Requesters").exists() and ticket.status != "pending":
             raise ValidationError({"detail": "The ticket has already been assessed."})
         
-        serialized_data = self.get_serializer(instance=ticket, data=request.data)
+        serialized_data = self.get_serializer(instance=ticket, data=request.data, partial=True)
         serialized_data.is_valid(raise_exception=True)
         serialized_data.save()
 
-        return Response(serialized_data, status=status.HTTP_200_OK)
-
+        return Response(serialized_data.data, status=status.HTTP_200_OK)
+    
+    def destroy(self, request, *args, **kwargs):
+        user = self.request.user
+        ticket = self.get_object()
+        
+        if user.groups.filter(name="Managers").exists():
+            raise ValidationError({"detail": "A manager can't delete a submitted ticket!"})
+        
+        if ticket.status != "pending":
+            raise ValidationError({"detail": "You can only delete pending tickets!"})
+        
+        ticket.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+            
     
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all().order_by('first_name')

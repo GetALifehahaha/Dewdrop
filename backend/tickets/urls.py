@@ -1,7 +1,8 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from .views import TicketViewSet, AgentViewSet
 
-urlpatterns = [
-    path('tickets/', TicketViewSet.as_view(), name="tickets"),
-    path('agents/', AgentViewSet.as_view(), name="agents"),
-]
+router = DefaultRouter()
+router.register(r'tickets', TicketViewSet)
+router.register(r'agents', AgentViewSet)
+
+urlpatterns = router.urls
