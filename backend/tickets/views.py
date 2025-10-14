@@ -24,10 +24,15 @@ class TicketViewSet(viewsets.ModelViewSet):
         ),
         '-created_at')
         
+        agent_id = self.request.query_params.get('agent_id', None) #type: ignore
+        
         if user.groups.filter(name="Requesters").exists():
             return queryset.filter(requester=user)
             
         elif user.groups.filter(name="Managers").exists():
+            if agent_id:
+                return queryset.filter(assigned_agent=agent_id)
+            
             return queryset
             
         return Ticket.objects.none()
@@ -60,6 +65,6 @@ class TicketViewSet(viewsets.ModelViewSet):
             
     
 class AgentViewSet(viewsets.ModelViewSet):
-    queryset = Agent.objects.all().order_by('first_name')
+    queryset = Agent.objects.all().order_by('last_name')
     serializer_class = AgentSerializer
     permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
