@@ -3,6 +3,7 @@
 export {default as LoginSignupForm} from './LoginSignupForm'
 export {default as Navbar} from './Navbar'
 export {default as Sidebar} from './Navbar'
+export {default as ProtectedRoute} from './ProtectedRoute'
 
 // Reporter Components
 
