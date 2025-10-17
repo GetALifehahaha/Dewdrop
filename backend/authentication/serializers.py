@@ -10,9 +10,15 @@ class UserSerializer(serializers.ModelSerializer):
         
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        print(validated_data)
         requester, _ = Group.objects.get_or_create(name="Requesters")
         user.groups.add(requester)
         
         return user
         
+        
+class UserProfileSerializer(serializers.ModelSerializer):
+    groups = serializers.StringRelatedField(many=True)
+    
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'groups']

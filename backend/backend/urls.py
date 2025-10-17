@@ -20,7 +20,7 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView #type: ignore
 
-from authentication.views import CreateUserView
+from authentication.views import CreateUserView, UserProfileView
 
 # setup url patterns for authentication
 # then for tickets later
@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('tickets/', include('tickets.urls')),
     path('authentication/user/register/', CreateUserView.as_view(), name="register"),
+    path('authentication/user/', UserProfileView.as_view(), name="me"),
     path('authentication/token/', TokenObtainPairView.as_view(), name="get_token"),
     path('authentication/token/refresh/', TokenRefreshView.as_view(), name="refresh_token"),
     path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),

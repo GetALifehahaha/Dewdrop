@@ -15,12 +15,6 @@ const ProtectedRoute = ({children}) => {
   const refreshToken = async () => {
     const refreshToken = localStorage.getItem(REFRESH_TOKEN);
 
-    let jsonBody = method == "login" ? {
-      username, password
-    } : {
-      
-    } 
-
     try {
       const res = api.post("/authentication/token/refresh/", 
         {

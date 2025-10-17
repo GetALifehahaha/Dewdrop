@@ -47,6 +47,10 @@ const LoginSignupForm = ({method, route}) => {
         localStorage.setItem(ACCESS_TOKEN, res.data.access)
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
 
+        const userData = await api.get('/authentication/user/')
+
+        console.log(userData.data)
+
         navigate('/')
       } else {
         navigate('/login')
