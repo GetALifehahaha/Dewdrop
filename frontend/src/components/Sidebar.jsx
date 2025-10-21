@@ -1,38 +1,17 @@
-import React, {useState, useEffect} from 'react'
+import React from 'react'
 import {Link} from 'react-router-dom'
 
-const Sidebar = ({role}) => {
-  const [sidebarRoutes, setSidebarRoutes] = useState({});
+const Sidebar = ({navLinks=[{name: "View Tickets", link: '/'}, {name: "Submit New Ticket", link: "/newTicket"}]}) => {
 
-  useEffect(() => {
-    if (role == "Requesters") {
-      setSidebarRoutes({
-        Home: "/",
-        Tickets: "/tickets",
-      })
-    } else if (role == "Managers") {
-      setSidebarRoutes({
-        Home: "/",
-        Tickets: "/tickets",
-        Agents: "/agents",
-      })
-    }
-  }, []);
+    const listNav = navLinks.map((navItem, index) => 
+        <Link key={index} to={navItem.link} className='font-medium text-text/75 py-2 px-8 rounded-sm hover:bg-main-dark'>{navItem.name}</Link>
+    )
 
-  const listSidebar = Object.entries(sidebarRoutes).map((key, value, index) => <Link key={index} to={value}>{key}</Link>)
-
-
-  return (
-    <div className='p-8 bg-main flex flex-col h-full'>
-      <h5>Dewdrop</h5>
-
-      <div className='flex flex-col gap-4'>
-        {listSidebar}
-      </div>
-
-      <Link to={'/logout'}>Log out</Link>
-    </div>
-  )
+    return (
+        <div className='h-screen flex flex-col gap-1 text-text bg-main w-fit px-2 py-4'>
+            {listNav}
+        </div>
+    )
 }
 
 export default Sidebar

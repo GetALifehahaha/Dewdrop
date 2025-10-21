@@ -13,9 +13,8 @@ body {
 
 @theme {
     /* Theme Colors */
-    --color-main-light: #edf3fa;
-    --color-main: #dfe5ed;
-    --color-main-dark: #caced9;
+    --color-main: #f6fafd;
+    --color-main-dark: #dbe5ee;
     --color-main-gray: #758BA5;
     --color-main-gray-dark: #6c8094;
     --color-main-lightblue: #B3D6F9;

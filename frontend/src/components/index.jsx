@@ -13,3 +13,8 @@ export {default as RequestList} from './requester/RequestList'
 
 export {default as AgentList} from './moderator/AgentList'
 export {default as TicketList} from './moderator/TicketList'
+
+// Basic Components
+
+export {default as Button} from './basic/Button'
+export {default as Title} from './basic/Title'
