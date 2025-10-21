@@ -1,14 +1,17 @@
 import React from 'react'
 import {Link} from 'react-router-dom'
 
-const Sidebar = ({navLinks=[{name: "View Tickets", link: '/'}, {name: "Submit New Ticket", link: "/newTicket"}]}) => {
+const Sidebar = ({navItems=[]}) => {
 
-    const listNav = navLinks.map((navItem, index) => 
-        <Link key={index} to={navItem.link} className='font-medium text-text/75 py-2 px-8 rounded-sm hover:bg-main-dark'>{navItem.name}</Link>
+    const listNav = navItems.map(({label, link, icon: Icon}, index) => 
+        (link) ? 
+            <Link key={index} to={link} className='font-medium text-text/75 py-2 px-8 rounded-sm hover:bg-main-dark flex gap-4'>{Icon && <Icon width={16}/>} {label}</Link>
+        :
+            <h5 key={index} className='font-medium text-text/50 px-2'>{label}</h5>
     )
 
     return (
-        <div className='h-screen flex flex-col gap-1 text-text bg-main w-fit px-2 py-4'>
+        <div className='min-w-40 flex flex-col gap-1 text-text bg-main w-fit px-2 py-4'>
             {listNav}
         </div>
     )
