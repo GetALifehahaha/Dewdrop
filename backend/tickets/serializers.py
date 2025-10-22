@@ -44,7 +44,6 @@ class TicketSerializer(serializers.ModelSerializer):
     
     
 class DashboardSerializer(serializers.Serializer):
-    total_tickets_sent = serializers.IntegerField()
-    urgent_tickets_sent = serializers.IntegerField()
-    resolved_tickets_sent = serializers.IntegerField()
+    dashboard_counts = serializers.DictField()
+    latest_ticket = TicketSerializer()
     

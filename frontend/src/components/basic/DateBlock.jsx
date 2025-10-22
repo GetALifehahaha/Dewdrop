@@ -3,7 +3,7 @@ import React from 'react'
 const DateBlock = ({variant="blockDate", hasWeekday=false, hasNamedMonth=false}) => {
 
     const dateBlockVariants = {
-        blockDate: "text-sm font-medium flex flex-row px-4 py-1 outline-1 outline-text/25 text-text/50 rounded-sm w-fit",
+        blockDate: "text-sm font-medium flex flex-row gap-2 px-4 py-1 outline-1 outline-text/25 text-text/50 rounded-sm w-fit",
         cardDate: "text-xl font-bold flex flex-col-reverse text-text"
     }
 

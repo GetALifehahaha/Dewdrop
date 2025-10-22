@@ -3,7 +3,6 @@ import {Link, useNavigate} from 'react-router-dom'
 import {SquareUser, UserPlus} from 'lucide-react'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../services/constants';
 import api from '../services/api'
-import { AuthContext } from '../context/AuthContext';
 
 const LoginSignupForm = ({method, route}) => {
 
@@ -16,7 +15,6 @@ const LoginSignupForm = ({method, route}) => {
   const [passwordAgain, setPasswordAgain] = useState("")
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const {setUser, setIsAuthorized} = useContext(AuthContext);
 
   // content variables
   const title = method == 'login' ? 'Welcome back!' : 'Hello there!'
@@ -65,7 +63,7 @@ const LoginSignupForm = ({method, route}) => {
       <div className='basis-3/5 p-12 h-[100%] flex flex-col justify-between'>
         {/* Top Part */}
         <div className="flex flex-row justify-between">
-          <h5 className='text-main-light text-2xl font-medium'>Dewdrop</h5>
+          <h5 className='text-main text-2xl font-medium'>Dewdrop</h5>
             {
               (method == "login") ? 
               <div className='flex flex-row items-center gap-2 text-main-dark'>
@@ -158,7 +156,7 @@ const LoginSignupForm = ({method, route}) => {
                 </div> : ''
               }
 
-              <button type='submit' className='w-fit px-24 py-2 mt-4 mx-auto rounded-2xl bg-accent-deepblue text-main-light cursor-pointer'>{submitButton}</button>
+              <button type='submit' className='w-fit px-24 py-2 mt-4 mx-auto rounded-2xl bg-accent-deepblue text-main cursor-pointer'>{submitButton}</button>
             </form>
 
             <hr className='text-text/25 my-4 w-7/8 mx-auto rounded-full'/>

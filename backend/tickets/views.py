@@ -81,11 +81,13 @@ class DashboardAPIView(APIView):
             tickets = tickets.filter(requester=user)
             
         dashboard_counts = tickets.aggregate(
-            total_tickets_sent= Count('id'),
+            total_tickets_sent=Count('id'),
             urgent_tickets_sent=Count("id", filter=Q(severity="ur")),
             resolved_tickets_sent=Count("id", filter=Q(status="resolved"))
         )
         
-        serializer = DashboardSerializer(dashboard_counts);
+        latest_ticket = tickets.order_by('-created_at').first()
+        
+        serializer = DashboardSerializer({'dashboard_counts': dashboard_counts, 'latest_ticket': latest_ticket}, context={'request': request});
         
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -23,7 +23,9 @@ body {
     --color-text: #031930;
 
     /* Utility Colors */
-    --color-error: #cf0e2b;
-    --color-warning: #f0a13a;
-    --color-success: #22de0d;
+    --color-urgent: #e05944;
+    --color-urgent-light: #fbefee;
+    --color-resolved: #067886;
+    --color-resolved-light: #d0f9ee;
+
 }
