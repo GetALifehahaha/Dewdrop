@@ -1,1 +1,31 @@
-@import 'tailwindcss'
+@import 'tailwindcss';
+
+@font-face {
+    font-family: 'Urbanist';
+    src: url('./assets/Urbanist-VariableFont_wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+body {
+    font-family: 'Urbanist';
+}
+
+@theme {
+    /* Theme Colors */
+    --color-main: #f6fafd;
+    --color-main-dark: #dbe5ee;
+    --color-main-gray: #758BA5;
+    --color-main-gray-dark: #6c8094;
+    --color-main-lightblue: #B3D6F9;
+    --color-accent-blue: #3684D8;
+    --color-accent-deepblue: #223A59;
+    --color-text: #031930;
+
+    /* Utility Colors */
+    --color-urgent: #e05944;
+    --color-urgent-light: #fbefee;
+    --color-resolved: #067886;
+    --color-resolved-light: #d0f9ee;
+
+}

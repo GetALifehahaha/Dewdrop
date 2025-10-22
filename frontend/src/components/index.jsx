@@ -1,14 +1,14 @@
-// Basic Components
+// Page Block Components
 
 export {default as LoginSignupForm} from './LoginSignupForm'
-export {default as Navbar} from './Navbar'
-export {default as Sidebar} from './Navbar'
+export {default as Header} from './Header'
+export {default as Sidebar} from './Sidebar'
+export {default as ProtectedRoute} from './ProtectedRoute'
 
-// Reporter Components
+// Basic Components
 
-export {default as Reportlist} from './reporter/ReportList'
-
-// Moderator Components
-
-export {default as AgentList} from './moderator/AgentList'
-export {default as TicketList} from './moderator/TicketList'
+export {default as Button} from './basic/Button'
+export {default as Title} from './basic/Title'
+export {default as DateBlock} from './basic/DateBlock'
+export {default as Card} from './basic/Card'
+export {default as LatestTicketCard} from './basic/LatestTicketCard'

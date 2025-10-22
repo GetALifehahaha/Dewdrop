@@ -15,3 +15,11 @@ class UserSerializer(serializers.ModelSerializer):
         
         return user
         
+        
+class UserProfileSerializer(serializers.ModelSerializer):
+    groups = serializers.StringRelatedField(many=True)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email', 'username', 'groups']
+        read_only_fields = ['__all__']
