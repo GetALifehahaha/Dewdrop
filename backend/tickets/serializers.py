@@ -41,3 +41,10 @@ class TicketSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['requester'] = self.context['request'].user
         return super().create(validated_data)
+    
+    
+class DashboardSerializer(serializers.Serializer):
+    total_tickets_sent = serializers.IntegerField()
+    urgent_tickets_sent = serializers.IntegerField()
+    resolved_tickets_sent = serializers.IntegerField()
+    

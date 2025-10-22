@@ -1,8 +1,9 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useContext} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {SquareUser, UserPlus} from 'lucide-react'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../services/constants';
 import api from '../services/api'
+import { AuthContext } from '../context/AuthContext';
 
 const LoginSignupForm = ({method, route}) => {
 
@@ -15,6 +16,7 @@ const LoginSignupForm = ({method, route}) => {
   const [passwordAgain, setPasswordAgain] = useState("")
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const {setUser, setIsAuthorized} = useContext(AuthContext);
 
   // content variables
   const title = method == 'login' ? 'Welcome back!' : 'Hello there!'
@@ -46,10 +48,6 @@ const LoginSignupForm = ({method, route}) => {
 
         localStorage.setItem(ACCESS_TOKEN, res.data.access)
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-
-        const userData = await api.get('/authentication/user/')
-
-        console.log(userData.data)
 
         navigate('/')
       } else {

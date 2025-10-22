@@ -9,3 +9,5 @@ export {default as ProtectedRoute} from './ProtectedRoute'
 
 export {default as Button} from './basic/Button'
 export {default as Title} from './basic/Title'
+export {default as DateBlock} from './basic/DateBlock'
+export {default as Card} from './basic/Card'

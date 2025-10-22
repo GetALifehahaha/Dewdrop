@@ -2,8 +2,10 @@ from rest_framework import permissions, viewsets, generics
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import TicketSerializer, AgentSerializer
+from rest_framework.views import APIView
+from .serializers import TicketSerializer, AgentSerializer, DashboardSerializer
 from .models import Ticket, Agent
+from django.db.models import Count, Q
 # for priority queue
 
 from django.db.models import Case, When, Value, IntegerField
@@ -68,3 +70,22 @@ class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all().order_by('last_name')
     serializer_class = AgentSerializer
     permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+    
+
+class DashboardAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        tickets = Ticket.objects.all()
+        
+        if user.groups.filter(name="Requesters").exists():
+            tickets = tickets.filter(requester=user)
+            
+        dashboard_counts = tickets.aggregate(
+            total_tickets_sent= Count('id'),
+            urgent_tickets_sent=Count("id", filter=Q(severity="ur")),
+            resolved_tickets_sent=Count("id", filter=Q(status="resolved"))
+        )
+        
+        serializer = DashboardSerializer(dashboard_counts);
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
