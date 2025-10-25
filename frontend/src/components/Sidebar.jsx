@@ -15,7 +15,7 @@ const Sidebar = () => {
     <div key={section} className='flex flex-col font-medium py-2'>
         {section && <h5 className={`text-text/50`}>{section}</h5>}
         <div className='flex flex-col'>
-            {items.map(({label, link, icon: Icon}) => <NavLink key={label} to={link}  className={({isActive}) => ((isActive) ? `flex gap-4 px-4 py-2 rounded-sm hover:bg-main-dark text-accent-blue` : 'flex gap-4 px-4 py-2 rounded-sm hover:bg-main-dark text-text/75')}>{Icon && <Icon width={16} />} {label}</NavLink>)}
+            {items.map(({label, link, icon: Icon}) => <NavLink key={label} to={link} className={({isActive}) => ((isActive) ? `flex gap-4 px-4 py-2 rounded-sm hover:bg-main-dark text-accent-blue` : 'flex gap-4 px-4 py-2 rounded-sm hover:bg-main-dark text-text/75')}>{Icon && <Icon width={16} />} {label}</NavLink>)}
         </div>
     </div>)
 
