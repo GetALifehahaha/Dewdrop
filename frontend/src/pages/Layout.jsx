@@ -1,8 +1,7 @@
-import React, {useContext, useEffect, useState} from 'react'
+import React, {useContext} from 'react'
 import {AuthContext} from '../context/AuthContext'
 import { Header, Sidebar } from '../components/'
-import {Outlet, Route} from 'react-router-dom'
-import {Home} from '../pages'
+import {Outlet} from 'react-router-dom'
 
 const Layout = () => {
 	const handleOnClick = () => {

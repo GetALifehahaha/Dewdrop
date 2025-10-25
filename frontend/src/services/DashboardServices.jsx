@@ -7,7 +7,7 @@ const DashboardServices = async () => {
 		
 		return response.data
 	} catch (err) {
-		alert(err)
+		return err;
 	}
 }
 

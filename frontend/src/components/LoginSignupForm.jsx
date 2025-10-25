@@ -1,10 +1,11 @@
 import React, {useState, useContext} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {SquareUser, UserPlus} from 'lucide-react'
-import { ACCESS_TOKEN, REFRESH_TOKEN } from '../services/constants';
-import api from '../services/api'
+import { AuthContext } from '../context/AuthContext';
 
-const LoginSignupForm = ({method, route}) => {
+const LoginSignupForm = ({method}) => {
+  // context variables
+  const {login, isAuthorized} = useContext(AuthContext);
 
   // state variables
   const [firstName, setFirstName] = useState("");
@@ -13,7 +14,6 @@ const LoginSignupForm = ({method, route}) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("")
-  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   // content variables
@@ -21,40 +21,20 @@ const LoginSignupForm = ({method, route}) => {
   const greeting = method == 'login' ? 'Log in to continue requesting tickets!' : 'Sign up to start requesting tickets!'
   const submitButton = method == 'login' ? 'Login' : 'Get Started!'
 
+  // form function
   const submitForm = async (e) => {
-    if (method == "signup" && password != passwordAgain) {
-      alert("Password entered is incorrect.")
-      return;
-    }
-    setIsLoading(true);
-    e.preventDefault()
+    e.preventDefault();
 
-    const jsonBody = method == "login" ? {
-      username, password
-    } : {
-      first_name: firstName,
-      last_name: lastName,
-      email: emailAddress,
-      username,
-      password
-    }
-    
     try {
-      const res = await api.post(route, jsonBody)
-
       if (method == "login") {
-
-        localStorage.setItem(ACCESS_TOKEN, res.data.access)
-        localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-
-        navigate('/')
-      } else {
-        navigate('/login')
+        await login(username, password);
+      } else if (method == "signup") {
+        // 
       }
+
+      navigate('/');
     } catch (err) {
-      alert(err)
-    } finally {
-      setIsLoading(false);
+      alert(err);
     }
   }
 
@@ -139,9 +119,9 @@ const LoginSignupForm = ({method, route}) => {
                 <h5 className='ml-2'>
                   Password
                 </h5>
-                <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Enter your password' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
+                <input onChange={(e) => setPassword(e.target.value)} type="text" placeholder='Enter your password' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
                 {(method == 'signup') ? 
-                  <input onChange={(e) => setPasswordAgain(e.target.value)} type="password" placeholder='Enter password again' className='px-6 py-2 mt-1 bg-main-light w-full rounded-sm shadow-sm'/> : ''
+                  <input onChange={(e) => setPasswordAgain(e.target.value)} type="text" placeholder='Enter password again' className='px-6 py-2 mt-1 bg-main-light w-full rounded-sm shadow-sm'/> : ''
                 }
               </div>
 

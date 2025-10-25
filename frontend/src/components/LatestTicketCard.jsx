@@ -1,6 +1,6 @@
 import React from 'react'
 import {SquareArrowOutUpRightIcon} from 'lucide-react'
-import Button from './Button';
+import Button from './basic/Button';
 
 const LatestTicketCard = ({severity="Low", title="Title", description="Description", datetime="datetime", agent="Agent Ironman"}) => {
 
@@ -29,7 +29,7 @@ const LatestTicketCard = ({severity="Low", title="Title", description="Descripti
 	}
 
     return (
-        <div className='bg-main shadow-md rounded-xl font-medium basis-1/3 flex flex-col relative
+        <div className='bg-main shadow-md rounded-xl font-medium basis-1/2 flex flex-col relative
                         before:content-[""] before:absolute before:bg-accent-blue before:w-1/3 before:h-2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full
         '>
             <div className='px-4 py-4 flex justify-between bg-main-dark items-center rounded-t-xl'>

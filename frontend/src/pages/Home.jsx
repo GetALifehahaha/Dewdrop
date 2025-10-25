@@ -11,8 +11,6 @@ const Home = () => {
 	if (loading) return <p>Loading dashboard...</p>;
 	if (error) return <p>Error loading dashboard data.</p>;
 
-	console.log(latestTicket.created_at)
-
 	const formatTitle = (title) => {
         let first = title.split('_')[0] || title;
         return first.charAt(0).toUpperCase() + first.slice(1);
@@ -40,7 +38,9 @@ const Home = () => {
 				{/* 2 tickets: Urgent Priority */}
 				<div className='flex flex-row gap-4'>
 					<LatestTicketCard title={latestTicket.title} description={latestTicket.description} datetime={latestTicket.created_at}/>
-					{listDashboardCard}
+					<div className='h-fit flex-1 flex gap-2'>
+						{listDashboardCard}
+					</div>
 				</div>
 			</div>
 		</>

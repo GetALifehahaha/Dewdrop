@@ -9,9 +9,21 @@ export const AuthProvider = ({children}) => {
 
     const [user, setUser] = useState(null);
     const [isAuthorized, setIsAuthorized] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        auth().catch(() => {setIsAuthorized(false); setUser(null)})
+        const initApp = async () => {
+            try {
+                await auth();
+            } catch {
+                setIsAuthorized(false);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        initApp();
     }, []);
 
     const auth = async () => {
@@ -24,7 +36,6 @@ export const AuthProvider = ({children}) => {
         }
 
         const decodedToken = jwtDecode(accessToken);
-        setUser({});
         const tokenExpiration = decodedToken.exp;
         const currentDate = Date.now() / 1000;
 
@@ -59,7 +70,7 @@ export const AuthProvider = ({children}) => {
 
     const getUserData = async () => {
         try {
-            const response = await  api.get('/authentication/user/');
+            const response = await api.get('/authentication/user/');
             const userData = response.data
             setUser(userData);
         } catch {
@@ -67,8 +78,30 @@ export const AuthProvider = ({children}) => {
         }
     }
 
+    const login = async (username, password) => {
+        const response = await api.post('/authentication/token/', {username, password});
+
+        localStorage.setItem(ACCESS_TOKEN, response.data.access);
+        localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+
+        await getUserData();
+        setIsAuthorized(true);
+    }
+    
+
+    // const register = async (firstName, lastName, emailAddress, username, password) => {
+    //     continue
+    // }
+
+    const logout = () => {
+        localStorage.removeItem(ACCESS_TOKEN);
+        localStorage.removeItem(REFRESH_TOKEN);
+        setUser(null);
+        setIsAuthorized(false);
+    };
+
     return (
-        <AuthContext.Provider value={{user, isAuthorized, setUser, setIsAuthorized}}>
+        <AuthContext.Provider value={{user, isAuthorized, setUser, login, setIsAuthorized, loading}}>
             {children}
         </AuthContext.Provider>
     )

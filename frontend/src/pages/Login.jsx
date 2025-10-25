@@ -5,7 +5,7 @@ import backgroundImg from '../assets/images/blue-minimalist-alien-landscape-c3.j
 const Login = () => {
   return (
     <div className='flex justify-center items-center w-screen h-screen bg-cover' style={{ backgroundImage: `url(${backgroundImg})`}}>
-      <LoginSignupForm method="login" route={'/authentication/token/'}/>
+      <LoginSignupForm method="login" />
     </div>
   )
 }
