@@ -2,7 +2,7 @@ import React from 'react';
 import { useTicketData } from '../hooks';
 import {Ticket} from './'
 
-const TicketList = ({tickets}) => {
+const TicketList = () => {
 
     const {ticketData, error, loading} = useTicketData();
     
@@ -15,7 +15,7 @@ const TicketList = ({tickets}) => {
 
 
     return (
-        <div>
+        <div className='flex flex-col gap-4 h-[60vh] overflow-auto'>
             {listTickets}
         </div>
     )

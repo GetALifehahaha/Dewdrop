@@ -37,7 +37,7 @@ const Home = () => {
 				
 				{/* 2 tickets: Urgent Priority */}
 				<div className='flex flex-row gap-4'>
-					<LatestTicketCard title={latestTicket.title} description={latestTicket.description} datetime={latestTicket.created_at}/>
+					<LatestTicketCard severity_display={latestTicket.severity_display} title={latestTicket.title} description={latestTicket.description} datetime={latestTicket.created_at}/>
 					<div className='h-fit flex-1 flex gap-2'>
 						{listDashboardCard}
 					</div>

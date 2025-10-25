@@ -11,11 +11,13 @@ class AgentSerializer(serializers.ModelSerializer):
         
 class TicketSerializer(serializers.ModelSerializer):
     assigned_agent = AgentSerializer(read_only=True)
+    severity_display = serializers.CharField(source='get_severity_display')
+    status_display = serializers.CharField(source='get_status_display')
     
     class Meta:
         model = Ticket
-        fields = ['id', 'title', 'description', 'requester', 'created_at', 'severity', 'assigned_agent', 'status', 'resolved_at']
-        read_only_fields = ['id', 'created_at', 'resolved_at']
+        fields = ['id', 'title', 'description', 'requester', 'created_at', 'severity', 'severity_display', 'assigned_agent', 'status_display', 'status', 'resolved_at']
+        read_only_fields = ['id', 'created_at', 'resolved_at', 'severity_display', 'status_display',]
     
     def get_fields(self):
         fields = super().get_fields()

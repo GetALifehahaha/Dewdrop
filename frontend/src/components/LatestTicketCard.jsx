@@ -2,7 +2,7 @@ import React from 'react'
 import {SquareArrowOutUpRightIcon} from 'lucide-react'
 import Button from './basic/Button';
 
-const LatestTicketCard = ({severity="Low", title="Title", description="Description", datetime="datetime", agent="Agent Ironman"}) => {
+const LatestTicketCard = ({severity_display="Low", title="Title", description="Description", datetime="datetime", agent="Agent Ironman"}) => {
 
     const formatDateFromIso = (dateString) => {
 		let unformattedDate = new Date(dateString);
@@ -34,7 +34,7 @@ const LatestTicketCard = ({severity="Low", title="Title", description="Descripti
         '>
             <div className='px-4 py-4 flex justify-between bg-main-dark items-center rounded-t-xl'>
                 <h5 className='font-semibold'>Latest Ticket</h5>
-                <h5 className='px-4 rounded-sm h-fit text-sm text-text/50 border-1 border-text/50'>{severity}</h5>
+                <h5 className='px-4 rounded-sm h-fit text-sm text-text/50 border-1 border-text/50'>{severity_display}</h5>
             </div>
 
             <div className='flex flex-col justify-evenly px-4 py-4 gap-8'>

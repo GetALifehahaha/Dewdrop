@@ -4,9 +4,9 @@ import { AuthContext } from '../context/AuthContext';
 
 const ProtectedRoute = ({children}) => {
 
-  const {isAuthorized} = useContext(AuthContext);
+  const {user, loading, isAuthorized} = useContext(AuthContext);
 
-  if (isAuthorized == null) {
+  if (loading || user == null) {
     return <div className="w-screen h-screen felx justify-center items-center text-text/50">
       <h5>Waiting</h5>
       <h5>Please wait for a bit</h5>

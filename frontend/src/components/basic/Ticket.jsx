@@ -1,50 +1,37 @@
 import React from 'react';
-import { LucideDot } from 'lucide-react';
+import {DateTime, StatusDisplay, SeverityDisplay} from '../';
 
 const Ticket = ({ticket}) => {
 
-    const formatDateFromIso = (dateString) => {
-		let unformattedDate = new Date(dateString);
-		
-		const date = unformattedDate.toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		});
-
-		return date;
-	}
-
-	const formatTimeFromIso = (dateString) => {
-		let unformattedDate = new Date(dateString);
-
-		const time = unformattedDate.toLocaleTimeString('en-US', {
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: true
-		});
-
-		return time;
-	}
-
-    const capitalize = (string) => string[0].toUpperCase() + string.slice(1)
-
     return (
-        <div className='flex-1 bg-main rounded-lg p-8 flex flex-col justify-between shadow-md'>
-            <div className='flex items-center gap-2'>
-                <h5 className='text-text font-semibold text-xl'>{ticket.title}</h5>
-                <h5 className='text-text/50 font-medium'>{ticket.severity}</h5>
+        <div 
+        onClick={() => console.log(ticket.id)}
+        className='flex-1 bg-main rounded-lg p-8 flex flex-col gap-2 shadow-md cursor-pointer hover:bg-white duration-75 ease-out mr-2'>
+            <div className='flex items-center justify-between'>
+                <div className="flex items-end gap-4">
+                    <h5 className='text-text font-semibold text-lg'>{ticket.title}</h5>
+                    <SeverityDisplay severity={ticket.severity} severityDisplay={ticket.severity_display} />
+                </div>
+
+                <div>
+                    <DateTime dateTime={ticket.created_at}/>
+                </div>
             </div>
 
-            <div className='flex items-center gap-2'>
-                <h5 className='text-text/50 text-sm'>Status</h5>
-                <h3 className='text-text font-semibold'>{capitalize(ticket.status)}</h3>
-            </div>
-
-            <div className='flex text-text/50 font-semibold text-sm items-center'>
-                <h5>{formatDateFromIso(ticket.created_at)}</h5>
-                <LucideDot />
-                <h5>{formatTimeFromIso(ticket.created_at)}</h5>
+            <div className='flex items-center gap-4'>
+                <StatusDisplay status={ticket.status} status_display={ticket.status_display}/>
+                <div className='flex gap-2 font-medium text-text/75'>
+                    { (ticket.assigned_agent) ? 
+                        <>
+                            <h5>Assigned Agent:</h5>
+                            <h5>{ticket.assigned_agent.first_name + ' ' + ticket.assigned_agent.last_name}</h5>
+                        </>
+                        :
+                        <h5>
+                            No Agent Assigned Yet
+                        </h5>
+                    }
+                </div>
             </div>
         </div>
     )
