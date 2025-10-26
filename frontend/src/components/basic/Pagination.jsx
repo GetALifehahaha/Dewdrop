@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, act} from 'react';
 import { NavLink, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -6,35 +6,76 @@ const Pagination = ({maxPage}) => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const currentPage = parseInt(searchParams.get("page")) || 1;
+    const [pageNumbers, setPageNumbers] = useState([1]);
 
     const changePage = (change) => {
-        if (change == "prev" && currentPage > 1) {
+        setSearchParams((prev) => {
+            const params = new URLSearchParams(prev);
 
-            if (currentPage == 1) {
-                setSearchParams(null);
+            if (change === "prev" && currentPage > 1) {
+                params.set("page", currentPage - 1);
+            } else if (change === "next" && currentPage < maxPage) {
+                params.set("page", currentPage + 1);
+            } else if (Number.isInteger(change)) {
+                params.set("page", change);
+            }
+
+            return params;
+        })
+    }
+
+    useEffect(() => {
+        const getPageNumbers = () => {
+            if (maxPage <= 3) {
+                setPageNumbers(() => {
+                    const numbers = [];
+
+                    for (let i = 1; i <= maxPage; i++) {
+                        numbers.push(i);
+                    }
+
+                    return numbers;
+                });
+
                 return;
             }
 
-            setSearchParams({page: currentPage-1})
-
-        } else if (change == "next" && currentPage < maxPage) {
-            setSearchParams({page: currentPage+1})
+            if (currentPage === 1) {
+                setPageNumbers([1, 2, 3]);
+            } else if (currentPage === maxPage) {
+                setPageNumbers([maxPage-2, maxPage-1, maxPage]);
+            } else {
+                setPageNumbers([currentPage-1, currentPage, currentPage+1]);
+            }
         }
-    }
 
-    const leftPage = (currentPage == 1) ? currentPage : ((currentPage == maxPage) ? currentPage - 2 : currentPage - 1);
-    const middlePage = (currentPage == 1) ? currentPage + 1: (currentPage == maxPage) ? currentPage - 1 : currentPage;
-    const rightPage = (currentPage == 1) ? currentPage + 2: (currentPage == maxPage) ? currentPage : currentPage + 1;
+        getPageNumbers();
+    }, [maxPage, currentPage])
+    
+    const activePage = Number(searchParams.get('page')) || 1;
 
-    const activePageNumber = (pageNumber) => (pageNumber == currentPage) ? 'bg-text text-main' : 'text-text/75 border-1 border-text/25'
-
-    const listButtons = [leftPage, middlePage, rightPage].map((pageNumber, index) => <NavLink to={`/tickets/?page=${pageNumber}`} className={`w-6 h-6 flex items-center justify-center rounded-sm font-semibold ${activePageNumber(pageNumber)}`} key={index}>{pageNumber}</NavLink>)
+    const listPageNumbers = pageNumbers.map((pageNumber, index) => 
+        <h5 
+        key={index} 
+        onClick={() => changePage(pageNumber)}
+        className={
+            `w-6 h-6 rounded-sm flex items-center justify-center ${(pageNumber === activePage) ? 'bg-text text-main' : 'bg-main text-text'}`
+          }
+        >
+            {pageNumber}
+        </h5>
+    )
 
     return (
-        <div className='mx-auto mt-2 px-4 py-2 flex gap-4 items-center w-fit '>
-            <button onClick={() => changePage("prev")} className='flex items-center gap-2 cursor-pointer px-4'><ArrowLeft width={16}/>Prev</button>
-            {listButtons}
-            <button onClick={() => changePage("next")} className='flex items-center gap-2 cursor-pointer px-4'>Next<ArrowRight width={16}/></button>
+        <div className='mr-auto mt-2 px-4 py-2 flex gap-4 items-center w-fit text-text font-medium'>
+
+            {(maxPage) && <>
+                <button onClick={() => changePage("prev")} className='flex items-center gap-2 cursor-pointer px-4 bg-main rounded-sm'><ArrowLeft width={16}/>Prev</button>
+                <div className='flex gap-2'>
+                    {listPageNumbers}
+                </div>
+                <button onClick={() => changePage("next")} className='flex items-center gap-2 cursor-pointer px-4 bg-main rounded-sm'>Next<ArrowRight width={16}/></button>
+            </>}
         </div>
     )
 }

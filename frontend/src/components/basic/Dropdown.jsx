@@ -21,16 +21,11 @@ const Dropdown = ({selectionName="Option", selections=[{name: "Option 1", value:
     };
 
     return (
-        <div className='basis-1/4 relative'>
-            <div className='flex justify-between items-center cursor-pointer bg-main rounded-md  text-text/75 shadow-sm'>
-                <span onClick={handleSetIsExpanded} className='px-6 py-4 flex-1'>
-                    <h5 >{selected}</h5>
-                </span>
+        <div className='basis-1/6 relative'>
+            <div onClick={handleSetIsExpanded} className='px-4 py-2 flex justify-between items-center cursor-pointer bg-main rounded-md  text-text/75 shadow-sm'>
+                <h5 >{selected}</h5>
 
-                <div className='flex gap-2 px-6'>
-                    <ChevronDown onClick={handleSetIsExpanded} className={`${(isExpanded) ? 'rotate-180' : ''} duration-200 ease-in `}/>
-                    {(selected != selectionName) && <XIcon width={16} onClick={() => handleSetSelected(selectionName, null)}/>}
-                </div>
+                <ChevronDown onClick={handleSetIsExpanded} className={`${(isExpanded) ? 'rotate-180' : ''} duration-200 ease-in `}/>
             </div>
 
             {isExpanded && 

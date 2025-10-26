@@ -7,6 +7,17 @@
     font-display: swap;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-main);
+    border-radius: 2rem;
+}
+::-webkit-scrollbar-thumb:hover {
+    cursor: pointer;
+}
+
 body {
     font-family: 'Urbanist';
 }
@@ -27,5 +38,4 @@ body {
     --color-urgent-light: #fbefee;
     --color-resolved: #067886;
     --color-resolved-light: #d0f9ee;
-
 }

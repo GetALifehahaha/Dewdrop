@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTicketData } from '../hooks';
 import {Ticket, Pagination} from './'
+import { PAGINATION } from '../services/constants';
 
 const TicketList = () => {
 
@@ -13,12 +14,11 @@ const TicketList = () => {
         <Ticket key={index} ticket={ticket}/>
     )
 
-    const maxPage = Math.ceil(ticketData.count / 5)
-
+    const maxPage = Math.ceil(ticketData.count / PAGINATION);
 
     return (
         <div>
-            <div className='flex flex-col gap-4 h-[60vh] overflow-auto'>
+            <div className='flex flex-col gap-4 h-[60vh] overflow-auto snap-y rounded-md'>
                 {listTickets}
             </div>
 

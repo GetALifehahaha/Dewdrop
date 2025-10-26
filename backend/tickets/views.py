@@ -27,6 +27,14 @@ class TicketViewSet(viewsets.ModelViewSet):
         '-created_at')
         
         agent_id = self.request.query_params.get('agent_id', None) #type: ignore
+        title = self.request.query_params.get('title', None) #type: ignore
+        severity = self.request.query_params.get('severity', None) #type: ignore
+        
+        if title:
+            queryset = queryset.filter(title__icontains=title);
+            
+        if severity:
+            queryset = queryset.filter(severity=severity);
         
         if user.groups.filter(name="Requesters").exists():
             return queryset.filter(requester=user)
@@ -36,6 +44,8 @@ class TicketViewSet(viewsets.ModelViewSet):
                 return queryset.filter(assigned_agent=agent_id)
             
             return queryset
+        
+        
             
         return Ticket.objects.none()
     
