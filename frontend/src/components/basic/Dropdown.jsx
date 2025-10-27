@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import { ChevronDown, XIcon } from 'lucide-react';
 
-const Dropdown = ({selectionName="Option", selections=[{name: "Option 1", value: "Value 1"}, {name: "Option 2", value: "Value 2"}], onSelect}) => {
+const Dropdown = ({defaultValue=null, selectionName="Option", selections=[{name: "Option 1", value: "Value 1"}, {name: "Option 2", value: "Value 2"}], onSelect}) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [selected, setSelected] = useState(selectionName);
+    const [selected, setSelected] = useState(defaultValue || selectionName);
 
     const listSelections = selections.map(({name, value}, index) => 
         <div key={index} className='cursor-pointer hover:bg-main-dark px-1 py-2 rounded-sm text-semibold' onClick={() => handleSetSelected(name, value)}>
@@ -23,7 +23,7 @@ const Dropdown = ({selectionName="Option", selections=[{name: "Option 1", value:
     return (
         <div className='basis-1/6 relative'>
             <div onClick={handleSetIsExpanded} className='px-4 py-2 flex justify-between items-center cursor-pointer bg-main rounded-md  text-text/75 shadow-sm'>
-                <h5 >{selected}</h5>
+                <h5>{selected}</h5>
 
                 <ChevronDown onClick={handleSetIsExpanded} className={`${(isExpanded) ? 'rotate-180' : ''} duration-200 ease-in `}/>
             </div>

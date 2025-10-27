@@ -5,19 +5,18 @@
 // clear
 
 import React, {useState, useEffect} from 'react'
-import {Input, Dropdown, Button} from './'
+import {Input, Dropdown, Button, Title, TicketFilter} from './'
 import { Search } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 
 const Searchbar = () => {
 
-    const [search, setSearch] = useState("");
-    const [severity, setSeverity] = useState("");
     const [searchParams, setSearchParams] = useSearchParams();
+    const [search, setSearch] = useState(searchParams.get("title") || "");
+    const [severity, setSeverity] = useState(searchParams.get("severity") || "");
 
     const handleSeveritySelection = (value) => {
         setSeverity(value);
-        console.log(value)
     }
 
     const handleSetSearch = (value) => {
@@ -52,8 +51,9 @@ const Searchbar = () => {
 
     return (
         <div className='flex gap-2'>
-            <Input placeholder="Search tickets by title" icon={Search} onChange={(value) => handleSetSearch(value)}/>
-            <Dropdown selectionName="Severity" selections={severitySelections} onSelect={(value) => handleSeveritySelection(value)}/>
+            <Input defaultValue={search} placeholder="Search tickets by title" icon={Search} onChange={(value) => handleSetSearch(value)}/>
+            <Dropdown defaultValue={severitySelections.find(item => item.value === severity)?.name} selectionName="Severity" selections={severitySelections} onSelect={(value) => handleSeveritySelection(value)}/>
+            <TicketFilter />
 
             <Button text='Search' onClick={handleSetParameters}/>
         </div>
