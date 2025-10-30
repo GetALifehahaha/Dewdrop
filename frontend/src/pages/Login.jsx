@@ -1,5 +1,5 @@
 import React from 'react'
-import {LoginSignupForm} from '../components'
+import {LoginSignupForm} from '../components/organisms'
 import backgroundImg from '../assets/images/blue-minimalist-alien-landscape-c3.jpg'
 
 const Login = () => {

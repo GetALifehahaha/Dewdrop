@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
-import {Selection, Input, Label} from '../'
+import {Selection, Label, Button} from '../atoms'
 
-const TicketFilter = ({onChange={}}) => {
+const TicketFilter = ({onApply}) => {
 
     const [status, setStatus] = useState();
     const [filterShown, setFilterShown] = useState(false);
@@ -21,17 +21,22 @@ const TicketFilter = ({onChange={}}) => {
         setFilterShown(!filterShown);
     }
 
-    return (
-        <div className='basis-1/5'>   
-            <h5 className='relative bg-main text-text/75 p-2 rounded-md shadow-sm' onClick={handleSetFilterShown}>Filter</h5>
+    const handleApplyFilter = () => {
+        onApply();
+    }
 
-            {filterShown && <div className='absolute transform-x-4'>
+    return (
+        <div className='basis-1/5 relative'>   
+            <h5 className='bg-main text-text/75 p-2 rounded-md shadow-sm cursor-pointer hover:bg-main-hover' onClick={handleSetFilterShown}>Filter</h5>
+
+            {filterShown && 
+            <div className='absolute flex flex-col gap-2 items-center top-full translate-y-2 -translate-x-1/12'>
                 <div className='flex flex-col bg-main gap-2 rounded-sm p-2'>
                     <Label text='Date Created'/>
                     <div className='flex flex-row justify-between gap-2'>
                         <div className='bg-main p-2'>
                             <Label text='Start' variant='small' />
-                            <input type='date'/>
+                            <input type='date' className='cursor-text border-b-2 border-border'/>
                         </div>
                         <div className='bg-main p-2'>
                             <Label text='End' variant='small' />
@@ -40,7 +45,10 @@ const TicketFilter = ({onChange={}}) => {
                     </div>
                 </div>
                 <Selection selectionName='Status' selections={statusSelections} onChange={(value) => {handleStatusSelectionChange(value)}}/>
-            </div>}
+                    
+                <Button text='Apply Filter' onClick={handleApplyFilter}/>
+            </div>
+            }
         </div>
     )
 }

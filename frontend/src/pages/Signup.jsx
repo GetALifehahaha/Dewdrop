@@ -1,4 +1,4 @@
-import { LoginSignupForm } from '../components'
+import { LoginSignupForm } from '../components/organisms'
 import React from 'react'
 import backgroundImg from '../assets/images/blue-minimalist-alien-landscape-c3.jpg'
 

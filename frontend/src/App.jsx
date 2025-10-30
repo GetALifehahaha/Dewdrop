@@ -1,5 +1,5 @@
 import {Login, Signup, Layout, Home, Tickets} from './pages'
-import { ProtectedRoute } from './components';
+import { ProtectedRoute } from './components/organisms';
 import {Routes, Route, Navigate} from 'react-router-dom'
 
 const Logout = () => {

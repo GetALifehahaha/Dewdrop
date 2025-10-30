@@ -1,12 +1,12 @@
 import {Navigate} from 'react-router-dom'
 import { useContext } from 'react'
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 const ProtectedRoute = ({children}) => {
 
-  const {user, loading, isAuthorized} = useContext(AuthContext);
+  const {loading, isAuthorized} = useContext(AuthContext);
 
-  if (loading || user == null) {
+  if (loading) {
     return <div className="w-screen h-screen felx justify-center items-center text-text/50">
       <h5>Waiting</h5>
       <h5>Please wait for a bit</h5>

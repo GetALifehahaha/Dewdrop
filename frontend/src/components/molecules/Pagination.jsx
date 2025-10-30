@@ -1,5 +1,5 @@
-import React, {useState, useEffect, act} from 'react';
-import { NavLink, useSearchParams } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 const Pagination = ({maxPage}) => {

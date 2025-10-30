@@ -1,6 +1,6 @@
 import React from 'react'
 import {SquareArrowOutUpRightIcon} from 'lucide-react'
-import Button from './basic/Button';
+import {Button} from '../atoms';
 
 const LatestTicketCard = ({severity_display="Low", title="Title", description="Description", datetime="datetime", agent="Agent Ironman"}) => {
 

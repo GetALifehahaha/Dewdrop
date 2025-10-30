@@ -1,6 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react'
 import {AuthContext} from '../context/AuthContext'
-import {Title, Button, DateBlock, Card, LatestTicketCard} from '../components'
+import {Title, Button, DateBlock} from '../components/atoms'
+import {DashboardCard} from '../components/molecules'
+import {LatestTicketCard} from '../components/organisms'
 import { TicketPlus } from 'lucide-react'
 import { useDashboardData } from '../hooks'
 
@@ -17,7 +19,7 @@ const Home = () => {
     }
 
 	const listDashboardCard = Object.entries(dashboardCounts || {}).map(([title, count], index) => 
-		<Card key={index} title={formatTitle(title)} count={count}/>
+		<DashboardCard key={index} title={formatTitle(title)} count={count}/>
 	)
 
 	return (

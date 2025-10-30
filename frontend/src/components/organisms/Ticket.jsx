@@ -1,12 +1,13 @@
 import React from 'react';
-import {DateTime, StatusDisplay, SeverityDisplay} from '../';
+import {DateTime} from '../atoms';
+import {StatusDisplay, SeverityDisplay} from '../molecules';
 
 const Ticket = ({ticket}) => {
 
     return (
         <div 
         onClick={() => console.log(ticket.id)}
-        className='bg-main rounded-lg p-6 flex flex-col gap-2 shadow-md cursor-pointer hover:bg-white duration-75 ease-out mr-2 snap-start'>
+        className='bg-main rounded-lg p-6 flex flex-col gap-2 shadow-md cursor-pointer hover:bg-main-hover duration-75 ease-out mr-2 snap-start'>
             <div className='flex items-center justify-between'>
                 <div className="flex items-end gap-4">
                     <h5 className='text-text font-semibold text-lg'>{ticket.title}</h5>

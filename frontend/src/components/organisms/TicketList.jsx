@@ -1,7 +1,8 @@
 import React from 'react';
-import { useTicketData } from '../hooks';
-import {Ticket, Pagination} from './'
-import { PAGINATION } from '../services/constants';
+import { useTicketData } from '../../hooks';
+import {Pagination} from '../molecules'
+import {Ticket} from '../organisms'
+import { PAGINATION } from '../../services/constants';
 
 const TicketList = () => {
 

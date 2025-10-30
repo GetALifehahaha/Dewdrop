@@ -22,9 +22,14 @@ body {
     font-family: 'Urbanist';
 }
 
+h2 {
+    color: #e7eef5;
+}
+
 @theme {
     /* Theme Colors */
     --color-main: #f6fafd;
+    --color-main-hover: #e7eef5;
     --color-main-dark: #dbe5ee;
     --color-main-gray: #758BA5;
     --color-main-gray-dark: #6c8094;
@@ -32,6 +37,7 @@ body {
     --color-accent-blue: #3684D8;
     --color-accent-deepblue: #223A59;
     --color-text: #031930;
+    --color-border: #a7a9b3;
 
     /* Utility Colors */
     --color-urgent: #e05944;

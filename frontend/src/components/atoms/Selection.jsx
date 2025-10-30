@@ -1,5 +1,5 @@
 import React from 'react'
-import {Label} from '../'
+import {Label} from './'
 
 const Selection = ({selectionName="Selection", selections=[{name: "Select", value: "Value"}], onChange}) => {
 

@@ -1,7 +1,7 @@
 import React from 'react'
-import {DateBlock} from '../'
+import {DateBlock} from '../atoms'
 
-const Card = ({title="Total", count=0}) => {
+const DashboardCard = ({title="Total", count=0}) => {
 
     const colorVariants = {
         Total: {
@@ -32,4 +32,4 @@ const Card = ({title="Total", count=0}) => {
     )
 }
 
-export default Card
+export default DashboardCard

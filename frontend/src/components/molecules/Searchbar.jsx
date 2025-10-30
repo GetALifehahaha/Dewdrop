@@ -1,11 +1,6 @@
-// input
-// urgency type
-// common filter (start and end date, status)
-// display clearable filter
-// clear
-
 import React, {useState, useEffect} from 'react'
-import {Input, Dropdown, Button, Title, TicketFilter} from './'
+import {Input, Dropdown, Button,} from '../atoms'
+import {TicketFilter} from './'
 import { Search } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 

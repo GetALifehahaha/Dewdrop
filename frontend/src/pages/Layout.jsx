@@ -1,6 +1,6 @@
 import React, {useContext} from 'react'
 import {AuthContext} from '../context/AuthContext'
-import { Header, Sidebar } from '../components/'
+import { Header, Sidebar } from '../components/molecules'
 import {Outlet} from 'react-router-dom'
 
 const Layout = () => {
