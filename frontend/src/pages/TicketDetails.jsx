@@ -75,7 +75,13 @@ const TicketDetails = ({ticket}) => {
             <div className='py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4'>
                 <Title text='Assigned Agent' variant='blockTitle' />
 
-                {ticketData.assigned_agent ? <></> : 
+                {ticketData.assigned_agent ? 
+                <div>
+                    <div>
+                        <Label variant='medium' text='Agent Name' />
+                    </div>
+                </div> 
+                : 
                 <div className='text-md font-semibold text-text/50 flex flex-col gap-8 justify-center items-center'>
                     <Hourglass size={96} className='text-text/25 animate-spin-delay'/>
                     <h5>No agent has been assigned yet. Let's wait for the manager to assign someone.</h5>
