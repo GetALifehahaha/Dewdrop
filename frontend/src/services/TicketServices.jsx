@@ -20,7 +20,7 @@ const TicketServices = async (params, ticket_id = null, method="GET") => {
 			return response.data
 		}
 	} catch (err) {
-		return err;
+		throw err;
 	}
 }
 

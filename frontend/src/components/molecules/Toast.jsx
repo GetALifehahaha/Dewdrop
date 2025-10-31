@@ -5,7 +5,8 @@ const Toast = React.memo(( {toastMessages = [{ message: "Message", status: "succ
 
     const toastMessageVariants = {
         success: "text-green-500",
-        error: "text-red-400"
+        error: "text-red-400",
+        info: "text-text"
     }
 
     const listToastMessages = toastMessages.map(({message, status, icon: Icon}, index) => 

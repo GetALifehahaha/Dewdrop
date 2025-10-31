@@ -69,7 +69,7 @@ const Pagination = ({maxPage}) => {
     return (
         <div className='mr-auto mt-2 px-4 py-2 flex gap-4 items-center w-fit text-text font-medium'>
 
-            {(maxPage) && <>
+            {(maxPage > 1) && <>
                 <button onClick={() => changePage("prev")} className='flex items-center gap-2 cursor-pointer px-4 bg-main rounded-sm'><ArrowLeft width={16}/>Prev</button>
                 <div className='flex gap-2'>
                     {listPageNumbers}
