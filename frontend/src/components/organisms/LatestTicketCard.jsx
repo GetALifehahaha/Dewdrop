@@ -1,8 +1,13 @@
 import React from 'react'
 import {SquareArrowOutUpRightIcon} from 'lucide-react'
 import {Button} from '../atoms';
+import { useNavigate } from 'react-router-dom';
 
-const LatestTicketCard = ({severity_display="Low", title="Title", description="Description", datetime="datetime", agent="Agent Ironman"}) => {
+const LatestTicketCard = ({severity_display="Low", title="Title", description="Description", datetime="datetime", agent="Agent Ironman", id=1}) => {
+
+    const navigate = useNavigate();
+
+    const openTicketDetails = () => navigate('/tickets/'+id)
 
     const formatDateFromIso = (dateString) => {
 		let unformattedDate = new Date(dateString);
@@ -49,7 +54,7 @@ const LatestTicketCard = ({severity_display="Low", title="Title", description="D
                 </div>
 
                 <div className='mt-10 border-t-1 border-text/25 flex pt-4 items-center justify-end'>
-                    <Button text='View Ticket' icon={SquareArrowOutUpRightIcon}/>
+                    <Button text='View Ticket' icon={SquareArrowOutUpRightIcon} onClick={openTicketDetails}/>
                 </div>
             </div>
         </div>

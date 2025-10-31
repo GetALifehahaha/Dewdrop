@@ -25,7 +25,7 @@ const DashboardCard = ({title="Total", count=0}) => {
         <div className={`flex flex-col flex-1 font-medium rounded-md shadow-md overflow-hidden bg-main`}>
             <h5 className={`py-2 px-4 font-semibold shadow-sm ${colorVariants[title].text} ${colorVariants[title].color}`}>{title}</h5>
             <div className={`flex flex-col px-4 py-8 ${colorVariants[title].text}`}>
-                <h2 className='text-4xl font-bold'>{count}</h2>
+                <h5 className='text-4xl font-bold'>{count}</h5>
                 <h5 className='text-text/50 text-sm'>Tickets Sent</h5>
             </div>
         </div>

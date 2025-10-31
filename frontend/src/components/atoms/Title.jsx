@@ -9,7 +9,7 @@ const Title = ({variant="pageTitle", text="Text", icon: Icon}) => {
 
     return (
         <h1 className={`flex gap-2 items-center ${titleVariants[variant]}`}>
-            {Icon && <Icon />}
+            {Icon && <Icon size={18} />}
             {text}
         </h1>
     )

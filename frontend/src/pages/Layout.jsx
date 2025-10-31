@@ -11,11 +11,11 @@ const Layout = () => {
 	const {user} = useContext(AuthContext);
 
 	return (
-		<div className='bg-main-dark w-full min-h-screen flex flex-col'>
+		<div className='w-full h-screen flex flex-col'>
 			<Header name={`${user.first_name} ${user.last_name}`} onClick={handleOnClick}/>
-			<div className="flex flex-row w-full flex-1">
+			<div className="flex flex-row w-full h-full overflow-hidden">
 				<Sidebar />
-				<div className='p-8 flex-1 flex flex-col gap-6'>
+				<div className='bg-main-dark p-8 flex-1 h-full overflow-auto flex flex-col gap-6'>
 					<Outlet />
 				</div>
 			</div>

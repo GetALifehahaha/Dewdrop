@@ -8,11 +8,13 @@
 }
 
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 16px;
 }
 ::-webkit-scrollbar-thumb {
     background-color: var(--color-main);
     border-radius: 2rem;
+    border: 4px solid transparent; 
+    background-clip: content-box;
 }
 ::-webkit-scrollbar-thumb:hover {
     cursor: pointer;
@@ -27,7 +29,7 @@ h2 {
 }
 
 .animate-spin-delay {
-    animation: spin-delay 2s ease-in-out infinite;
+    animation: spin-delay 4s ease-in-out 2s infinite;
 }
 
 @theme {
@@ -54,6 +56,9 @@ h2 {
     @keyframes spin-delay {
         0% {
             transform: rotate(0deg);
+        }
+        50% {
+            transform: rotate(360deg);
         }
         100% {
             transform: rotate(360deg);
