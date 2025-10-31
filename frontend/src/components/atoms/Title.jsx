@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Title = ({variant="pageTitle", text="Text"}) => {
+const Title = ({variant="pageTitle", text="Text", icon: Icon}) => {
 
     const titleVariants = {
         pageTitle: "text-lg font-semibold tracking-wide text-text",
@@ -8,7 +8,8 @@ const Title = ({variant="pageTitle", text="Text"}) => {
     }
 
     return (
-        <h1 className={titleVariants[variant] || titleVariants["pageTitle"]}>
+        <h1 className={`flex gap-2 items-center ${titleVariants[variant]}`}>
+            {Icon && <Icon />}
             {text}
         </h1>
     )
