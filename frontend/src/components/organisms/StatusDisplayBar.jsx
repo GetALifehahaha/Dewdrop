@@ -1,13 +1,14 @@
 import React from 'react';
 import { Clock4, BookOpen, UserCheck2, TicketCheckIcon } from 'lucide-react';
+import {easeInOut, motion} from 'framer-motion'
 
 const StatusDisplayBar = ({currentStatus="pending"}) => {
 
     const progress = {
-        pending: "w-4",
-        assessing: "w-1/2",
-        assigned: "w-3/4",
-        resolved: "w-full"
+        pending: "20%",
+        assessing: "50%",
+        assigned: "75%",
+        resolved: "100%"
     }
 
     const progressIcons = {
@@ -52,12 +53,18 @@ const StatusDisplayBar = ({currentStatus="pending"}) => {
             </div>
         </div>
     )
+
+    const progressWidth = progress[currentStatus]
     
     return (
         <div className='h-24'>
             <div className={`bg-main-dark h-3 rounded-xl relative`}>
-                <div className={`h-full rounded-xl bg-accent-blue ${progress[currentStatus]}`}>
-                </div>
+                <motion.div 
+                initial={{width: 0}}
+                animate={{width: progressWidth}}
+                transition={{ease: easeInOut, duration: 1}}
+                className={`h-full rounded-xl bg-accent-blue`}>
+                </motion.div>
                 <div className='flex flex-row justify-between absolute w-full -top-1'>
                     {listStatus}
                 </div>
