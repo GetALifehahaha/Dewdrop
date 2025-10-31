@@ -3,7 +3,7 @@ import { useTicketData } from '../hooks';
 import { Title, DateTime, Label } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
-import { Hourglass } from 'lucide-react';
+import { Hourglass, UserCircle, Loader2, ScrollText, Calendar } from 'lucide-react';
 
 const TicketDetails = ({ticket}) => {
     const {ticketData, error, loading} = useTicketData();
@@ -19,6 +19,7 @@ const TicketDetails = ({ticket}) => {
 
     return (
         <div className='flex flex-col gap-4'>
+            {/* Page Header */}
             <div className="flex flex-col">
                 <Title text='Details' />
                 <Breadcrumbs breadcrumb={breadcrumb}/>
@@ -40,14 +41,14 @@ const TicketDetails = ({ticket}) => {
                 <div className='flex flex-row gap-4'>
                     {/* Description */}
                     <div className='flex-1 flex flex-col gap-2 shadow-sm hover:shadow-md ease-in duration-75 p-4 rounded-sm'>
-                        <Title variant='blockTitle' text='Description'/>
+                        <Title variant='blockTitle' text='Description' icon={ScrollText}/>
                         <h5 className='font-medium'>{ticketData.description}</h5>
                     </div>
 
                     {/* Details */}
                     <div className="basis-1/4 flex flex-col gap-8 shadow-sm hover:shadow-md ease-in duration-75 p-4 rounded-sm">
                         <div className='flex flex-col gap-2'>
-                            <Title variant='blockTitle' text='Submitted At'/>
+                            <Title variant='blockTitle' text='Submitted At' icon={Calendar}/>
                             <div className='flex flex-row gap-8'>
                                 <div>
                                     <Label variant='small' text='Date' />
@@ -67,18 +68,19 @@ const TicketDetails = ({ticket}) => {
 
             {/* Status Block */}
             <div className='py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4'>
-                <Title text='Status' variant='blockTitle' />
+                <Title text='Status' variant='blockTitle' icon={Loader2}/>
                 <StatusDisplayBar currentStatus={ticketData.status}/>
             </div>
 
             {/* Agent Block */}
             <div className='py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4'>
-                <Title text='Assigned Agent' variant='blockTitle' />
+                <Title text='Assigned Agent' variant='blockTitle' icon={UserCircle}/>
 
                 {ticketData.assigned_agent ? 
                 <div>
                     <div>
-                        <Label variant='medium' text='Agent Name' />
+                        <Label variant='medium' text='Agent Name'/>
+                        <h5 className='font-medium'>{ticketData.assigned_agent.first_name + ' ' + ticketData.assigned_agent.last_name}</h5>
                     </div>
                 </div> 
                 : 
