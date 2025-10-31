@@ -5,9 +5,9 @@ import {easeInOut, motion} from 'framer-motion'
 const StatusDisplayBar = ({currentStatus="pending"}) => {
 
     const progress = {
-        pending: "20%",
-        assessing: "50%",
-        assigned: "75%",
+        pending: "10%",
+        assessing: "40%",
+        assigned: "70%",
         resolved: "100%"
     }
 

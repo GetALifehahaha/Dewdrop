@@ -5,7 +5,7 @@ import { Breadcrumbs, SeverityDisplay } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
 import { Hourglass, UserCircle, Loader2, ScrollText, Calendar } from 'lucide-react';
 
-const TicketDetails = ({ticket}) => {
+const TicketDetails = () => {
     const {ticketData, error, loading} = useTicketData();
 
     if (loading) return <p>Loading Ticket Data...</p>
@@ -18,7 +18,7 @@ const TicketDetails = ({ticket}) => {
     ]
 
     return (
-        <div className='flex flex-col gap-4'>
+        <>
             {/* Page Header */}
             <div className="flex flex-col">
                 <Title text='Details' />
@@ -89,7 +89,7 @@ const TicketDetails = ({ticket}) => {
                     <h5>No agent has been assigned yet. Let's wait for the manager to assign someone.</h5>
                 </div>}
             </div>
-        </div>
+        </>
     )
 }
 

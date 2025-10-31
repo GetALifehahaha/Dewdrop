@@ -5,10 +5,12 @@ import {DashboardCard} from '../components/molecules'
 import {LatestTicketCard} from '../components/organisms'
 import { TicketPlus } from 'lucide-react'
 import { useDashboardData } from '../hooks'
+import { useNavigate } from 'react-router-dom'
 
 const Home = () => {
 	const {user} = useContext(AuthContext);
 	const {dashboardCounts, latestTicket, loading, error} = useDashboardData();
+	const navigate = useNavigate();
 
 	if (loading) return <p>Loading dashboard...</p>;
 	if (error) return <p>Error loading dashboard data.</p>;
@@ -17,6 +19,8 @@ const Home = () => {
         let first = title.split('_')[0] || title;
         return first.charAt(0).toUpperCase() + first.slice(1);
     }
+
+	const redirectToCreateTicket = () => navigate('/ticket-create')
 
 	const listDashboardCard = Object.entries(dashboardCounts || {}).map(([title, count], index) => 
 		<DashboardCard key={index} title={formatTitle(title)} count={count}/>
@@ -27,7 +31,7 @@ const Home = () => {
 			{/* Welcome Block */}
 			<div className="flex justify-between h-fit">
 				<Title text={`Hello, ${user.first_name}`}/>
-				<Button icon={TicketPlus} text='Create Request' onClick={() => console.log("Hi")}/>
+				<Button icon={TicketPlus} text='Create Request' onClick={redirectToCreateTicket}/>
 			</div>
 
 			{/* Recently Sent Tickets */}

@@ -29,7 +29,7 @@ h2 {
 }
 
 .animate-spin-delay {
-    animation: spin-delay 4s ease-in-out 2s infinite;
+    animation: spin-delay 4s ease-in-out infinite;
 }
 
 @theme {

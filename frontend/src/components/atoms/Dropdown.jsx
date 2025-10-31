@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import { ChevronDown, XIcon } from 'lucide-react';
 
-const Dropdown = ({defaultValue=null, selectionName="Option", selections=[{name: "Option 1", value: "Value 1"}, {name: "Option 2", value: "Value 2"}], onSelect}) => {
+const Dropdown = ({value=null, selectionName="Option", selections=[{name: "Option 1", value: "Value 1"}, {name: "Option 2", value: "Value 2"}], onSelect}) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [selected, setSelected] = useState(defaultValue || selectionName);
+    const [selected, setSelected] = useState(value || selectionName);
 
     const listSelections = selections.map(({name, value}, index) => 
         <div key={index} className='cursor-pointer hover:bg-main-dark px-1 py-2 rounded-sm text-semibold' onClick={() => handleSetSelected(name, value)}>

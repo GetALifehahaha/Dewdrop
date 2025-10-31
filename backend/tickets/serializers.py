@@ -11,8 +11,8 @@ class AgentSerializer(serializers.ModelSerializer):
         
 class TicketSerializer(serializers.ModelSerializer):
     assigned_agent = AgentSerializer(read_only=True)
-    severity_display = serializers.CharField(source='get_severity_display')
-    status_display = serializers.CharField(source='get_status_display')
+    severity_display = serializers.CharField(source='get_severity_display', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
     
     class Meta:
         model = Ticket

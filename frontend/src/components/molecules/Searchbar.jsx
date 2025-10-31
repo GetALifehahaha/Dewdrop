@@ -3,6 +3,7 @@ import {Input, Dropdown, Button,} from '../atoms'
 import {TicketFilter} from './'
 import { Search } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
+import {SeveritySelectionConfig} from '../../config/SeveritySelectionConfig'
 
 const Searchbar = () => {
 
@@ -38,16 +39,10 @@ const Searchbar = () => {
         else params.delete(key);
     };
 
-    const severitySelections = [
-        {name: "Low", value: "lw"},
-        {name: "Medium", value: "md"},
-        {name: "Urgent", value: "ur"},
-    ]
-
     return (
         <div className='flex gap-2'>
-            <Input defaultValue={search} placeholder="Search tickets by title" icon={Search} onChange={(value) => handleSetSearch(value)}/>
-            <Dropdown defaultValue={severitySelections.find(item => item.value === severity)?.name} selectionName="Severity" selections={severitySelections} onSelect={(value) => handleSeveritySelection(value)}/>
+            <Input value={search} placeholder="Search tickets by title" icon={Search} onChange={(value) => handleSetSearch(value)}/>
+            <Dropdown value={SeveritySelectionConfig.find(item => item.value === severity)?.name} selectionName="Severity" selections={SeveritySelectionConfig} onSelect={(value) => handleSeveritySelection(value)}/>
             <TicketFilter />
 
             <Button text='Search' onClick={handleSetParameters}/>

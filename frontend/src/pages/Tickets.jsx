@@ -5,14 +5,12 @@ import {Searchbar} from '../components/molecules'
 import {TicketList} from '../components/organisms';
 
 const Tickets = () => {
-    const {user} = useContext(AuthContext);
-
     return (
-        <div className='flex flex-col gap-8'>
+        <>
             <Title text='Tickets'/>
             <Searchbar />
             <TicketList />
-        </div>
+        </>
     )
 }
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Tickets, TicketPlus, UserCircle, LogOut, HomeIcon, UsersIcon, UserRoundPlusIcon } from 'lucide-react'
 
 export const NavConfig = {
@@ -8,7 +7,7 @@ export const NavConfig = {
         ],
         "Tickets": [
             { label: "View Tickets", link: "/tickets", icon: Tickets },
-            { label: "Submit New", link: "/tickets/create", icon: TicketPlus },
+            { label: "Submit New", link: "/ticket-create", icon: TicketPlus },
         ],
         "Account": [
             { label: "View Account", link: "/me", icon: UserCircle },
