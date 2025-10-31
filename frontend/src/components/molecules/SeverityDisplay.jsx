@@ -5,7 +5,7 @@ const SeverityDisplay = ({severity, severityDisplay}) => {
     const severityVariants = {
         lw: 'text-main-gray',
         md: 'text-orange-400',
-        ur: 'text-purple-800',
+        ur: 'text-red-600',
     }
 
     return (

@@ -11,7 +11,7 @@ const Layout = () => {
 	const {user} = useContext(AuthContext);
 
 	return (
-		<div className='bg-main-dark w-full h-screen flex flex-col'>
+		<div className='bg-main-dark w-full min-h-screen flex flex-col'>
 			<Header name={`${user.first_name} ${user.last_name}`} onClick={handleOnClick}/>
 			<div className="flex flex-row w-full flex-1">
 				<Sidebar />

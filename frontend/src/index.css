@@ -26,6 +26,10 @@ h2 {
     color: #e7eef5;
 }
 
+.animate-spin-delay {
+    animation: spin-delay 2s ease-in-out infinite;
+}
+
 @theme {
     /* Theme Colors */
     --color-main: #f6fafd;
@@ -44,4 +48,15 @@ h2 {
     --color-urgent-light: #fbefee;
     --color-resolved: #067886;
     --color-resolved-light: #d0f9ee;
+
+
+    /* Animations */
+    @keyframes spin-delay {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
 }

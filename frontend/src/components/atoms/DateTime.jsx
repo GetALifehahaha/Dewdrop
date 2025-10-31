@@ -1,7 +1,12 @@
 import React from 'react';
 import { LucideDot } from 'lucide-react';
 
-const DateTime = ({dateTime}) => {
+const DateTime = ({variant="base", dateTime, hasDate=false, hasTime=false}) => {
+
+    const dateTimeVariant = {
+        base: 'text-text',
+        transparent: 'text-text/50',
+    }
 
     const formatDateFromIso = (dateString) => {
         let unformattedDate = new Date(dateString);
@@ -28,10 +33,10 @@ const DateTime = ({dateTime}) => {
     }
 
     return (
-        <div className='flex items-center text-text/50 font-medium'>
-            <h5>{formatDateFromIso(dateTime)}</h5>
-            <LucideDot />
-            <h5>{formatTimeFromIso(dateTime)}</h5>
+        <div className={`flex items-center ${dateTimeVariant[variant]} font-medium`}>
+            {hasDate && <h5>{formatDateFromIso(dateTime)}</h5>}
+            {(hasDate && hasTime) && <LucideDot />}
+            {hasTime && <h5>{formatTimeFromIso(dateTime)}</h5>}
         </div>
     )
 }

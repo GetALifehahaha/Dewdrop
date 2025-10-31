@@ -1,12 +1,19 @@
 import React from 'react';
 import {DateTime} from '../atoms';
 import {StatusDisplay, SeverityDisplay} from '../molecules';
+import { useNavigate } from 'react-router-dom';
 
 const Ticket = ({ticket}) => {
 
+    const navigate = useNavigate();
+
+    const handleNavigate = (id) => {
+        navigate(`/tickets/${id}`)
+    }
+
     return (
         <div 
-        onClick={() => console.log(ticket.id)}
+        onClick={() => handleNavigate(ticket.id)}
         className='bg-main rounded-lg p-6 flex flex-col gap-2 shadow-md cursor-pointer hover:bg-main-hover duration-75 ease-out mr-2 snap-start'>
             <div className='flex items-center justify-between'>
                 <div className="flex items-end gap-4">
@@ -15,7 +22,7 @@ const Ticket = ({ticket}) => {
                 </div>
 
                 <div>
-                    <DateTime dateTime={ticket.created_at}/>
+                    <DateTime variant='transparent' dateTime={ticket.created_at} hasDate={true} hasTime={true}/>
                 </div>
             </div>
 
