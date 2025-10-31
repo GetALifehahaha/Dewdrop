@@ -6,7 +6,6 @@ const usePostTicket = () => {
     const [error, setError] = useState(null);
     const [response, setResponse] = useState(null);
 
-    
     const postTicket = async (ticketData) => {
         setLoading(true);
 

@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
-import {Title, Label, Input, Textarea, Dropdown, Button} from '../components/atoms'
-import {SeveritySelectionConfig} from '../config/SeveritySelectionConfig';
-import { X, Pen, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Title, Label, Input, Textarea, Dropdown, Button } from '../components/atoms'
+import { Toast } from '../components/molecules'
+import { SeveritySelectionConfig } from '../config/SeveritySelectionConfig';
+import { X, Pen, Loader2, Check } from 'lucide-react';
 import { usePostTicket } from '../hooks';
+import { AnimatePresence } from 'framer-motion';
 
 const CreateTicket = () => {
+    const { loading, error, response, postTicket } = usePostTicket();
+
     const [title, setTitle] = useState();
     const [description, setDescription] = useState();
     const [severity, setSeverity] = useState();
     const [errorMessages, setErrorMessages] = useState([]);
-    const { loading, error, responseData, postTicket } = usePostTicket();
+    const [toastMessages, setToastMessages] = useState([{}])
 
     const handleSetTitle = (value) => setTitle(value);
     const handleSetDescription = (value) => setDescription(value);
@@ -24,14 +28,41 @@ const CreateTicket = () => {
         if (!description) setErrorMessages(er => [...er, "Please include a description of the issue."])
         if (!severity) setErrorMessages(er => [...er, "Please select a severity level."]);
 
-        await postTicket({title: title, description: description, severity: severity});
+        if (title && description && severity) {
+            await postTicket({title: title, description: description, severity: severity});
+        }
     }
 
-    return (
-        <>
-            {responseData && alert(responseData)}
-            <Title text='Submit a Ticket' />
+    useEffect(() => {
+        if (response) {
+            setToastMessages([{
+                message: "Ticket submitted successfully!",
+                status: "success",
+                icon: Check
+            }]);
+        }
 
+        if (error) {
+            setToastMessages([{
+                message: "Failed to submit the ticket. Please try again.",
+                status: "error",
+                icon: X
+            }]);
+        }
+    }, [response, error]);
+
+    useEffect(() => {
+        if (toastMessages.length > 0) {
+            const timer = setTimeout(() => setToastMessages([]), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [toastMessages]);
+
+    return (
+        <>  
+            <Toast toastMessages={toastMessages} />
+            <Title text='Submit a Ticket' />
+    
             <div className='p-4 bg-main rounded-md shadow-sm'>
                 <Title variant='blockTitle' text='Ticket Information' icon={Pen}/>
                 <div className='flex flex-col'>
