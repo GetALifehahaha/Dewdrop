@@ -89,9 +89,12 @@ const CreateTicket = () => {
                     </div>}
 
                     <div className='mx-auto mt-18'>
-                        {loading ? 
-                        <h5 className='flex gap-2 items-center'><Loader2 className='text-accent-blue' size={16}/> Submitting your ticket</h5> :
-                        <Button text='Submit Your Ticket' onClick={handleSubmitTicket}/>
+                        {response ? 
+                        <h5 className='text-accent-deepblue font-semibold'>Ticket Submitted Successfully!</h5> :
+                            loading ? 
+                            <h5 className='flex gap-2 items-center'><Loader2 className='text-accent-blue' size={16}/> Submitting your ticket</h5> :
+                            <Button text='Submit Your Ticket' onClick={handleSubmitTicket}/>
+                            
                         }
                     </div>
                 </div>

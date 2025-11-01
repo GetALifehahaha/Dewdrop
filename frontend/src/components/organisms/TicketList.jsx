@@ -8,9 +8,6 @@ const TicketList = () => {
 
     const {ticketData, error, loading} = useTicketData();
     
-
-    console.log(ticketData)
-
     if (loading) return <p>Loading Tickets...</p>
     if (error) return <div className='w-full h-80 flex flex-col gap-2 justify-center items-center'>
         <h5 className='text-text/50 text-4xl font-bold'>{error.status}</h5> 

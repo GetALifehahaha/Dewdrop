@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { useTicketData } from '../hooks';
 import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay } from '../components/molecules';
@@ -8,32 +8,46 @@ import { useNavigate } from 'react-router-dom';
 
 const TicketDetails = () => {
     const {ticketData, error, loading} = useTicketData();
+    const [confirmationMessage, setConfirmationMessage] = useState();
     const navigate = useNavigate();
 
     if (loading) return <p>Loading Ticket Data...</p>
     if (error) return <p>Error</p>
-
 
     const breadcrumb = [
         {label: 'Tickets', link: '/tickets'},
         {label: ticketData.id, link: `/tickets/${ticketData.id}`},
     ]
 
-    const handleRedirectToEdit = () => navigate(`edit`)
+    const handleRedirectToEdit = () => navigate(`edit`);
+
+    const handleSetDeleteTicket = () => {
+        setConfirmationMessage(["Are you sure you want to delete this ticket? This action cannot be undone."])
+    }
+
+    const handleDeleteTicket = (response) => {
+        if (response) {console.log("Deleted")} 
+        else {console.log("Not Deleted")}
+        
+        setConfirmationMessage([]);
+    }
 
     return (
         <>
             {/* Page Header */}
-            <div className='flex items-center justify-between'>
+            <div className='flex justify-between items-start'>
                 <div className="flex flex-col">
                     <Title text='Details' />
                     <Breadcrumbs breadcrumb={breadcrumb}/>
                 </div>
+                {
+                    (ticketData.status == "pending") &&
 
-                {ticketData.status == "pending" && <div className="flex items-center gap-4">
-                    <Button variant={1} text='' icon={Pen} onClick={handleRedirectToEdit}/>
-                    <Button text='' icon={Trash} />
-                </div>}
+                    <div className='flex gap-2'>
+                        <Button variant="outline" text='Edit' icon={Pen} onClick={handleRedirectToEdit}/>
+                        <Button text='Delete' icon={Trash} onClick={handleSetDeleteTicket}/>
+                    </div>
+                }
             </div>
             
             {/* Main Content */}
@@ -117,6 +131,8 @@ const TicketDetails = () => {
                     <h5>No agent has been assigned yet. Let's wait for the manager to assign someone.</h5>
                 </div>}
             </div>
+
+            <ConfirmationModal messages={confirmationMessage} onSetResponse={handleDeleteTicket}/>
         </>
     )
 }
