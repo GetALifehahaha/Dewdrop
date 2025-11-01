@@ -11,9 +11,9 @@ const Toast = React.memo(( {toastMessages = [{ message: "Message", status: "succ
 
     const listToastMessages = toastMessages.map(({message, status, icon: Icon}, index) => 
         <motion.h5 
-        initial={{opacity: 0, translateX: -150}}
-        animate={{opacity: 1, translateX: 0}}
-        exit={{opacity: 0, translateX: 150}}
+        initial={{opacity: 0, translateY: -150}}
+        animate={{opacity: 1, translateY: 0}}
+        exit={{opacity: 0, translateY: 150}}
         key={index} 
         className={`font-semibold bg-main px-4 py-2 rounded-xl shadow-md text-sm flex gap-2 items-center ${toastMessageVariants[status]}`}>
             {Icon && <Icon size={18} />}{message}

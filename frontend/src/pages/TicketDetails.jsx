@@ -1,28 +1,49 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { useTicketData } from '../hooks';
-import { Title, DateTime, Label } from '../components/atoms';
-import { Breadcrumbs, SeverityDisplay } from '../components/molecules';
+import { Title, DateTime, Label, Button } from '../components/atoms';
+import { Breadcrumbs, SeverityDisplay, ConfirmationModal } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
-import { Hourglass, UserCircle, Loader2, ScrollText, Calendar } from 'lucide-react';
+import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, Pen, Trash2 } from 'lucide-react';
 
 const TicketDetails = () => {
     const {ticketData, error, loading} = useTicketData();
+    const [confirmationMessage, setConfirmationMessage] = useState();
 
     if (loading) return <p>Loading Ticket Data...</p>
     if (error) return <p>Error</p>
-
 
     const breadcrumb = [
         {label: 'Tickets', link: '/tickets'},
         {label: ticketData.id, link: `/tickets/${ticketData.id}`},
     ]
 
+    const handleSetDeleteTicket = () => {
+        setConfirmationMessage(["Are you sure you want to delete this ticket? This action cannot be undone."])
+    }
+
+    const handleDeleteTicket = (response) => {
+        if (response) {console.log("Deleted")} 
+        else {console.log("Not Deleted")}
+        
+        setConfirmationMessage([]);
+    }
+
     return (
         <>
             {/* Page Header */}
-            <div className="flex flex-col">
-                <Title text='Details' />
-                <Breadcrumbs breadcrumb={breadcrumb}/>
+            <div className='flex justify-between items-start'>
+                <div className="flex flex-col">
+                    <Title text='Details' />
+                    <Breadcrumbs breadcrumb={breadcrumb}/>
+                </div>
+                {
+                    (ticketData.status == "pending") &&
+
+                    <div className='flex gap-2'>
+                        <Button variant="outline" text='Edit' icon={Pen} onClick={() => console.log("Edit")}/>
+                        <Button text='Delete' icon={Trash2} onClick={handleSetDeleteTicket}/>
+                    </div>
+                }
             </div>
             
             {/* Main Content */}
@@ -89,6 +110,8 @@ const TicketDetails = () => {
                     <h5>No agent has been assigned yet. Let's wait for the manager to assign someone.</h5>
                 </div>}
             </div>
+
+            <ConfirmationModal messages={confirmationMessage} onSetResponse={handleDeleteTicket}/>
         </>
     )
 }
