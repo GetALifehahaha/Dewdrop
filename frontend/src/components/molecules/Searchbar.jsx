@@ -19,7 +19,9 @@ const Searchbar = () => {
         setSearch(value);
     }
 
-    const handleSetParameters = () => {
+    const handleSetParameters = (filters=null) => {
+        if (filters && filters.preventDefault) filters = null;
+
         setSearchParams((prev) => {
             let params = new URLSearchParams(prev);
 
@@ -29,6 +31,12 @@ const Searchbar = () => {
 
             setOrDeleteParam(params, "title", search);
             setOrDeleteParam(params, "severity", severity);
+            if (filters) {
+                console.log(filters)
+                Object.entries(filters).forEach(([label, value]) => {
+                    params.set(label, value);
+                });
+            }
 
             return params;
         })
@@ -39,13 +47,18 @@ const Searchbar = () => {
         else params.delete(key);
     };
 
+    const clearParameters = () => {setSearchParams(); console.log(searchParams)}
+
     return (
         <div className='flex gap-2'>
             <Input value={search} placeholder="Search tickets by title" icon={Search} onChange={(value) => handleSetSearch(value)}/>
             <Dropdown value={SeveritySelectionConfig.find(item => item.value === severity)?.name} selectionName="Severity" selections={SeveritySelectionConfig} onSelect={(value) => handleSeveritySelection(value)}/>
-            <TicketFilter />
+            <TicketFilter onApply={handleSetParameters}/>
 
             <Button text='Search' onClick={handleSetParameters}/>
+            {searchParams.size > 0 &&
+            <Button variant='text' text='Clear' onClick={clearParameters} />
+            }
         </div>
     )
 }

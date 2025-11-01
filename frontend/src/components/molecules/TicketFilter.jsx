@@ -5,6 +5,8 @@ const TicketFilter = ({onApply}) => {
 
     const [status, setStatus] = useState();
     const [filterShown, setFilterShown] = useState(false);
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
 
     const statusSelections = [
         {name: "Pending", value: "pending"},
@@ -14,7 +16,7 @@ const TicketFilter = ({onApply}) => {
     ]
 
     const handleStatusSelectionChange = (value) => {
-        console.log(value);
+        setStatus(value)
     }
 
     const handleSetFilterShown = () => {
@@ -22,25 +24,27 @@ const TicketFilter = ({onApply}) => {
     }
 
     const handleApplyFilter = () => {
-        onApply();
+        let params = {}
+        if (status) params = {...params, status: status};
+        onApply(params)
     }
 
     return (
         <div className='basis-1/5 relative'>   
-            <h5 className='bg-main text-text/75 p-2 rounded-md shadow-sm cursor-pointer hover:bg-main-hover' onClick={handleSetFilterShown}>Filter</h5>
+            <h5 className='bg-main text-text/75 px-4 py-2 rounded-md shadow-sm cursor-pointer hover:bg-main-hover' onClick={handleSetFilterShown}>Filter</h5>
 
             {filterShown && 
-            <div className='absolute flex flex-col gap-2 items-center top-full translate-y-2 -translate-x-1/12'>
+            <div className='absolute flex flex-col gap-2 items-center top-full translate-y-2 -translate-x-1/12 shadow-sm bg-main rounded-md p-2'>
                 <div className='flex flex-col bg-main gap-2 rounded-sm p-2'>
                     <Label text='Date Created'/>
                     <div className='flex flex-row justify-between gap-2'>
                         <div className='bg-main p-2'>
                             <Label text='Start' variant='small' />
-                            <input type='date' className='cursor-text border-b-2 border-border'/>
+                            <input type='date' className='cursor-text border-b-2 border-border focus:outline-none'/>
                         </div>
                         <div className='bg-main p-2'>
                             <Label text='End' variant='small' />
-                            <input type='date'/>
+                            <input type='date' className='cursor-text border-b-2 border-border focus:outline-none'/>
                         </div>
                     </div>
                 </div>
