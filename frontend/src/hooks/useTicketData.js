@@ -9,11 +9,6 @@ const useTicketData = () => {
     const [searchParams] = useSearchParams();
     const {ticket_id} = useParams()
 
-    const errorMessages = {
-        400: "Something went wrong.",
-        404: "The page you're looking for doesn't exist. Please don't tell me you tried page 999?"
-    }
-
     useEffect(() => {
         const fetchTicketData = async () => {
             try {
@@ -22,7 +17,7 @@ const useTicketData = () => {
 
                 setTicketData(data);
             } catch (err) {
-                setError({status: err.response.status, message: errorMessages[err.response.status]});
+                setError({status: err.response.status});
                 setTicketData(null);
             } finally {
                 setLoading(false);

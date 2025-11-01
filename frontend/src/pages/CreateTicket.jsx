@@ -12,7 +12,7 @@ const CreateTicket = () => {
     const [description, setDescription] = useState();
     const [severity, setSeverity] = useState();
     const [errorMessages, setErrorMessages] = useState([]);
-    const [toastMessages, setToastMessages] = useState([{}])
+    const [toastMessages, setToastMessages] = useState([]);
 
     const handleSetTitle = (value) => setTitle(value);
     const handleSetDescription = (value) => setDescription(value);

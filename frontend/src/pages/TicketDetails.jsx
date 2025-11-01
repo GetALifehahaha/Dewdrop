@@ -1,18 +1,47 @@
 import React, {useEffect, useState} from 'react';
-import { useTicketData } from '../hooks';
+import { useTicketData, useDeleteTicket } from '../hooks';
 import { Title, DateTime, Label, Button } from '../components/atoms';
-import { Breadcrumbs, SeverityDisplay } from '../components/molecules';
+import { Breadcrumbs, SeverityDisplay, Guard, Toast } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
-import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen } from 'lucide-react';
+import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const TicketDetails = () => {
     const {ticketData, error, loading} = useTicketData();
+    const { response: deleteResponse, error: deleteError, loading: deleteLoading, deleteTicket } = useDeleteTicket();
     const [confirmationMessage, setConfirmationMessage] = useState();
     const navigate = useNavigate();
+    const [toastMessages, setToastMessages] = useState([]);
 
-    if (loading) return <p>Loading Ticket Data...</p>
-    if (error) return <p>Error</p>
+    useEffect(() => {
+        if (deleteResponse) {
+            setToastMessages([{
+                message: "Ticket deleted successfully!",
+                status: "Success",
+                icon: Check
+            }])
+        }
+        if (deleteError) {
+            setToastMessages([{
+                message: "Failed to delete the ticket!",
+                status: "Error",
+                icon: X
+            }])
+        }
+
+    }, [deleteResponse, error])
+
+    useEffect(() => {
+            if (toastMessages.length > 0) {
+                const timer = setTimeout(() => setToastMessages([]), 3000);
+                return () => clearTimeout(timer);
+            }
+        }, [toastMessages]);
+
+    if (loading) return <Guard message={"Loading ticket details..."}/>
+    if (error) return <Guard type='Error' message={{status: error.status, detail: "The ticket doesn't exist."}} />
+
+    if (deleteLoading) return <Guard message={"Deleting ticket..."}/>
 
     const breadcrumb = [
         {label: 'Tickets', link: '/tickets'},
@@ -25,16 +54,19 @@ const TicketDetails = () => {
         setConfirmationMessage(["Are you sure you want to delete this ticket? This action cannot be undone."])
     }
 
-    const handleDeleteTicket = (response) => {
-        if (response) {console.log("Deleted")} 
-        else {console.log("Not Deleted")}
-        
+    const handleDeleteTicket = async (response) => {
+        if (response) {
+            await deleteTicket(ticketData.id)
+        } 
+
         setConfirmationMessage([]);
     }
 
     return (
         <>
             {/* Page Header */}
+            <Toast toastMessages={toastMessages}/>
+            
             <div className='flex justify-between items-start'>
                 <div className="flex flex-col">
                     <Title text='Details' />
