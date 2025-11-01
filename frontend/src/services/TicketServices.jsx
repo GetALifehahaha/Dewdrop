@@ -18,6 +18,10 @@ const TicketServices = async (params, ticket_id = null, method="GET") => {
 			const response = await api.post('/tickets/tickets/', params);
 
 			return response.data
+		} else if (method == "DELETE") {
+			const response = await api.delete(`/tickets/tickets/${ticket_id}/`);
+
+			return response.data
 		}
 	} catch (err) {
 		throw err;
