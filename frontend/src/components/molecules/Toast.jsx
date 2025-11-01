@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {AnimatePresence, motion} from 'framer-motion'
 
-const Toast = React.memo(( {toastMessages = [{ message: "Message", status: "success", icon: null }]} ) => {
+const Toast = React.memo(({ toastMessages = [{ message: "Message", status: "success", icon: null }] }) => {
+
+    if (toastMessages.length === 0) return;
 
     const toastMessageVariants = {
         success: "text-green-500",
@@ -19,8 +21,6 @@ const Toast = React.memo(( {toastMessages = [{ message: "Message", status: "succ
             {Icon && <Icon size={18} />}{message}
         </motion.h5>
     )
-
-    console.log("Update: ", toastMessages)
 
     return (
         <div className='absolute top-5 left-1/2 -translate-x-1/2'>
