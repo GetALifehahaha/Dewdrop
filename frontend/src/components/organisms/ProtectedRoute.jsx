@@ -1,14 +1,15 @@
 import {Navigate} from 'react-router-dom'
 import { useContext } from 'react'
 import { AuthContext } from '../../context/AuthContext';
+import { Hourglass } from 'lucide-react';
 
 const ProtectedRoute = ({children}) => {
 
   const {loading, isAuthorized} = useContext(AuthContext);
 
   if (loading) {
-    return <div className="w-screen h-screen felx justify-center items-center text-text/50">
-      <h5>Waiting</h5>
+    return <div className="w-screen h-screen flex flex-col justify-center items-center text-text/50">
+      <Hourglass className='animate-spin-delay'/>
       <h5>Please wait for a bit</h5>
     </div>
   }

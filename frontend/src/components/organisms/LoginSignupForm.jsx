@@ -5,7 +5,7 @@ import { AuthContext } from '../../context/AuthContext';
 
 const LoginSignupForm = ({method}) => {
   // context variables
-  const {login, isAuthorized} = useContext(AuthContext);
+  const {login, register} = useContext(AuthContext);
 
   // state variables
   const [firstName, setFirstName] = useState("");
@@ -28,11 +28,17 @@ const LoginSignupForm = ({method}) => {
     try {
       if (method == "login") {
         await login(username, password);
+        navigate('/');
       } else if (method == "signup") {
-        // 
+        if ( password != passwordAgain) {
+          alert("Password doesn't match. ");
+          return;
+        }
+
+        await register(username, password, firstName, lastName, emailAddress);
+        navigate('/login');
       }
 
-      navigate('/');
     } catch (err) {
       alert(err);
     }

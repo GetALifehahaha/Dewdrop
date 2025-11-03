@@ -20,7 +20,13 @@ export const AuthProvider = ({children}) => {
             } catch {
                 setIsAuthorized(false);
                 setUser(null);
-                navigate('/login')
+
+                if (
+                    !window.location.pathname.includes('/login') &&
+                    !window.location.pathname.includes('/register')
+                ) {
+                    navigate('/login');
+                }
             } finally {
                 setLoading(false);
             }
@@ -99,8 +105,16 @@ export const AuthProvider = ({children}) => {
         setIsAuthorized(false);
     };
 
+    const register = async (username, password, first_name, last_name, email) => {
+        try {
+            const response = await api.post('/authentication/user/register/', {username, password, first_name, last_name, email});
+        } catch (err) {
+            alert(err)
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{user, isAuthorized, setUser, login, setIsAuthorized, loading}}>
+        <AuthContext.Provider value={{user, isAuthorized, setUser, login, register, setIsAuthorized, loading}}>
             {children}
         </AuthContext.Provider>
     )
