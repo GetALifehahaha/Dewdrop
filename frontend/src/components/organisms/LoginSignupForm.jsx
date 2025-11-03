@@ -125,9 +125,9 @@ const LoginSignupForm = ({method}) => {
                 <h5 className='ml-2'>
                   Password
                 </h5>
-                <input onChange={(e) => setPassword(e.target.value)} type="text" placeholder='Enter your password' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
+                <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Enter your password' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
                 {(method == 'signup') ? 
-                  <input onChange={(e) => setPasswordAgain(e.target.value)} type="text" placeholder='Enter password again' className='px-6 py-2 mt-1 bg-main-light w-full rounded-sm shadow-sm'/> : ''
+                  <input onChange={(e) => setPasswordAgain(e.target.value)} type="password" placeholder='Enter password again' className='px-6 py-2 mt-1 bg-main-light w-full rounded-sm shadow-sm'/> : ''
                 }
               </div>
 

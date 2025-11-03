@@ -12,7 +12,7 @@ const ProfileCard = ({username="Username", firstName="First Name", lastName="Las
         initial={{y: -10, opacity: 0}}
         animate={{y: 0, opacity: 1}}
         exit={{y: -10, opacity: 0}}
-        className='z-10 absolute right-2 top-14 px-16 py-4 rounded-md shadow-sm bg-main flex flex-col gap-4 items-center'>
+        className='z-10 absolute right-2 top-14 w-64 px-6 py-4 rounded-md shadow-sm bg-main flex flex-col gap-4 items-center'>
             <Label text='User Profile'/>
             {imageUrl ? <div className='w-4 h-4 rounded-sm'></div> : <div className='w-24 h-24 rounded-full bg-gray-500'></div>}
 

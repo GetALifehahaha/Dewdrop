@@ -4,9 +4,11 @@ import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
 import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const TicketDetails = () => {
     const {ticketData, error, loading} = useTicketData();
+    const navigate = useNavigate();
 
     if (loading) return <p>Loading Ticket Data...</p>
     if (error) return <p>Error</p>
@@ -16,6 +18,8 @@ const TicketDetails = () => {
         {label: 'Tickets', link: '/tickets'},
         {label: ticketData.id, link: `/tickets/${ticketData.id}`},
     ]
+
+    const handleRedirectToEdit = () => navigate(`edit`)
 
     return (
         <>
@@ -27,8 +31,8 @@ const TicketDetails = () => {
                 </div>
 
                 {ticketData.status == "pending" && <div className="flex items-center gap-4">
-                    <Button text='Edit' icon={Pen}/>
-                    <Button text='Delete' icon={Trash}/>
+                    <Button variant={1} text='' icon={Pen} onClick={handleRedirectToEdit}/>
+                    <Button text='' icon={Trash} />
                 </div>}
             </div>
             

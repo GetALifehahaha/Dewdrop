@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from 'react'
-import { ChevronDown } from 'lucide-react'
+import React, {useState} from 'react'
 
 const Header = ({title="Dewdrop", name="User", onClick}) => {
 
@@ -17,11 +16,10 @@ const Header = ({title="Dewdrop", name="User", onClick}) => {
 			</h1>
 
 			<div className="flex items-center gap-8">
-				<div className='content-[""] aspect-square rounded-full bg-accent-blue w-5'></div>
+				<div className='content-[""] aspect-square rounded-full bg-accent-blue w-5 cursor-pointer' onClick={handleSetDropdown}></div>
 				<h5 className='text-accent-deepblue'>
 					{name}
 				</h5>
-				<ChevronDown width={16} onClick={handleSetDropdown} className={`cursor-pointer duration-200 ease-in ${isDropdownOpen ? 'rotate-180' : 'rotate-0'}`}/>
 			</div>
 		</div>
 	)

@@ -4,7 +4,6 @@ import { Toast } from '../components/molecules'
 import { SeveritySelectionConfig } from '../config/SeveritySelectionConfig';
 import { X, Pen, Loader2, Check } from 'lucide-react';
 import { usePostTicket } from '../hooks';
-import { AnimatePresence } from 'framer-motion';
 
 const CreateTicket = () => {
     const { loading, error, response, postTicket } = usePostTicket();

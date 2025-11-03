@@ -20,13 +20,7 @@ export const AuthProvider = ({children}) => {
             } catch {
                 setIsAuthorized(false);
                 setUser(null);
-
-                if (
-                    !window.location.pathname.includes('/login') &&
-                    !window.location.pathname.includes('/register')
-                ) {
-                    navigate('/login');
-                }
+                navigate('/login');
             } finally {
                 setLoading(false);
             }
