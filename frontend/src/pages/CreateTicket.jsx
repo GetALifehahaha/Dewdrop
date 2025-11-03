@@ -68,16 +68,16 @@ const CreateTicket = () => {
                 <div className='flex flex-col'>
                     <div className="flex gap-2">
                         <div className='p-2 flex flex-col'>
-                            <Label text='Title'/>
+                            <Label text='Title' required={true}/>
                             <Input placeholder='What is this request all about?' onChange={handleSetTitle}/>
                         </div>
                         <div className='p-2 w-40'>
-                            <Label text='Severity'/>
+                            <Label text='Severity' required={true}/>
                             <Dropdown selectionName='Severity' selections={SeveritySelectionConfig} onSelect={handleSetSeverity}/>
                         </div>
                     </div>
                     <div className='p-2 flex flex-col'>
-                        <Label text='Description' type='textbox'/>
+                        <Label text='Description' type='textbox' required={true}/>
                         <Textarea placeholder='What would be the content of this ticket request?' onChange={handleSetDescription}/>
                     </div>
                     <div className='p-2 flex flex-col'>

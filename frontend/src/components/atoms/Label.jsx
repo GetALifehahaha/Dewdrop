@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Label = ({text="Text", variant='medium'}) => {
+const Label = ({text="Text", variant='medium', required=false}) => {
 
     const labelVariants = {
         medium: 'text-text/50 font-semibold text-md',
@@ -8,7 +8,7 @@ const Label = ({text="Text", variant='medium'}) => {
     }
 
     return (
-        <h5 className={labelVariants[variant]}>{text}</h5>
+        <h5 className={`${labelVariants[variant]} relative w-fit`} >{required && <div className='absolute w-1 h-1 rounded-full bg-red-500 -right-2 top-1'></div>}{text}</h5>
     )
 }
 

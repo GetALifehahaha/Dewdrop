@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTicketData } from '../hooks';
-import { Title, DateTime, Label } from '../components/atoms';
+import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
-import { Hourglass, UserCircle, Loader2, ScrollText, Calendar } from 'lucide-react';
+import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen } from 'lucide-react';
 
 const TicketDetails = () => {
     const {ticketData, error, loading} = useTicketData();
@@ -20,9 +20,16 @@ const TicketDetails = () => {
     return (
         <>
             {/* Page Header */}
-            <div className="flex flex-col">
-                <Title text='Details' />
-                <Breadcrumbs breadcrumb={breadcrumb}/>
+            <div className='flex items-center justify-between'>
+                <div className="flex flex-col">
+                    <Title text='Details' />
+                    <Breadcrumbs breadcrumb={breadcrumb}/>
+                </div>
+
+                {ticketData.status == "pending" && <div className="flex items-center gap-4">
+                    <Button text='Edit' icon={Pen}/>
+                    <Button text='Delete' icon={Trash}/>
+                </div>}
             </div>
             
             {/* Main Content */}
@@ -47,6 +54,7 @@ const TicketDetails = () => {
 
                     {/* Details */}
                     <div className="basis-1/4 flex flex-col gap-8 shadow-sm hover:shadow-md ease-in duration-75 p-4 rounded-sm">
+                        {/* Submission Date */}
                         <div className='flex flex-col gap-2'>
                             <Title variant='blockTitle' text='Submitted At' icon={Calendar}/>
                             <div className='flex flex-row gap-8'>
@@ -61,6 +69,22 @@ const TicketDetails = () => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Resolved Date */}
+                        {ticketData.resolved_at && <div className='flex flex-col gap-2'>
+                            <Title variant='blockTitle' text='Resolved At' icon={CheckCircleIcon}/>
+                            <div className='flex flex-row gap-8'>
+                                <div>
+                                    <Label variant='small' text='Date' />
+                                    <DateTime dateTime={ticketData.resolved_at} hasDate={true}/>
+                                </div>
+
+                                <div>
+                                    <Label variant='small' text='Time' />
+                                    <DateTime dateTime={ticketData.resolved_at} hasTime={true}/>
+                                </div>
+                            </div>
+                        </div>}
                     </div>
                 </div>
 
