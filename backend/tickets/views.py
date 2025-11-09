@@ -56,7 +56,7 @@ class TicketViewSet(viewsets.ModelViewSet):
         if user.groups.filter(name="Requesters").exists() and ticket.status != "pending":
             raise ValidationError({"detail": "The ticket has already been assessed."})
         
-        serialized_data = self.get_serializer(instance=ticket, data=request.data, partial=True)
+        serialized_data = self.get_serializer(instance=ticket, data=request.data["params"], partial=True)
         serialized_data.is_valid(raise_exception=True)
         serialized_data.save()
 

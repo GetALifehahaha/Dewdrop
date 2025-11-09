@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import {AnimatePresence, motion} from 'framer-motion'
 
 const Toast = React.memo(({ toastMessages = [{ message: "Message", status: "success", icon: null }] }) => {

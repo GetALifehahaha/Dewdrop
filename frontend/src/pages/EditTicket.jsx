@@ -1,16 +1,20 @@
 import React, {useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
-import { useTicketData } from '../hooks';
+import { useTicketData, usePatchTicket } from '../hooks';
 import { Label, Title, Dropdown, Button } from '../components/atoms';
-import { Breadcrumbs } from '../components/molecules';
-import { Pen } from 'lucide-react';
+import { Breadcrumbs, Toast } from '../components/molecules';
+import { Pen, X, Check } from 'lucide-react';
 import { SeveritySelectionConfig } from '../config/SeveritySelectionConfig';
 
 const EditTicket = ({}) => {
     const {ticket_id} = useParams();
     const {ticketData, error, loading} = useTicketData();
+    const {loading: editLoading, error: editError, response: editResponse, patchTicket} = usePatchTicket();
+    const [oldTitle, setOldTitle] = useState("");
     const [title, setTitle] = useState("");
+    const [oldDescription, setOldDescription] = useState("");
     const [description, setDescription] = useState();
+    const [oldSeverity, setOldSeverity] = useState("");
     const [severity, setSeverity] = useState();
     const [errorMessages, setErrorMessages] = useState([]);
     const [toastMessages, setToastMessages] = useState([]);
@@ -18,10 +22,37 @@ const EditTicket = ({}) => {
     useEffect(() => {
         if (ticketData){
             setTitle(ticketData.title);
+            setOldTitle(ticketData.title)
             setDescription(ticketData.description);
+            setOldDescription(ticketData.description);
             setSeverity(ticketData.severity)
+            setOldSeverity(ticketData.severity)
         }
     }, [ticketData]);
+
+    useEffect(() => {
+        if (editResponse) {
+            setToastMessages([{
+                message: "Ticket has been edited successfully",
+                status: "success",
+                icon: Check
+            }])
+        }
+        if (editError) {
+            setToastMessages([{
+                message: "Failed to edit ticket. Something went wrong",
+                status: "error",
+                icon: X
+            }])
+        }
+    }, [editResponse, editError]);
+
+    useEffect(() => {
+        if (toastMessages.length > 0) {
+            const timer = setTimeout(() => setToastMessages([]), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [toastMessages])
 
     if (loading) return <p>Loading</p>
     if (error) return <p>Error</p>  
@@ -46,12 +77,25 @@ const EditTicket = ({}) => {
         if (!severity) setErrorMessages(er => [...er, "You cannot remove the severity of your ticket."]);
 
         if (title && description && severity) {
-            await postTicket({title: title, description: description, severity: severity});
+            let params = {};
+
+            if (title != oldTitle) params = {title: title};
+            if (description != oldDescription) params = {...params, description: description};
+            if (severity != oldSeverity) params = {...params, severity: severity};
+
+            if (params) await patchTicket(ticketData.id, params);
         }
+    }
+
+    const handleResetDetails = () => {
+        setTitle(oldTitle);
+        setDescription(oldDescription);
+        setSeverity(oldSeverity);
     }
 
     return (
         <>
+            <Toast toastMessages={toastMessages} />
             <div className="flex flex-col">
                 <Title text='Details' />
                 <Breadcrumbs breadcrumb={breadcrumb}/>
@@ -93,18 +137,10 @@ const EditTicket = ({}) => {
                         {listErrorMessages}
                     </div>}
                     
-                    <div className='mx-auto'>
+                    <div className='ml-auto flex gap-2'>
+                        <Button text='Reset' onClick={handleResetDetails}/>
                         <Button text='Finish Editing' onClick={handleSubmitTicket}/>
                     </div>
-
-                    {/* <div className='mx-auto mt-18'>
-                        {response ? 
-                        <h5 className='text-accent-deepblue font-semibold'>Ticket Submitted Successfully!</h5> :
-                            loading ? 
-                            <h5 className='flex gap-2 items-center'><Loader2 className='text-accent-blue' size={16}/> Submitting your ticket</h5> :
-                            
-                            
-                        } */}
                 </div>
             </div>
         </>

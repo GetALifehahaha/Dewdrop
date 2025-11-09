@@ -23,7 +23,7 @@ const TicketServices = async (params, ticket_id = null, method="GET") => {
 
 			return response
 		} else if (method == "PATCH") {
-			const response = await api.patch(`/tickets/tickets/${ticket_id}`, {params});
+			const response = await api.patch(`/tickets/tickets/${ticket_id}/`, {params});
 
 			return response
 		}
