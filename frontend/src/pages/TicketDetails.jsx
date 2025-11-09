@@ -8,40 +8,19 @@ import { useNavigate } from 'react-router-dom';
 
 const TicketDetails = () => {
     const {ticketData, error, loading} = useTicketData();
-    const { response: deleteResponse, error: deleteError, loading: deleteLoading, deleteTicket } = useDeleteTicket();
     const [confirmationMessage, setConfirmationMessage] = useState();
     const navigate = useNavigate();
     const [toastMessages, setToastMessages] = useState([]);
-
+    
     useEffect(() => {
-        if (deleteResponse) {
-            setToastMessages([{
-                message: "Ticket deleted successfully!",
-                status: "Success",
-                icon: Check
-            }])
+        if (toastMessages.length > 0) {
+            const timer = setTimeout(() => setToastMessages([]), 3000);
+            return () => clearTimeout(timer);
         }
-        if (deleteError) {
-            setToastMessages([{
-                message: "Failed to delete the ticket!",
-                status: "Error",
-                icon: X
-            }])
-        }
-
-    }, [deleteResponse, error])
-
-    useEffect(() => {
-            if (toastMessages.length > 0) {
-                const timer = setTimeout(() => setToastMessages([]), 3000);
-                return () => clearTimeout(timer);
-            }
-        }, [toastMessages]);
-
-    if (loading) return <Guard message={"Loading ticket details..."}/>
-    if (error) return <Guard type='Error' message={{status: error.status, detail: "The ticket doesn't exist."}} />
-
-    if (deleteLoading) return <Guard message={"Deleting ticket..."}/>
+    }, [toastMessages]);
+    
+    if (loading) return <Guard message="Loading ticket details" />
+    if (error) return <Guard type='error' message={{status: error.status, detail: "Ticket doesn't exist"}} />
 
     const breadcrumb = [
         {label: 'Tickets', link: '/tickets'},
@@ -55,10 +34,6 @@ const TicketDetails = () => {
     }
 
     const handleDeleteTicket = async (response) => {
-        if (response) {
-            await deleteTicket(ticketData.id)
-        } 
-
         setConfirmationMessage([]);
     }
 
@@ -76,8 +51,8 @@ const TicketDetails = () => {
                     (ticketData.status == "pending") &&
 
                     <div className='flex gap-2'>
-                        <Button variant="outline" text='Edit' icon={Pen} onClick={handleRedirectToEdit}/>
-                        <Button text='Delete' icon={Trash} onClick={handleSetDeleteTicket}/>
+                        <Button text='' icon={Pen} onClick={handleRedirectToEdit}/>
+                        <Button text='' icon={Trash} onClick={handleSetDeleteTicket}/>
                     </div>
                 }
             </div>
@@ -169,6 +144,7 @@ const TicketDetails = () => {
                     </div>
                 </div>
             }
+
             <ConfirmationModal messages={confirmationMessage} onSetResponse={handleDeleteTicket}/>
         </>
     )

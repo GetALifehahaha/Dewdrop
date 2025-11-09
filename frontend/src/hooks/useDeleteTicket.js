@@ -12,9 +12,9 @@ const useDeleteTicket = () => {
         try {
             const res = await TicketServices(null, id, "DELETE");
     
-            setResponse(res);
+            setResponse({status: res, detail: "Ticket deleted successfully."});
         } catch (err) {
-            setError({status: err.response, detail: "HA?"});
+            setError({status: err.response.status, detail: "Failed to delete ticket."});
             setResponse(null);
         } finally {
             setLoading(false);

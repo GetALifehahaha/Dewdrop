@@ -5,7 +5,7 @@ const Dropdown = ({value=null, selectionName="Option", selections=[{name: "Optio
     const [isExpanded, setIsExpanded] = useState(false);
     const [selected, setSelected] = useState(value || selectionName);
 
-    useEffect(() => {setSelected(value || selectionName)}, [value])
+    useEffect(() => {setSelected(capitalize(value || selectionName))}, [value])
 
     const listSelections = selections.map(({name, value}, index) => 
         <div key={index} className='cursor-pointer hover:bg-main-dark px-1 py-2 rounded-sm text-semibold' onClick={() => handleSetSelected(name, value)}>
@@ -21,6 +21,8 @@ const Dropdown = ({value=null, selectionName="Option", selections=[{name: "Optio
     const handleSetIsExpanded = () => {
         setIsExpanded(!isExpanded);
     };
+
+    const capitalize = (str) => str[0].toUpperCase() + str.slice(1);
 
     return (
         <div className='w-40 relative'>

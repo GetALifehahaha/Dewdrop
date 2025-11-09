@@ -19,9 +19,13 @@ const TicketServices = async (params, ticket_id = null, method="GET") => {
 
 			return response.data
 		} else if (method == "DELETE") {
-			const response = await api.delete(`/tickets/tickets/${id}`);
+			const response = await api.delete(`/tickets/tickets/${ticket_id}/`);
 
-			return response.data
+			return response
+		} else if (method == "PATCH") {
+			const response = await api.patch(`/tickets/tickets/${ticket_id}`, {params});
+
+			return response
 		}
 	} catch (err) {
 		throw err;

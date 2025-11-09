@@ -5,11 +5,11 @@ import { ChevronRight } from 'lucide-react';
 const Breadcrumbs = ({breadcrumb = [{Link: '/link'},]}) => {
 
     const listBreadcrumb = breadcrumb.map(({label, link}, index, array) => 
-        <>
-            <Link key={index} to={link}>{label}</Link>
+        <div key={index} className='flex flex-row items-center gap-2'>
+            <Link  to={link} className='hover:text-text'>{label}</Link>
 
             {(index + 1 < array.length) ? <ChevronRight size={16} /> : null}
-        </>
+        </div>
     )
 
     return (
