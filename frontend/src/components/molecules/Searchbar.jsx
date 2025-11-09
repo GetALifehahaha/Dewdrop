@@ -58,7 +58,7 @@ const Searchbar = () => {
     return (
         <div className='flex gap-2'>
             <Input value={search} placeholder="Search tickets by title" icon={Search} onChange={handleSetSearch}/>
-            <Button text='' icon={Search} onClick={handleSetParameters}/>
+            <Button variant='block' text='' icon={Search} onClick={handleSetParameters}/>
             <Dropdown value={severity} selectionName="Severity" selections={SeveritySelectionConfig} onSelect={handleSetSeverity}/>
             {/* 
             <div className='w-20'></div>

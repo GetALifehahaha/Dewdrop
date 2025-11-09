@@ -14,7 +14,7 @@ const useDeleteTicket = () => {
     
             setResponse(res);
         } catch (err) {
-            setError({status: err.response.status, detail: "HA?"});
+            setError({status: err.response, detail: "HA?"});
             setResponse(null);
         } finally {
             setLoading(false);
