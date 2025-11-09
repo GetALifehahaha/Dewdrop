@@ -1,7 +1,7 @@
 import React from 'react'
 import {DateBlock} from '../atoms'
 
-const DashboardCard = ({title="Total", count=0}) => {
+const DashboardCard = ({title="Total", count=0, description=""}) => {
 
     const colorVariants = {
         Total: {
@@ -26,7 +26,7 @@ const DashboardCard = ({title="Total", count=0}) => {
             <h5 className={`py-2 px-4 font-semibold shadow-sm ${colorVariants[title].text} bg-main-dark/50`}>{title}</h5>
             <div className={`flex flex-col px-4 py-8 ${colorVariants[title].text}`}>
                 <h5 className='text-4xl font-bold'>{count}</h5>
-                <h5 className='text-text/50 text-sm'>Tickets Sent</h5>
+                <h5 className='text-text/50 text-sm'>{description}</h5>
             </div>
         </div>
     )

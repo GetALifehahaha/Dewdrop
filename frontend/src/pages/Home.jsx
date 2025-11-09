@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react'
 import {AuthContext} from '../context/AuthContext'
-import {Title, Button, DateBlock} from '../components/atoms'
+import {Title, Button, DateBlock, DateTime} from '../components/atoms'
 import {DashboardCard} from '../components/molecules'
 import {LatestTicketCard} from '../components/organisms'
 import { TicketPlus, TicketsIcon } from 'lucide-react'
@@ -26,13 +26,14 @@ const Home = () => {
 	const redirectToCreateTicket = () => navigate('/ticket-create')
 
 	const listDashboardCard = Object.entries(dashboardCounts || {}).map(([title, count], index) => 
-		<DashboardCard key={index} title={formatTitle(title)} count={count}/>
+		<DashboardCard key={index} title={formatTitle(title)} count={count} description={user.groups == "Requesters" ? "Tickets Sent" : "Tickets Received"}/>
 	)
 
 	const listTicket = ticketData.results.map((ticket, index) => <div key={index} onClick={() => navigate(`/tickets/${ticket.id}`)} className='flex flex-1 text-text font-medium rounded-sm py-2 px-0.5 hover:bg-main-hover cursor-pointer'>
 		<h5 className='flex-1'>{ticket.title}</h5>
 		<h5 className='flex-1'>{ticket.status_display}</h5>
 		<h5 className='flex-1'>{ticket.severity_display}</h5>
+		<h5 className='flex-1'><DateTime dateTime={ticket.created_at} hasDate={true} /></h5>
 	</div>)
 
 	return (
@@ -53,16 +54,18 @@ const Home = () => {
 					{listDashboardCard}
 				</div>
 				
-				{
-					latestTicket && 
-					<LatestTicketCard 
-					severity_display={latestTicket.severity_display} 
-					title={latestTicket.title} 
-					description={latestTicket.description} 
-					datetime={latestTicket.created_at}
-					id={latestTicket.id}
-					/>
-				}
+				<div className='flex gap-4 items-center'>
+					{
+						latestTicket && 
+						<LatestTicketCard 
+						severity_display={latestTicket.severity_display} 
+						title={latestTicket.title} 
+						description={latestTicket.description} 
+						datetime={latestTicket.created_at}
+						id={latestTicket.id}
+						/>
+					}
+				</div>
 			</div>
 
 			<div className='p-8 bg-main rounded-2xl shadow-sm flex flex-col gap-6'>
@@ -76,6 +79,7 @@ const Home = () => {
 						<h5 className='flex-1'>Ticket Title</h5>
 						<h5 className='flex-1'>Status</h5>
 						<h5 className='flex-1'>Severity</h5>
+						<h5 className='flex-1'>Submission Date</h5>
 					</div>
 
 					<div className='flex flex-1 flex-col gap-4'>

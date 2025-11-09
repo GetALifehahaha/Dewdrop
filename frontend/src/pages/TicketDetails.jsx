@@ -1,14 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import { useTicketData, useDeleteTicket } from '../hooks';
+import React, {useContext, useEffect, useState} from 'react';
+import { useTicketData, useDeleteTicket, usePatchTicket } from '../hooks';
 import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay, Guard, Toast ,ConfirmationModal } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
 import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const TicketDetails = () => {
+    const {user} = useContext(AuthContext);
     const {ticketData, error, loading} = useTicketData();
     const {response, error: deleteError, loading: deleteLoading, deleteTicket} = useDeleteTicket();
+    const {response: patchResponse, error: patchError, loading: patchLoading, patchTicket} = usePatchTicket();
     const [confirmationMessage, setConfirmationMessage] = useState();
     const navigate = useNavigate();
     const [toastMessages, setToastMessages] = useState([]);
@@ -19,6 +22,13 @@ const TicketDetails = () => {
             return () => clearTimeout(timer);
         }
     }, [toastMessages]);
+
+    useEffect(() => {
+        if (!ticketData) return
+        if (user.groups == "Managers" && ticketData.status == "pending") {
+            handlePatchTicket("assessing")
+        }
+    }, [ticketData])
 
     useEffect(() => {
         if (response) {
@@ -59,6 +69,16 @@ const TicketDetails = () => {
             await deleteTicket(ticketData.id)
         }
         setConfirmationMessage([]);
+    }
+
+    const handlePatchTicket = async (method) => {
+        if (method == "assessing") {
+            try {
+                await patchTicket(ticketData.id, {status: "assessing"});
+            } catch (err) {
+                console.log(err);
+            }
+        }
     }
 
     return (
