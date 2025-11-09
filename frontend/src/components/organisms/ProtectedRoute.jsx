@@ -7,6 +7,8 @@ const ProtectedRoute = ({children}) => {
 
   const {loading, isAuthorized} = useContext(AuthContext);
 
+  console.log(isAuthorized)
+
   if (loading) {
     return <div className="w-screen h-screen flex flex-col justify-center items-center text-text/50">
       <Hourglass className='animate-spin-delay'/>

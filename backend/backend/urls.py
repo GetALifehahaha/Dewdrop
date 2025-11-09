@@ -20,7 +20,7 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView #type: ignore
 
-from authentication.views import CreateUserView, UserProfileView
+from authentication.views import CreateUserView, UserProfileView, GoogleAuthView
 
 # setup url patterns for authentication
 # then for tickets later
@@ -31,5 +31,6 @@ urlpatterns = [
     path('authentication/user/', UserProfileView.as_view(), name="me"),
     path('authentication/token/', TokenObtainPairView.as_view(), name="get_token"),
     path('authentication/token/refresh/', TokenRefreshView.as_view(), name="refresh_token"),
+    path('authentication/google-auth/', GoogleAuthView.as_view(), name="google-auth"),
     path('api-auth/', include('rest_framework.urls', namespace="rest_framework")),
 ]

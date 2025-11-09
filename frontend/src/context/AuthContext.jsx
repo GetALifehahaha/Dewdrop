@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect} from 'react'
+import React, { createContext, useState, useEffect, useContext} from 'react'
 import {jwtDecode} from 'jwt-decode'
 import api from '../services/api'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '../services/constants'
@@ -91,6 +91,16 @@ export const AuthProvider = ({children}) => {
         await getUserData();
         setIsAuthorized(true);
     }
+
+    const googleLogin = async (token) => {
+        const response = await api.post('/authentication/google-auth/', {token: token});
+
+        localStorage.setItem(ACCESS_TOKEN, response.data.access);
+        localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+
+        await getUserData();
+        setIsAuthorized(true);
+    }
     
     const logout = () => {
         localStorage.removeItem(ACCESS_TOKEN);
@@ -108,12 +118,12 @@ export const AuthProvider = ({children}) => {
     }
 
     return (
-        <AuthContext.Provider value={{user, isAuthorized, setUser, login, register, setIsAuthorized, loading}}>
+        <AuthContext.Provider value={{user, isAuthorized, setUser, login, googleLogin, register, setIsAuthorized, loading}}>
             {children}
         </AuthContext.Provider>
     )
 }
 
-
+export const useAuth = () => useContext(AuthContext);
 
 

@@ -65,7 +65,7 @@ INSTALLED_APPS = [
     # packages
     'rest_framework',
     'corsheaders',
-]
+    ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

@@ -2,6 +2,7 @@ import React, {useState, useContext} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {SquareUser, UserPlus} from 'lucide-react'
 import { AuthContext } from '../../context/AuthContext';
+import { GoogleLoginService } from '../../services';
 
 const LoginSignupForm = ({method}) => {
   // context variables
@@ -143,9 +144,12 @@ const LoginSignupForm = ({method}) => {
               }
 
               <button type='submit' className='w-fit px-24 py-2 mt-4 mx-auto rounded-2xl bg-accent-deepblue text-main cursor-pointer'>{submitButton}</button>
+            
+              <hr className='text-text/25 my-4 w-7/8 mx-auto rounded-full'/>
+
+              <GoogleLoginService />
             </form>
 
-            <hr className='text-text/25 my-4 w-7/8 mx-auto rounded-full'/>
 
           </div>
     </div>
