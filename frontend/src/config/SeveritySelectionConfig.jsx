@@ -1,5 +1,5 @@
 export const SeveritySelectionConfig = [
-    {name: "Low", value: "lw"},
-    {name: "Medium", value: "md"},
-    {name: "Urgent", value: "ur"},
+    {name: "Low", value: "low"},
+    {name: "Medium", value: "medium"},
+    {name: "Urgent", value: "urgent"},
 ];

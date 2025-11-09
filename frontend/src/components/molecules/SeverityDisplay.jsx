@@ -3,9 +3,9 @@ import React from 'react';
 const SeverityDisplay = ({severity, severityDisplay}) => {
 
     const severityVariants = {
-        lw: 'text-main-gray',
-        md: 'text-orange-400',
-        ur: 'text-red-600',
+        low: 'text-main-gray',
+        medium: 'text-orange-400',
+        urgent: 'text-red-600',
     }
 
     return (

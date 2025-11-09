@@ -6,7 +6,7 @@ const StatusDisplay = ({status, status_display}) => {
         pending: 'text-main-gray',
         assessing: 'text-orange-400',
         assigned: '',
-        resolved: 'text-green-400',
+        resolved: 'text-green-500',
     }
 
     return (

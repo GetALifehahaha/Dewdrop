@@ -20,7 +20,7 @@ class TicketViewSet(viewsets.ModelViewSet):
         user = self.request.user
         queryset = Ticket.objects.all().order_by(
         Case(
-            When(severity = "ur", then=Value(0)),
+            When(severity = "urgent", then=Value(0)),
             default=Value(1),
             output_field=IntegerField(),
         ),
@@ -92,7 +92,7 @@ class DashboardAPIView(APIView):
             
         dashboard_counts = tickets.aggregate(
             total_tickets_sent=Count('id'),
-            urgent_tickets_sent=Count("id", filter=Q(severity="ur")),
+            urgent_tickets_sent=Count("id", filter=Q(severity="urgent")),
             resolved_tickets_sent=Count("id", filter=Q(status="resolved"))
         )
         

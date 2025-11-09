@@ -13,15 +13,15 @@ class Agent(models.Model):
     
 class Ticket(models.Model):
     SEVERITY = [
-        ('lw', 'Low'),
-        ('md', 'Medium'),
-        ('ur', 'Urgent'),
+        ('low', 'Low'),
+        ('medium', 'Medium'),
+        ('urgent', 'Urgent'),
     ]
     title = models.CharField(max_length=100)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     requester = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
-    severity = models.CharField(choices=SEVERITY, max_length=2) 
+    severity = models.CharField(choices=SEVERITY, max_length=6) 
     
     assigned_agent = models.ForeignKey(Agent, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
     
