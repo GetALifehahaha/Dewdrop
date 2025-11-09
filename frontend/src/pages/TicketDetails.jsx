@@ -3,11 +3,12 @@ import { useTicketData, useDeleteTicket } from '../hooks';
 import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay, Guard, Toast ,ConfirmationModal } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
-import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X } from 'lucide-react';
+import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const TicketDetails = () => {
     const {ticketData, error, loading} = useTicketData();
+    const {response, error: deleteError, loading: deleteLoading, deleteTicket} = useDeleteTicket();
     const [confirmationMessage, setConfirmationMessage] = useState();
     const navigate = useNavigate();
     const [toastMessages, setToastMessages] = useState([]);
@@ -18,6 +19,26 @@ const TicketDetails = () => {
             return () => clearTimeout(timer);
         }
     }, [toastMessages]);
+
+    useEffect(() => {
+        if (response) {
+            setToastMessages([{
+                status: "success",
+                message: "Successfully deleted ticket. Will be redirecting you shortly.",
+                icon: Trash2
+            }])
+
+            const redirect = setTimeout(() => navigate('/tickets'), 5000);
+            return () => clearTimeout(redirect);
+        }
+        if (deleteError){
+            setToastMessages([{
+                status: "error",
+                message: "Failed to delete message",
+                icon: Trash2
+            }])
+        }
+    }, [response, deleteError])
     
     if (loading) return <Guard message="Loading ticket details" />
     if (error) return <Guard type='error' message={{status: error.status, detail: "Ticket doesn't exist"}} />
@@ -34,6 +55,9 @@ const TicketDetails = () => {
     }
 
     const handleDeleteTicket = async (response) => {
+        if (response) {
+            await deleteTicket(ticketData.id)
+        }
         setConfirmationMessage([]);
     }
 
