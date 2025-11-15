@@ -20,6 +20,8 @@ from dotenv import load_dotenv
 from decouple import config, Csv
 import os
 
+from jwt import decode
+
 # load environment variables
 load_dotenv()
 
@@ -51,6 +53,8 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=config("ACCESS_TOKEN_LIFETIME", cast=int)),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=config("REFRESH_TOKEN_LIFETIME", cast=int)),
 }
+
+RESEND_API_KEY = config('RESEND_EMAIL_API')
 
 
 # Application definition
