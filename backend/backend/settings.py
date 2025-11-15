@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 # import necessary modules in settings
+from ctypes import cast
+from email.policy import default
 from pathlib import Path
 from datetime import timedelta
+from django import conf
 from dotenv import load_dotenv
+from decouple import config, Csv
 import os
 
 # load environment variables
@@ -27,12 +31,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-z+84pa1_skk3j7xt853axp6j_^d+k)040@#4cw2-fjrlhvi&*-'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
 # setup rest_framework classes
 REST_FRAMEWORK = {
@@ -44,8 +48,8 @@ REST_FRAMEWORK = {
 
 # setup jwt lifetimes
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=config("ACCESS_TOKEN_LIFETIME", cast=int)),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=config("REFRESH_TOKEN_LIFETIME", cast=int)),
 }
 
 
