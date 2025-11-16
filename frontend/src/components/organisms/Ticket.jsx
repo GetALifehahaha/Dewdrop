@@ -29,10 +29,10 @@ const Ticket = ({ticket}) => {
             <div className='flex items-center gap-4'>
                 <StatusDisplay status={ticket.status} status_display={ticket.status_display}/>
                 <div className='flex gap-2 font-medium text-text/75'>
-                    { (ticket.assigned_agent) ? 
+                    { (ticket.assigned_agent_details) ? 
                         <>
                             <h5>Assigned Agent:</h5>
-                            <h5>{ticket.assigned_agent.first_name + ' ' + ticket.assigned_agent.last_name}</h5>
+                            <h5>{ticket.assigned_agent_details.first_name + ' ' + ticket.assigned_agent_details.last_name}</h5>
                         </>
                         :
                         <h5>

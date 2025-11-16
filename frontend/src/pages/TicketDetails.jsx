@@ -155,14 +155,37 @@ const TicketDetails = () => {
                             </div>
                         </div>}
 
+                        {/* Requester Information */}
+                        {user.groups == "Managers" && 
+                        <div className='flex flex-col gap-2'>
+                            <Title variant='blockTitle' text='Requester' icon={CheckCircleIcon}/>
+                            <div className='flex flex-col gap-4'>
+                                <div>
+                                    <Label variant='small' text='Full Name' />
+
+                                    <h5 className='text-text font-medium'>{ticketData.requester_details.first_name} {ticketData.requester_details.last_name}</h5>
+                                </div>
+                                <div>
+                                    <Label variant='small' text='Email' />
+
+                                    <h5 className='text-text font-medium'>{ticketData.requester_details.email}</h5>
+                                </div>
+                            </div>
+                        </div>}
+
                         {/* Agent Details */}
-                        {ticketData.assigned_agent && <div className='flex flex-col gap-2'>
+                        {ticketData.assigned_agent_details && <div className='flex flex-col gap-2'>
                             <Title variant='blockTitle' text='Agent Details' icon={UserCircle}/>
-                            <div className='flex flex-row gap-8'>
+                            <div className='flex flex-col gap-4'>
                                 <div>
                                     <Label variant='small' text='Agent Name' />
 
-                                    <h5 className='text-text font-medium'>{ticketData.assigned_agent.first_name} {ticketData.assigned_agent.last_name}</h5>
+                                    <h5 className='text-text font-medium'>{ticketData.assigned_agent_details.first_name} {ticketData.assigned_agent_details.last_name}</h5>
+                                </div>
+                                <div>
+                                    <Label variant='small' text='Email' />
+
+                                    <h5 className='text-text font-medium'>{ticketData.assigned_agent_details.email}</h5>
                                 </div>
                             </div>
                         </div>}
@@ -178,7 +201,37 @@ const TicketDetails = () => {
             </div>
 
             {/* Agent Block */}
-            {!ticketData.assigned_agent &&
+
+            {user.groups == "Managers" ? 
+            <div className='py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4'>
+                <Title text='Manager Actions' variant='blockTitle' icon={UserCircle}/>
+                {
+                    ticketData.status == "resolved" ?
+                    <div className='text-md font-semibold text-accent-deepblue flex flex-col gap-8 justify-center items-center'>
+                        <Check size={96} className='text-accent-blue animate-bounce'/>
+                        <h5>Ticket has been resolved</h5>
+                    </div>
+                    :
+                    <>
+                        <div className='text-md font-semibold text-text/50 flex flex-col gap-8 justify-center items-center'>
+                            <Hourglass size={96} className='text-text/25 animate-spin-delay'/>
+                            <h5>No agent has been assigned yet. Assign an agent to this ticket.</h5>
+                        </div>
+                        
+                        <span className='mx-auto'>
+                            {["pending", "assessing"].includes(ticketData.status) && 
+                                <Button text='Assign Agent' />
+                            }
+
+                            {ticketData.assigned_agent_details && 
+                                <Button text='Resolve Ticket' />
+                            }
+                        </span>
+                    </>
+                }
+            </div> 
+            : 
+            !ticketData.assigned_agent_details &&
                 <div className='py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4'>
                     <Title text='Assigned Agent' variant='blockTitle' icon={UserCircle}/>
 

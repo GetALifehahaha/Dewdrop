@@ -16,7 +16,11 @@ const Header = ({title="Dewdrop", name="User", onClick}) => {
 			</h1>
 
 			<div className="flex items-center gap-8">
-				<div className='content-[""] aspect-square rounded-full bg-accent-blue w-5 cursor-pointer' onClick={handleSetDropdown}></div>
+				<div className='content-[""] aspect-square rounded-full bg-accent-blue w-5 cursor-pointer flex justify-center items-center' onClick={handleSetDropdown}>
+					<h5 className='text-white font-semibold text-xs'>
+						{name.slice(0, 1)}
+					</h5>
+				</div>
 				<h5 className='text-accent-deepblue'>
 					{name}
 				</h5>
