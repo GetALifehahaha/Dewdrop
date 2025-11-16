@@ -3,7 +3,7 @@ import { Button, Label } from '../atoms'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 
-const ProfileCard = ({username="Username", firstName="First Name", lastName="Last Name", email="emailaddress@gmail.com", imageUrl=null}) => {
+const ProfileCard = ({username="Username", firstName="First Name", lastName="Last Name", email="emailaddress@gmail.com"}) => {
 
     const navigate = useNavigate();
 
@@ -14,7 +14,9 @@ const ProfileCard = ({username="Username", firstName="First Name", lastName="Las
         exit={{y: -10, opacity: 0}}
         className='z-10 absolute right-2 top-14 w-64 px-6 py-4 rounded-md shadow-sm bg-main flex flex-col gap-4 items-center'>
             <Label text='User Profile'/>
-            {imageUrl ? <div className='w-4 h-4 rounded-sm'></div> : <div className='w-24 h-24 rounded-full bg-gray-500'></div>}
+            <div className='w-24 h-24 rounded-full bg-accent-blue flex justify-center items-center'>
+                <h5 className='text-4xl text-white font-bold'>{firstName.slice(0, 1)}</h5>
+            </div>
 
             <div className='flex flex-col gap-0.5 w-full'>
                 <Label variant='small' text='Username' />

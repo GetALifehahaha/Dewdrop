@@ -74,8 +74,8 @@ const Home = () => {
 					<Button text='View Tickets' icon={TicketsIcon}/>
 				</div>
 
-				<div className='p-2 flex flex-col gap-4 rounded-md shadow-sm'>
-					<div className='flex flex-1 text-text/50 font-semibold bg-main-dark p-0.5 rounded-sm'>
+				<div className='p-2 flex flex-col gap-4 rounded-md shadow-sm border border-main-dark'>
+					<div className='flex flex-1 text-text/50 font-semibold p-0.5 pb-2 border-b-2 border-b-main-dark'>
 						<h5 className='flex-1'>Ticket Title</h5>
 						<h5 className='flex-1'>Status</h5>
 						<h5 className='flex-1'>Severity</h5>
