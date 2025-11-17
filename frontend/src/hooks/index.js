@@ -6,3 +6,6 @@ export {default as usePatchTicket} from './usePatchTicket'
 
 // Agent related
 export {default as useAgentData} from './useAgentData'
+export {default as useDeleteAgent} from './useDeleteAgent'
+export {default as usePatchAgent} from './useDeleteAgent'
+export {default as usePostAgent} from './usePostAgent'

@@ -120,7 +120,7 @@ const TicketDetails = () => {
             await patchTicket(ticketData.id, {assigned_agent: chosenAgentId, status: "assigned"});
 
             refresh();
-            showAgents(false);
+            setShowAgents(false);
         } catch (err) {
             console.log(err)
         }

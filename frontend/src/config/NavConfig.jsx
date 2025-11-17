@@ -20,7 +20,7 @@ export const NavConfig = {
         ],
         "Agents": [
             { label: "View Agents", link: "/agents", icon: UsersIcon },
-            { label: "Create New", link: "/agents/create", icon: UserRoundPlusIcon },
+            { label: "Create New", link: "/agent-create", icon: UserRoundPlusIcon },
         ],
     },
 }
