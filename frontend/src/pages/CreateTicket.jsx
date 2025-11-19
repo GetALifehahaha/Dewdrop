@@ -116,7 +116,6 @@ const CreateTicket = () => {
                             ticketLoading ? 
                             <h5 className='flex gap-2 items-center'><Loader2 className='text-accent-blue' size={16}/> Submitting your ticket</h5> :
                             <Button text='Submit Your Ticket' onClick={handleSubmitTicket}/>
-                            
                         }
                     </div>
                 </div>

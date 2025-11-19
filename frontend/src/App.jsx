@@ -1,4 +1,4 @@
-import {Login, Signup, Layout, Home, Tickets, TicketDetails, NotFound, CreateTicket, EditTicket} from './pages'
+import {Login, Signup, Layout, Home, Tickets, TicketDetails, NotFound, CreateTicket, EditTicket, CreateAgent, Agents} from './pages'
 import { ProtectedRoute } from './components/organisms';
 import {Routes, Route, Navigate} from 'react-router-dom'
 
@@ -24,7 +24,8 @@ function App() {
 					<Route path='/tickets/:ticket_id' element={<TicketDetails />}/>
 					<Route path='/tickets/:ticket_id/edit' element={<EditTicket />}/>
 					<Route path='/ticket-create' element={<CreateTicket />}/>
-					{/* <Route path='/agent-create' element={<CreateAgent />}/> */}
+					<Route path='/agents' element={<Agents />}/>
+					<Route path='/agent-create' element={<CreateAgent />}/>
 				</Route>
 				<Route path='/login' element={<Login />}/>
 				<Route path='/signup' element={<SignupAndLogout />}/>

@@ -16,7 +16,7 @@ const Dropdown = ({value, selectName, selectItems, onSelect}) => {
 
   return (
     <Select onValueChange={(val) => onSelect(val)}>
-      <SelectTrigger className="w-[180px] bg-main border-main-dark ring-main-gray font-medium text-text/50 cursor-pointer py-5 shadow-sm">
+      <SelectTrigger className="w-[180px] bg-main border-main-dark ring-main-gray font-medium text-text cursor-pointer py-5 shadow-sm">
         <SelectValue placeholder={value || selectName} />
       </SelectTrigger>
       <SelectContent className='bg-main border-main-dark'>
