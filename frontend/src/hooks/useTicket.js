@@ -19,7 +19,7 @@ export default function useTicket() {
 
             setTicketData(data);
         } catch (err) {
-            setTicketError(err);
+            setTicketError({status: "error", detail: "Failed to read ticket."});
         } finally {
             setTicketLoading(false);
         }

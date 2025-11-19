@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { Label, Title, Dropdown, Button } from '../components/atoms';
 import { Breadcrumbs, Toast } from '../components/molecules';
 import { Pen, X, Check } from 'lucide-react';
-import { SeveritySelectionConfig } from '../config/SeveritySelectionConfig';
 import useTicket from '../hooks/useTicket';
 
 const EditTicket = ({}) => {

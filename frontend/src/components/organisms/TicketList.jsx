@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTicketData } from '../../hooks';
 import {Pagination} from '../molecules'
 import {Ticket} from '../organisms'
 import { PAGINATION } from '../../services/constants';
@@ -7,8 +6,7 @@ import useTicket from '../../hooks/useTicket';
 
 const TicketList = () => {
 
-    // const {ticketData, error, loading} = useTicketData();
-    const {ticketData   , ticketLoading, ticketError} = useTicket();
+    const {ticketData , ticketLoading, ticketError} = useTicket();
     
     if (ticketLoading) return <p>Loading Tickets...</p>
     if (ticketError) return <div className='w-full h-80 flex flex-col gap-2 justify-center items-center'>

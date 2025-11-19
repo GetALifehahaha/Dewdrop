@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 class Department(models.Model):
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name
+
 class Agent(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -16,7 +19,10 @@ class Agent(models.Model):
 
 class TicketType(models.Model):
     name = models.CharField(max_length=50)
-    department = models.OneToOneField(Department, on_delete=models.CASCADE, related_name="ticket_type")
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="ticket_type")
+
+    def __str__(self):
+        return self.name
     
     
 class Ticket(models.Model):

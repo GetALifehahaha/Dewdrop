@@ -4,13 +4,14 @@ import {Title, Button, DateBlock, DateTime} from '../components/atoms'
 import {DashboardCard} from '../components/molecules'
 import {LatestTicketCard} from '../components/organisms'
 import { TicketPlus, TicketsIcon } from 'lucide-react'
-import { useDashboardData, useTicketData } from '../hooks'
+import useDashboardData from '../hooks/useDashboardData'
 import { useNavigate } from 'react-router-dom'
+import useTicket from '../hooks/useTicket'
 
 const Home = () => {
 	const {user} = useContext(AuthContext);
 	const {dashboardCounts, latestTicket, loading, error} = useDashboardData();
-	const {ticketData, error: ticketError, loading: ticketLoading} = useTicketData();
+	const {ticketData, ticketError, ticketLoading} = useTicket();
 	const navigate = useNavigate();
 
 	if (loading) return <p>Loading dashboard...</p>;

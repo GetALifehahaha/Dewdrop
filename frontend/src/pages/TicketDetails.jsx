@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
-import { useTicketData, useDeleteTicket, usePatchTicket, useAgentData } from '../hooks';
 import useTicket from '../hooks/useTicket';
+import useAgent from '../hooks/useAgent';
 import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay, Guard, Toast ,ConfirmationModal } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
@@ -11,7 +11,7 @@ import { AuthContext } from '../context/AuthContext';
 const TicketDetails = () => {
     const {user} = useContext(AuthContext);
     const {ticketResponse, ticketData, deleteTicket, patchTicket, ticketError, ticketLoading, refresh} = useTicket();
-    const {agentData, error: agentError, loading: agentLoading} = useAgentData();
+    const {agentData} = useAgent();
     const [confirmationMessage, setConfirmationMessage] = useState();
     const navigate = useNavigate();
     const [toastMessages, setToastMessages] = useState([]);
@@ -27,8 +27,10 @@ const TicketDetails = () => {
 
     useEffect(() => {
         if (!ticketData) return
+
         if (user.groups == "Managers" && ticketData.status == "pending") {
-            handlePatchTicket("assessing")
+            handlePatchTicket("assessing");
+            refresh();
         }
     }, [ticketData])
 
@@ -51,7 +53,7 @@ const TicketDetails = () => {
     }, [ticketResponse, ticketError]);
     
     if (ticketLoading) return <Guard message="Loading ticket details" />
-    if (ticketError) return <Guard type='error' message={ticketError} />
+    if (ticketError) return <Guard type='error' message={ticketError} />    
 
     const breadcrumb = [
         {label: 'Tickets', link: '/tickets'},

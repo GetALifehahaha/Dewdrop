@@ -3,10 +3,11 @@ import { Title, Label, Input, Textarea, Dropdown, Button } from '../components/a
 import { Toast } from '../components/molecules'
 import useTicket from '../hooks/useTicket';
 import { X, Pen, Loader2, Check } from 'lucide-react';
-import { usePostTicket } from '../hooks';
+import useTicketType from '../hooks/useTicketType';
 
 const CreateTicket = () => {
     const {postTicket, ticketResponse, ticketError, ticketLoading} = useTicket();
+    const {ticketTypeData} = useTicketType();
 
     const [title, setTitle] = useState();
     const [description, setDescription] = useState();
@@ -25,6 +26,10 @@ const CreateTicket = () => {
     }
 
     const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
+
+    const ticketTypeSelections = ticketTypeData.map((type) => {
+        return {Key: type.name}
+    });
 
     const handleSubmitTicket = async () => {
         setErrorMessages([]);
