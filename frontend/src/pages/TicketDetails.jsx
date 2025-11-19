@@ -11,12 +11,13 @@ import { AuthContext } from '../context/AuthContext';
 const TicketDetails = () => {
     const {user} = useContext(AuthContext);
     const {ticketResponse, ticketData, deleteTicket, patchTicket, ticketError, ticketLoading, refresh} = useTicket();
-    const {agentData} = useAgent();
+    const {agentData, agentLoading, agentError} = useAgent();
     const [confirmationMessage, setConfirmationMessage] = useState();
     const navigate = useNavigate();
     const [toastMessages, setToastMessages] = useState([]);
     const [showAgents, setShowAgents] = useState(false);
     const [chosenAgentId, setChosenAgentId] = useState(-1);
+    const [deleted, setDeleted] = useState(false);
     
     useEffect(() => {
         if (toastMessages.length > 0) {
@@ -54,13 +55,15 @@ const TicketDetails = () => {
     
     if (ticketLoading) return <Guard message="Loading ticket details" />
     if (ticketError) return <Guard type='error' message={ticketError} />    
+    if (agentLoading) return <Guard message="Loading agent details" />
+    if (agentError) return <Guard type='error' message={ticketError} />    
 
     const breadcrumb = [
         {label: 'Tickets', link: '/tickets'},
         {label: ticketData.id, link: `/tickets/${ticketData.id}`},
     ]
 
-    const listAgents = agentData.results.map((agent, index) => 
+    const listAgents = agentData?.results.map((agent, index) => 
         <div key={index} className={`py-2 px-4 rounded-md shadow-sm 'bg-main' hover:bg-main-hover cursor-pointer flex flex-col gap-1 relative`} onClick={() => handleSetChosenAgent(agent.id)}>
             {chosenAgentId == agent.id && 
             <div className='content-[""] absolute -left-2 top-1/2 w-4 h-4 aspect-square bg-accent-blue -translate-y-1/2 rounded-full'>
@@ -91,9 +94,7 @@ const TicketDetails = () => {
         if (response) {
             await deleteTicket(ticketData.id)
 
-            setTimeout(() => {
-                navigate(-1);
-            }, 3000)
+            setDeleted(true)
         }
         setConfirmationMessage([]);
     }
@@ -128,6 +129,8 @@ const TicketDetails = () => {
         refresh()
     }
 
+    if (deleted) return <div className='flex justify-center items-center w-full h-full flex-col text-text'><Trash className='text-text/50 animate-bounce' /><h5 className='font-semibold text-40'>Ticket has been deleted!</h5></div>
+
     return (
         <>
             {/* Page Header */}
@@ -152,9 +155,10 @@ const TicketDetails = () => {
             <div className="py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4">
                 {/* Head */}
                 <div className='flex flex-col gap-4'>
-                    <div className='flex flex-row gap-4 items-end'>
+                    <div className='flex flex-row gap-4 items-center'>
                         <h1 className='text-xl text-text font-semibold'>{ticketData.title}</h1>
                         <SeverityDisplay severity={ticketData.severity} severityDisplay={ticketData.severity_display}/>
+                        <h5 className='text-base text-text/50 font-bold'>{ticketData.ticket_type_details?.name}</h5>
                     </div>
 
                     <h5 className='text-text/50 text-sm font-medium'>ID - {ticketData.id}</h5>
@@ -224,10 +228,15 @@ const TicketDetails = () => {
                         {ticketData.assigned_agent_details && <div className='flex flex-col gap-2'>
                             <Title variant='blockTitle' text='Agent Details' icon={UserCircle}/>
                             <div className='flex flex-col gap-4'>
-                                <div>
-                                    <Label variant='small' text='Agent Name' />
-
-                                    <h5 className='text-text font-medium'>{ticketData.assigned_agent_details.first_name} {ticketData.assigned_agent_details.last_name}</h5>
+                                <div className='flex flex-row'>
+                                    <div className='flex flex-col gap-4 flex-1'>
+                                        <Label variant='small' text='Agent Name' />
+                                        <h5 className='text-text font-medium'>{ticketData.assigned_agent_details.first_name} {ticketData.assigned_agent_details.last_name}</h5>
+                                    </div>
+                                    <div className='flex flex-col gap-4 flex-1'>
+                                        <Label variant='small' text='Department' />
+                                        <h5 className='text-text font-medium'>{ticketData.department_details?.name}</h5>
+                                    </div>
                                 </div>
                                 <div>
                                     <Label variant='small' text='Email' />

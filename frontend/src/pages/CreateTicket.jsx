@@ -7,41 +7,14 @@ import useTicketType from '../hooks/useTicketType';
 
 const CreateTicket = () => {
     const {postTicket, ticketResponse, ticketError, ticketLoading} = useTicket();
-    const {ticketTypeData} = useTicketType();
+    const {ticketTypeData, ticketTypeLoading, ticketTypeError} = useTicketType();
 
-    const [title, setTitle] = useState();
-    const [description, setDescription] = useState();
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [severity, setSeverity] = useState();
+    const [ticketType, setTicketType] = useState();
     const [errorMessages, setErrorMessages] = useState([]);
     const [toastMessages, setToastMessages] = useState([]);
-
-    const handleSetTitle = (value) => setTitle(value);
-    const handleSetDescription = (value) => setDescription(value);
-    const handleSetSeverity = (value) => setSeverity(value);
-
-    const severitySelections = {
-        Low: "low",
-        Medium: "medium",
-        Urgent: "urgent",
-    }
-
-    const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
-
-    const ticketTypeSelections = ticketTypeData.map((type) => {
-        return {Key: type.name}
-    });
-
-    const handleSubmitTicket = async () => {
-        setErrorMessages([]);
-
-        if (!title) setErrorMessages(er => [...er, "Please provide a title for your ticket"]);
-        if (!description) setErrorMessages(er => [...er, "Please include a description of the issue."])
-        if (!severity) setErrorMessages(er => [...er, "Please select a severity level."]);
-
-        if (title && description && severity) {
-            await postTicket({title: title, description: description, severity: severity});
-        }
-    }
 
     useEffect(() => {
         if (ticketResponse) {
@@ -68,6 +41,40 @@ const CreateTicket = () => {
         }
     }, [toastMessages]);
 
+    if (ticketTypeLoading) return <h5>Loading ticket types...</h5>
+    if (ticketTypeError) return <h5>Error loading types...</h5>
+
+    const handleSetTitle = (value) => setTitle(value);
+    const handleSetDescription = (value) => setDescription(value);
+    const handleSetSeverity = (value) => setSeverity(value);
+    const handleSetTicketType = (value) => setTicketType(value);
+
+    const severitySelections = {
+        Low: "low",
+        Medium: "medium",
+        Urgent: "urgent",
+    }
+
+    const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
+
+    const ticketTypeSelections = ticketTypeData.reduce((acc, type) => {
+        acc[type.name] = type.id;
+        return acc;
+    }, {});
+
+    const handleSubmitTicket = async () => {
+        setErrorMessages([]);
+
+        if (!title) setErrorMessages(er => [...er, "Please provide a title for your ticket"]);
+        if (!description) setErrorMessages(er => [...er, "Please include a description of the issue."])
+        if (!severity) setErrorMessages(er => [...er, "Please select a severity level."]);
+        if (!ticketType) setErrorMessages(er => [...er, "Please select a ticket type."]);
+
+        if (title && description && severity && ticketType) {
+            await postTicket({title: title, description: description, severity: severity, ticket_type: ticketType});
+        }
+    }
+
     return (
         <>  
             <Toast toastMessages={toastMessages} />
@@ -81,9 +88,13 @@ const CreateTicket = () => {
                             <Label text='Title' required={true}/>
                             <Input placeholder='What is this request all about?' onChange={handleSetTitle}/>
                         </div>
-                        <div className='p-2 w-40'>
+                        <div className='p-2'>
                             <Label text='Severity' required={true}/>
                             <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>
+                        </div>
+                        <div className='p-2'>
+                            <Label text='Type' required={true}/>
+                            <Dropdown value={ticketType} selectName="Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
                         </div>
                     </div>
                     <div className='p-2 flex flex-col'>

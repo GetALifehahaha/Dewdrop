@@ -19,6 +19,7 @@ const Ticket = ({ticket}) => {
                 <div className="flex items-end gap-4">
                     <h5 className='text-text font-semibold text-lg'>{ticket.title}</h5>
                     <SeverityDisplay severity={ticket.severity} severityDisplay={ticket.severity_display} />
+                    <h5 className='text-text/50 font-semibold text-base'>{ticket.ticket_type_details?.name}</h5>
                 </div>
 
                 <div>

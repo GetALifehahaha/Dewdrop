@@ -2,13 +2,18 @@ import React, {useState, useEffect} from 'react'
 import {Input, Dropdown, Button,} from '../atoms'
 import { Search, X } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
-import {SeveritySelectionConfig} from '../../config/SeveritySelectionConfig'
+import useTicketType from '../../hooks/useTicketType'
+import { DatePicker } from '.'
 
 const Searchbar = () => {
+    const {ticketTypeData, ticketTypeLoading, ticketTypeError} = useTicketType();
     const [searchParams, setSearchParams] = useSearchParams();
     const [input, setInput] = useState(searchParams.get("title") || "");
     const [search, setSearch] = useState(searchParams.get("title") || "");
+    const [ticketType, setTicketType] = useState(searchParams.get("ticket_type") || null);
     const [severity, setSeverity] = useState(searchParams.get("severity") || null);
+    const [startDate, setStartDate] = useState(searchParams.get("start_date") || null)
+    const [endDate, setEndDate] = useState(searchParams.get("end_date") || null)
     const [filters, setFilters] = useState([]);
 
     const severitySelections = {
@@ -16,6 +21,11 @@ const Searchbar = () => {
         Medium: "medium",
         Urgent: "urgent",
     }
+
+    const ticketTypeSelections = ticketTypeData.reduce((acc, type) => {
+        acc[type.name] = type.id;
+        return acc;
+    }, {});
 
     const handleSetSearch = (value) => {
         setSearch(value);
@@ -29,31 +39,80 @@ const Searchbar = () => {
         setSeverity(value);
     }
 
+    const formatDate = (date) => {
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const day = date.getDate().toString().padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
+    const handleSetStartDate = (value) => {
+        setStartDate(formatDate(value))
+    }
+
+    const handleSetEndDate = (value) => {
+        setEndDate(formatDate(value))
+    }
+
+    const handleSetTicketType = (value) => setTicketType(value);
+
     const handleSetParameters = () => {
         let params = new URLSearchParams();
         let filters = [];
-        if (search) {params.set("title", search); filters = [...filters, {Search: search}]}
-        if (severity) {params.set("severity", severity); filters = [...filters, {Severity: severity}]}
-        setFilters(filters) 
+
+        if (search) {
+            params.set("title", search);
+            filters.push({ Search: search });
+        }
+
+        if (severity) {
+            params.set("severity", severity);
+            filters.push({ Severity: severity });
+        }
+
+        if (ticketType) {
+            params.set("ticket_type", ticketType);
+            const ticketName = Object.keys(ticketTypeSelections).find(
+                (key) => ticketTypeSelections[key] === ticketType
+            );
+            filters.push({ "Ticket Type": ticketName });
+        }
+
+        if (startDate) {
+            params.set("start_date", startDate);
+            filters.push({ "Start Date": startDate });
+        }
+
+        if (endDate) {
+            params.set("end_date", endDate);
+            filters.push({ "End Date": endDate });
+        }
+
+        setFilters(filters);
         setSearchParams(params);
     }
+
 
     const removeFilter = (type) => {
         if (type == "search") {setSearch(); setInput('')};
         if (type == "severity") setSeverity();
+        if (type == "ticket type") setTicketType();
+        if (type == "start date") setStartDate();
+        if (type == "end date") setEndDate();
     }
 
     const clearParameters = () => {
         setInput("")
         setSearch();
         setSeverity();
+        setTicketType();    
+        setStartDate();
+        setEndDate();
     }
     
-	// const capitalize = (string) => string[0].toUpperCase() + string.slice(1)
-
     useEffect(() => {
         handleSetParameters()
-    }, [severity, search]);
+    }, [severity, search, ticketType, startDate, endDate]);
 
     const listFilters = filters?.map((filter, index) => {
             const [key, value] = Object.entries(filter)[0];
@@ -61,30 +120,8 @@ const Searchbar = () => {
         }
     )
 
-    // const handleSetParameters = () => {
-    //     setSearchParams((prev) => {
-    //         let params = new URLSearchParams(prev);
-
-    //         if (searchParams.get("page")) {
-    //             params.set("page", searchParams.get("page"));
-    //         }
-
-    //         setOrDeleteParam(params, "title", search);
-    //         setOrDeleteParam(params, "severity", severity);
-
-    //         return params;
-    //     })
-    // }
-
-    // const setOrDeleteParam = (params, key, value) => {
-    //     if (value) params.set(key, value);
-    //     else params.delete(key);
-    // };
-
-    // useEffect(() => {
-    //     setSeverity(searchParams.get("severity") || "");
-    //     setSearch(searchParams.get("title") || "");
-    // }, [searchParams])
+    if (ticketTypeLoading) return <h5>Loading ticket types</h5>
+    if (ticketTypeError) return <h5>Error loading ticket types</h5>
 
     return (
         <div className='flex flex-col gap-1'>
@@ -92,6 +129,9 @@ const Searchbar = () => {
                 <Input value={input} placeholder="Search tickets by title" icon={Search} onChange={handleSetInput}/>
                 <Button variant='block' text='' icon={Search} onClick={() => setSearch(input)}/>
                 <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>
+                <Dropdown value={ticketType} selectName="Ticket Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
+                <DatePicker label={'Start Date'} date={startDate} onSetDate={handleSetStartDate}/>
+                <DatePicker label={'End Date'} date={endDate} onSetDate={handleSetEndDate}/>
             </div>
             <div className='flex items-center gap-2 p-1'>
                 {listFilters}

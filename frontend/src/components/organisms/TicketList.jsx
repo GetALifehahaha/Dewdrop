@@ -21,7 +21,7 @@ const TicketList = () => {
         <Ticket key={index} ticket={ticket}/>
     )
 
-    const maxPage = Math.ceil(ticketData.count / PAGINATION);
+    const maxPage = Math.floor(ticketData.count / PAGINATION);
 
     return (
         <div>

@@ -13,8 +13,8 @@ export default function useTicket() {
     // GET LIST
     const fetchTickets = async () => {
         try {
-            setTicketLoading(true);
             const params = Object.fromEntries(searchParams.entries());
+            setTicketLoading(true);
             const data = await TicketServices(params, ticket_id);
 
             setTicketData(data);
@@ -79,7 +79,7 @@ export default function useTicket() {
     // Load on first render
     useEffect(() => {
         fetchTickets();
-    }, []);
+    }, [searchParams]);
 
     return {
         ticketData,

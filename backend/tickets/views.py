@@ -36,13 +36,25 @@ class TicketViewSet(viewsets.ModelViewSet):
         agent_id = self.request.query_params.get('agent_id', None) #type: ignore
         title = self.request.query_params.get('title', None) #type: ignore
         severity = self.request.query_params.get('severity', None) #type: ignore
+        ticket_type = self.request.query_params.get('ticket_type', None)#type: ignore
+        start_date = self.request.query_params.get('start_date', None)#type: ignore
+        end_date = self.request.query_params.get('end_date', None)#type: ignore
         
         if title:
-            queryset = queryset.filter(title__icontains=title);
+            queryset = queryset.filter(title__icontains=title)
             
         if severity:
-            queryset = queryset.filter(severity=severity);
-        
+            queryset = queryset.filter(severity=severity)
+            
+        if ticket_type:
+            queryset = queryset.filter(ticket_type=ticket_type)
+            
+        if start_date:
+            queryset = queryset.filter(created_at__gte=start_date)
+            
+        if end_date:
+            queryset = queryset.filter(created_at__lte=end_date)
+
         if user.groups.filter(name="Requesters").exists():
             return queryset.filter(requester=user)
             
@@ -190,6 +202,7 @@ class TicketTypeViewSet(viewsets.ModelViewSet):
     queryset = TicketType.objects.all()
     serializer_class = TicketTypeSerializer
     permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+    pagination_class = None
 
 
 class DepartmentViewSet(viewsets.ModelViewSet):

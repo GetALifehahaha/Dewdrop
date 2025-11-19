@@ -5,22 +5,38 @@ from authentication.serializers import UserSerializer
 from .models import Ticket, Agent, Department, TicketType
 from rest_framework import serializers
 
+
+class TicketTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TicketType
+        fields = '__all__'
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Department
+        fields = '__all__'
+
+
 class AgentSerializer(serializers.ModelSerializer):
+    department_details = DepartmentSerializer(source='department', read_only=True)
+    
     class Meta:
         model = Agent
-        fields = ['id', 'first_name', 'last_name', 'email']
+        fields = ['id', 'first_name', 'last_name', 'email', 'department', 'department_details']
         read_only_fields = ['id']
         
         
 class TicketSerializer(serializers.ModelSerializer):
     assigned_agent_details = AgentSerializer(source='assigned_agent', read_only=True)
     requester_details = UserSerializer(source='requester', read_only=True)
+    ticket_type_details = TicketTypeSerializer(source='ticket_type', read_only=True)
     severity_display = serializers.CharField(source='get_severity_display', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     
     class Meta:
         model = Ticket
-        fields = ['id', 'title', 'description', 'requester', 'created_at', 'severity', 'severity_display', 'assigned_agent', 'assigned_agent_details', 'requester_details', 'status_display', 'status', 'resolved_at']
+        fields = ['id', 'title', 'description', 'requester', 'created_at', 'severity', 'severity_display', 'assigned_agent', 'assigned_agent_details', 'ticket_type', 'ticket_type_details', 'requester_details', 'status_display', 'status', 'resolved_at']
         read_only_fields = ['id', 'created_at', 'resolved_at', 'severity_display', 'status_display', 'assigned_agent_details', 'requester_details']
     
     def get_fields(self):
@@ -30,7 +46,7 @@ class TicketSerializer(serializers.ModelSerializer):
         allowed_fields = []
         
         if user.groups.filter(name="Requesters").exists():
-            allowed_fields = ['title', 'description', 'severity']
+            allowed_fields = ['title', 'description', 'severity', 'ticket_type']
                     
         elif user.groups.filter(name="Managers").exists():
             if self.context['request'].method == 'POST':
@@ -53,14 +69,3 @@ class DashboardSerializer(serializers.Serializer):
     dashboard_counts = serializers.DictField()
     latest_ticket = TicketSerializer()
 
-
-class TicketTypeSerializer(serializers.Serializer):
-    class Meta:
-        model = TicketType
-        fields = ['__all__']
-
-
-class DepartmentSerializer(serializers.Serializer):
-    class Meta:
-        model = Department
-        fields = ['__all__']
