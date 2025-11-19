@@ -51,8 +51,6 @@ class TicketViewSet(viewsets.ModelViewSet):
                 return queryset.filter(assigned_agent=agent_id)
             
             return queryset
-        
-        
             
         return Ticket.objects.none()
     
@@ -67,7 +65,6 @@ class TicketViewSet(viewsets.ModelViewSet):
         
         serialized_data = self.get_serializer(instance=ticket, data=request.data, partial=True)
         serialized_data.is_valid(raise_exception=True)
-        print("validated data:", serialized_data.validated_data)
         updated_ticket = serialized_data.save()
         
         new_status = updated_ticket.status

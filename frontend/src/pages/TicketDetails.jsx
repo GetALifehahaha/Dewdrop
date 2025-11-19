@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { useTicketData, useDeleteTicket, usePatchTicket, useAgentData } from '../hooks';
+import useTicket from '../hooks/useTicket';
 import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay, Guard, Toast ,ConfirmationModal } from '../components/molecules';
 import { StatusDisplayBar } from '../components/organisms'
@@ -9,9 +10,7 @@ import { AuthContext } from '../context/AuthContext';
 
 const TicketDetails = () => {
     const {user} = useContext(AuthContext);
-    const {ticketData, error, loading, refresh} = useTicketData();
-    const {response, error: deleteError, loading: deleteLoading, deleteTicket} = useDeleteTicket();
-    const {response: patchResponse, error: patchError, loading: patchLoading, patchTicket} = usePatchTicket();
+    const {ticketResponse, ticketData, deleteTicket, patchTicket, ticketError, ticketLoading, refresh} = useTicket();
     const {agentData, error: agentError, loading: agentLoading} = useAgentData();
     const [confirmationMessage, setConfirmationMessage] = useState();
     const navigate = useNavigate();
@@ -33,28 +32,26 @@ const TicketDetails = () => {
         }
     }, [ticketData])
 
-    useEffect(() => {
-        if (response) {
+   useEffect(() => {
+        if (ticketResponse) {
             setToastMessages([{
-                status: "success",
-                message: "Successfully deleted ticket. Will be redirecting you shortly.",
-                icon: Trash2
-            }])
+                message: ticketResponse.detail,
+                status: ticketResponse.status,
+                icon: Check
+            }]);
+        }
 
-            const redirect = setTimeout(() => navigate('/tickets'), 5000);
-            return () => clearTimeout(redirect);
-        }
-        if (deleteError){
+        if (ticketError) {
             setToastMessages([{
-                status: "error",
-                message: "Failed to delete message",
-                icon: Trash2
-            }])
+                message: ticketError.detail,
+                status: ticketError.detail,
+                icon: X
+            }]);
         }
-    }, [response, deleteError])
+    }, [ticketResponse, ticketError]);
     
-    if (loading) return <Guard message="Loading ticket details" />
-    if (error) return <Guard type='error' message={{status: error.status, detail: "Ticket doesn't exist"}} />
+    if (ticketLoading) return <Guard message="Loading ticket details" />
+    if (ticketError) return <Guard type='error' message={ticketError} />
 
     const breadcrumb = [
         {label: 'Tickets', link: '/tickets'},
@@ -91,17 +88,17 @@ const TicketDetails = () => {
     const handleDeleteTicket = async (response) => {
         if (response) {
             await deleteTicket(ticketData.id)
+
+            setTimeout(() => {
+                navigate(-1);
+            }, 3000)
         }
         setConfirmationMessage([]);
     }
 
     const handlePatchTicket = async (method) => {
         if (method == "assessing") {
-            try {
-                await patchTicket(ticketData.id, {status: "assessing"});
-            } catch (err) {
-                console.log(err);
-            }
+            await patchTicket(ticketData.id, {status: "assessing"});
         }
     }
 
@@ -116,24 +113,17 @@ const TicketDetails = () => {
     }
     
     const handleAssignAgent = async () => {
-        try {
-            await patchTicket(ticketData.id, {assigned_agent: chosenAgentId, status: "assigned"});
+        await patchTicket(ticketData.id, {assigned_agent: chosenAgentId, status: "assigned"});
 
-            refresh();
-            setShowAgents(false);
-        } catch (err) {
-            console.log(err)
-        }
+        refresh();
+        setShowAgents(false);
+
     }
 
     const handleResolveTicket = async () => {
-        try {
-            await patchTicket(ticketData.id, {status: "resolved"});
+        await patchTicket(ticketData.id, {status: "resolved"});
 
-            refresh()
-        } catch (err) {
-            console.log(err)
-        }
+        refresh()
     }
 
     return (

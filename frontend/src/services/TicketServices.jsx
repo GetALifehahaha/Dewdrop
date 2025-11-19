@@ -12,7 +12,6 @@ const TicketServices = async (params, ticket_id = null, method="GET") => {
 			} 
 	
 			const response = await api.get(`/tickets/tickets/`, {params});
-			console.log(params)
 	
 			return response.data
 		} else if (method == "POST") {

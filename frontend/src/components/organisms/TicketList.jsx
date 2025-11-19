@@ -3,15 +3,17 @@ import { useTicketData } from '../../hooks';
 import {Pagination} from '../molecules'
 import {Ticket} from '../organisms'
 import { PAGINATION } from '../../services/constants';
+import useTicket from '../../hooks/useTicket';
 
 const TicketList = () => {
 
-    const {ticketData, error, loading} = useTicketData();
+    // const {ticketData, error, loading} = useTicketData();
+    const {ticketData   , ticketLoading, ticketError} = useTicket();
     
-    if (loading) return <p>Loading Tickets...</p>
-    if (error) return <div className='w-full h-80 flex flex-col gap-2 justify-center items-center'>
-        <h5 className='text-text/50 text-4xl font-bold'>{error.status}</h5> 
-        <h5 className='text-text font-medium text-lg'>{error.message}</h5>
+    if (ticketLoading) return <p>Loading Tickets...</p>
+    if (ticketError) return <div className='w-full h-80 flex flex-col gap-2 justify-center items-center'>
+        <h5 className='text-text/50 text-4xl font-bold'>{ticketError.status}</h5> 
+        <h5 className='text-text font-medium text-lg'>{ticketError.message}</h5>
     </div>
     if (ticketData == null || ticketData.count == 0) return <div className='w-full h-80 flex flex-col gap-2 justify-center items-center'>
         <h5 className='text-text font-medium text-lg'>No ticket found</h5> 

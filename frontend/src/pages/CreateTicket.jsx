@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Title, Label, Input, Textarea, Dropdown, Button } from '../components/atoms'
 import { Toast } from '../components/molecules'
-import { SeveritySelectionConfig } from '../config/SeveritySelectionConfig';
+import useTicket from '../hooks/useTicket';
 import { X, Pen, Loader2, Check } from 'lucide-react';
 import { usePostTicket } from '../hooks';
 
 const CreateTicket = () => {
-    const { loading, error, response, postTicket } = usePostTicket();
+    const {postTicket, ticketResponse, ticketError, ticketLoading} = useTicket();
 
     const [title, setTitle] = useState();
     const [description, setDescription] = useState();
@@ -39,22 +39,22 @@ const CreateTicket = () => {
     }
 
     useEffect(() => {
-        if (response) {
+        if (ticketResponse) {
             setToastMessages([{
-                message: "Ticket submitted successfully!",
-                status: "success",
+                message: ticketResponse.detail,
+                status: ticketResponse.status,
                 icon: Check
             }]);
         }
 
-        if (error) {
+        if (ticketError) {
             setToastMessages([{
-                message: "Failed to submit the ticket. Please try again.",
-                status: "error",
+                message: ticketError.detail,
+                status: ticketError.detail,
                 icon: X
             }]);
         }
-    }, [response, error]);
+    }, [ticketResponse, ticketError]);
 
     useEffect(() => {
         if (toastMessages.length > 0) {
@@ -95,9 +95,9 @@ const CreateTicket = () => {
                     </div>}
 
                     <div className='mx-auto mt-18'>
-                        {response ? 
+                        {ticketResponse ? 
                         <h5 className='text-accent-deepblue font-semibold'>Ticket Submitted Successfully!</h5> :
-                            loading ? 
+                            ticketLoading ? 
                             <h5 className='flex gap-2 items-center'><Loader2 className='text-accent-blue' size={16}/> Submitting your ticket</h5> :
                             <Button text='Submit Your Ticket' onClick={handleSubmitTicket}/>
                             

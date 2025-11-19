@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
-import { useTicketData, usePatchTicket } from '../hooks';
 import { Label, Title, Dropdown, Button } from '../components/atoms';
 import { Breadcrumbs, Toast } from '../components/molecules';
 import { Pen, X, Check } from 'lucide-react';
 import { SeveritySelectionConfig } from '../config/SeveritySelectionConfig';
+import useTicket from '../hooks/useTicket';
 
 const EditTicket = ({}) => {
     const {ticket_id} = useParams();
-    const {ticketData, error, loading} = useTicketData();
-    const {loading: editLoading, error: editError, response: editResponse, patchTicket} = usePatchTicket();
+    const {ticketData, ticketError, ticketLoading, ticketResponse, patchTicket} = useTicket();
+
     const [oldTitle, setOldTitle] = useState("");
     const [title, setTitle] = useState("");
     const [oldDescription, setOldDescription] = useState("");
@@ -18,6 +18,12 @@ const EditTicket = ({}) => {
     const [severity, setSeverity] = useState();
     const [errorMessages, setErrorMessages] = useState([]);
     const [toastMessages, setToastMessages] = useState([]);
+
+    const severitySelections = {
+        Low: "low",
+        Medium: "medium",
+        Urgent: "urgent",
+    }
     
     useEffect(() => {
         if (ticketData){
@@ -31,21 +37,21 @@ const EditTicket = ({}) => {
     }, [ticketData]);
 
     useEffect(() => {
-        if (editResponse) {
+        if (ticketResponse) {
             setToastMessages([{
-                message: "Ticket has been edited successfully",
-                status: "success",
+                message: ticketResponse.detail,
+                status: ticketResponse.status,
                 icon: Check
             }])
         }
-        if (editError) {
+        if (ticketError) {
             setToastMessages([{
-                message: "Failed to edit ticket. Something went wrong",
-                status: "error",
+                message: ticketError.detail,
+                status: ticketError.status,
                 icon: X
             }])
         }
-    }, [editResponse, editError]);
+    }, [ticketResponse, ticketError]);
 
     useEffect(() => {
         if (toastMessages.length > 0) {
@@ -54,8 +60,8 @@ const EditTicket = ({}) => {
         }
     }, [toastMessages])
 
-    if (loading) return <p>Loading</p>
-    if (error) return <p>Error</p>  
+    if (ticketLoading) return <p>Loading</p>
+    if (ticketError) return <p>Error</p>  
     
     const handleSetTitle = (value) => setTitle(value);
     const handleSetDescription = (value) => setDescription(value);
@@ -116,7 +122,7 @@ const EditTicket = ({}) => {
                         </div>
                         <div className='p-2 w-40'>
                             <Label text='Severity' required={true}/>
-                            <Dropdown value={severity} selectionName='Severity' selections={SeveritySelectionConfig} onSelect={handleSetSeverity}/>
+                            <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>    
                         </div>
                     </div>
                     <div className='p-2 flex flex-col'>
