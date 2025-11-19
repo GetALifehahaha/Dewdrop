@@ -18,6 +18,12 @@ const CreateTicket = () => {
     const handleSetDescription = (value) => setDescription(value);
     const handleSetSeverity = (value) => setSeverity(value);
 
+    const severitySelections = {
+        Low: "low",
+        Medium: "medium",
+        Urgent: "urgent",
+    }
+
     const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
 
     const handleSubmitTicket = async () => {
@@ -72,7 +78,7 @@ const CreateTicket = () => {
                         </div>
                         <div className='p-2 w-40'>
                             <Label text='Severity' required={true}/>
-                            <Dropdown selectionName='Severity' selections={SeveritySelectionConfig} onSelect={handleSetSeverity}/>
+                            <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>
                         </div>
                     </div>
                     <div className='p-2 flex flex-col'>

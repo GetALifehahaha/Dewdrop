@@ -1,7 +1,8 @@
+from re import search
 from django.forms import ValidationError
 
 from authentication.serializers import UserSerializer
-from .models import Ticket, Agent
+from .models import Ticket, Agent, Department, TicketType
 from rest_framework import serializers
 
 class AgentSerializer(serializers.ModelSerializer):
@@ -51,4 +52,15 @@ class TicketSerializer(serializers.ModelSerializer):
 class DashboardSerializer(serializers.Serializer):
     dashboard_counts = serializers.DictField()
     latest_ticket = TicketSerializer()
-    
+
+
+class TicketTypeSerializer(serializers.Serializer):
+    class Meta:
+        model = TicketType
+        fields = ['__all__']
+
+
+class DepartmentSerializer(serializers.Serializer):
+    class Meta:
+        model = Department
+        fields = ['__all__']

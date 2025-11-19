@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
-from .serializers import TicketSerializer, AgentSerializer, DashboardSerializer
-from .models import Ticket, Agent
+from .serializers import DepartmentSerializer, TicketSerializer, AgentSerializer, DashboardSerializer, TicketTypeSerializer
+from .models import Ticket, Agent, TicketType, Department
 from django.db.models import Count, Q
 
 # for email
@@ -186,3 +186,16 @@ class DashboardAPIView(APIView):
         serializer = DashboardSerializer({'dashboard_counts': dashboard_counts, 'latest_ticket': latest_ticket}, context={'request': request});
         
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+
+class TicketTypeViewSet(viewsets.ModelViewSet):
+    queryset = TicketType.objects.all()
+    serializer_class = TicketTypeSerializer
+    permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+
+
+class DepartmentViewSet(viewsets.ModelViewSet):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
