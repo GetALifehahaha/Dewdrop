@@ -1,8 +1,10 @@
-import React, {useState, useContext} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {SquareUser, UserPlus} from 'lucide-react'
 import { AuthContext } from '../../context/AuthContext';
 import { GoogleLoginService } from '../../services';
+import { Toast } from '../molecules';
+import { X } from 'lucide-react';
 
 const LoginSignupForm = ({method}) => {
   // context variables
@@ -15,12 +17,20 @@ const LoginSignupForm = ({method}) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("")
+  const [toastMessages, setToastMessages] = useState([]);
   const navigate = useNavigate();
 
   // content variables
   const title = method == 'login' ? 'Welcome back!' : 'Hello there!'
   const greeting = method == 'login' ? 'Log in to continue requesting tickets!' : 'Sign up to start requesting tickets!'
   const submitButton = method == 'login' ? 'Login' : 'Get Started!'
+
+  useEffect(() => {
+      if (toastMessages.length > 0) {
+          const timer = setTimeout(() => setToastMessages([]), 3000);
+          return () => clearTimeout(timer);
+      }
+  }, [toastMessages]);
 
   // form function
   const submitForm = async (e) => {
@@ -41,12 +51,17 @@ const LoginSignupForm = ({method}) => {
       }
 
     } catch (err) {
-      alert(err);
+      console.log(err)
+      setToastMessages([
+            { message: err.response.data.detail, status: "error", icon: X },
+      ]);
     }
   }
 
   return (
     <div className='w-full h-screen flex flex-row justify-between p-6 text-text font-medium'>
+      <Toast toastMessages={toastMessages} />
+      
       <div className='basis-3/5 p-12 h-[100%] flex flex-col justify-between'>
         {/* Top Part */}
         <div className="flex flex-row justify-between">
@@ -147,7 +162,7 @@ const LoginSignupForm = ({method}) => {
             
               <hr className='text-text/25 my-4 w-7/8 mx-auto rounded-full'/>
 
-              <GoogleLoginService />
+              <GoogleLoginService type={method} />
             </form>
 
 

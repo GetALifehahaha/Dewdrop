@@ -1,44 +1,31 @@
-import React, {useEffect, useState} from 'react';
-import { ChevronDown, XIcon } from 'lucide-react';
+import * as React from "react"
 
-const Dropdown = ({value=null, selectionName="Option", selections=[{name: "Option 1", value: "Value 1"}, {name: "Option 2", value: "Value 2"}], onSelect}) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [selected, setSelected] = useState(value || selectionName);
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
-    useEffect(() => {setSelected(capitalize(value || selectionName))}, [value])
+const Dropdown = ({value, selectName, selectItems, onSelect}) => {
 
-    const listSelections = selections.map(({name, value}, index) => 
-        <div key={index} className='cursor-pointer hover:bg-main-dark px-1 py-2 rounded-sm text-semibold' onClick={() => handleSetSelected(name, value)}>
-            <h5>{name}</h5>
-        </div>
-    )
+    const listItems = Object.entries(selectItems).map(([key, value], index) => <SelectItem className='cursor-pointer hover:bg-main-hover font-medium' key={index} value={value}>{key}</SelectItem>)
 
-    const handleSetSelected = (name, value) => {
-        setSelected(name)
-        onSelect(value)
-    }
-
-    const handleSetIsExpanded = () => {
-        setIsExpanded(!isExpanded);
-    };
-
-    const capitalize = (str) => str[0].toUpperCase() + str.slice(1);
-
-    return (
-        <div className='w-40 relative'>
-            <div onClick={handleSetIsExpanded} className='px-4 py-2 flex justify-between items-center cursor-pointer bg-main rounded-md  text-text/75 shadow-sm'>
-                <h5>{selected}</h5>
-
-                <ChevronDown onClick={handleSetIsExpanded} className={`${(isExpanded) ? 'rotate-180' : ''} duration-200 ease-in `}/>
-            </div>
-
-            {isExpanded && 
-                <div className='flex flex-col gap-2 bg-main rounded-md absolute mt-2 w-full p-2 shadow-sm'>
-                    {listSelections}
-                </div>
-            }
-        </div>
-    )
+  return (
+    <Select onValueChange={(val) => onSelect(val)}>
+      <SelectTrigger className="w-[180px] bg-main border-main-dark ring-main-gray font-medium text-text/50 cursor-pointer py-5 shadow-sm">
+        <SelectValue placeholder={value || selectName} />
+      </SelectTrigger>
+      <SelectContent className='bg-main border-main-dark'>
+        <SelectGroup>
+            {listItems}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  )
 }
 
-export default Dropdown;
+export default Dropdown

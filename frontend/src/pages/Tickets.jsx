@@ -9,7 +9,6 @@ const Tickets = () => {
         <>
             <Title text='Tickets'/>
             <Searchbar />
-            <Filters />
             <TicketList />
         </>
     )

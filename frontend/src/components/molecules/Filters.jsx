@@ -27,14 +27,13 @@ const Filters = () => {
 	const listFilters = filters.map(({key, value}) => 
 	<div key={key} className='flex items-center  gap-1 bg-main px-4 py-0.5 rounded-2xl'>
 		<h5>{capitalize(key)}: </h5>
-		<h5>{value}</h5>
+		<h5>{capitalize(value)}</h5>
 		<X size={16} className='cursor-pointer' onClick={() => handleRemoveParams(key)}/>
 	</div>)
 	
 	return (
 		<div className='flex gap-4 items-center text-text/50 text-sm font-semibold'>
 			{listFilters}
-
 			{filters.length > 0 && <h5 className='cursor-pointer hover:text-text/75' onClick={clearParams}>Clear</h5>}
 		</div>
 	)
