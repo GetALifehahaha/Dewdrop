@@ -1,4 +1,10 @@
+from calendar import month
 from decouple import config
+
+from django.forms import DateField
+from django.utils import timezone
+from django.db.models.functions import TruncMonth, Cast
+from datetime import timedelta
 
 from rest_framework import permissions, viewsets, generics
 from rest_framework.exceptions import ValidationError
@@ -6,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
-from .serializers import DepartmentSerializer, TicketSerializer, AgentSerializer, DashboardSerializer, TicketTypeSerializer
+from .serializers import DepartmentSerializer, TicketSerializer, AgentSerializer, DashboardSerializer, TicketTypeSerializer, TicketMonthlySerializer
 from .models import Ticket, Agent, TicketType, Department
 from django.db.models import Count, Q
 
@@ -16,6 +22,7 @@ from django.conf import settings
 
 # for priority queue
 from django.db.models import Case, When, Value, IntegerField
+
 # Create your views here.
 
 class TicketViewSet(viewsets.ModelViewSet):
@@ -210,3 +217,20 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     serializer_class = DepartmentSerializer
     permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
     pagination_class = None
+    
+    
+class TicketStatsViewSet(viewsets.ViewSet):
+    def list(self, request):
+        today = timezone.now().date()
+        
+        six_months_ago = today.replace(day=1) - timedelta(days=180)
+        queryset = (
+            Ticket.objects.filter(created_at__date__gte=six_months_ago)
+            .annotate(month=TruncMonth("created_at")) #type: ignore
+            .values("month")
+            .annotate(count=Count("id"))
+            .order_by("month")
+        )
+        
+        serializer = TicketMonthlySerializer(queryset, many=True)
+        return Response(serializer.data)

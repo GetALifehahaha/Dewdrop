@@ -10,7 +10,7 @@ const Sidebar = () => {
     const {user} = useContext(AuthContext);
     const role = user.groups?.[0] || 'Requesters';
     const navItems = NavConfig[role]
-    const [expanded, setExpanded] = useState(true);
+    const [expanded, setExpanded] = useState(false);
 
     const handleSetExpanded = () => setExpanded(!expanded);
 

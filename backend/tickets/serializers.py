@@ -16,7 +16,14 @@ class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = '__all__'
+        
 
+class TicketMonthlySerializer(serializers.Serializer):
+    month = serializers.SerializerMethodField()
+    count = serializers.IntegerField()
+    
+    def get_month(self, obj):
+        return obj['month'].strftime("%Y-%m-%d")
 
 class AgentSerializer(serializers.ModelSerializer):
     department_details = DepartmentSerializer(source='department', read_only=True)
@@ -37,7 +44,7 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ['id', 'title', 'description', 'requester', 'created_at', 'severity', 'severity_display', 'assigned_agent', 'assigned_agent_details', 'ticket_type', 'ticket_type_details', 'requester_details', 'status_display', 'status', 'resolved_at']
-        read_only_fields = ['id', 'created_at', 'resolved_at', 'severity_display', 'status_display', 'assigned_agent_details', 'requester_details']
+        read_only_fields = ['id', 'resolved_at', 'severity_display', 'status_display', 'assigned_agent_details', 'requester_details']
     
     def get_fields(self):
         fields = super().get_fields()

@@ -22,12 +22,10 @@ const DashboardCard = ({title="Total", count=0, description=""}) => {
     }
 
     return (
-        <div className={`flex flex-col flex-1 font-medium rounded-md shadow-md overflow-hidden bg-main`}>
-            <h5 className={`py-2 px-4 font-semibold shadow-sm ${colorVariants[title].text} bg-main-dark/50`}>{title}</h5>
-            <div className={`flex flex-col px-4 py-8 ${colorVariants[title].text}`}>
-                <h5 className='text-4xl font-bold'>{count}</h5>
-                <h5 className='text-text/50 text-sm'>{description}</h5>
-            </div>
+        <div className={`flex flex-col font-medium rounded-md shadow-md overflow-hidden bg-main h-fit p-4 flex-1 border border-main-dark`}>
+            <h5 className={`pb-2 font-semibold border-b border-b-main-dark ${colorVariants[title].text}`}>{title}</h5>
+            <h5 className={`text-4xl font-bold py-4  ${colorVariants[title].text}`}>{count}</h5>
+            <h5 className='text-text/50 text-sm'>{description}</h5>
         </div>
     )
 }

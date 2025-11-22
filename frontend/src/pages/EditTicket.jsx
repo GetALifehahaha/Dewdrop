@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Label, Title, Dropdown, Button } from '../components/atoms';
 import { Breadcrumbs, Toast } from '../components/molecules';
-import { Pen, X, Check } from 'lucide-react';
+import { Pen, X, Check, ArrowLeft, RotateCcw,  } from 'lucide-react';
 import useTicket from '../hooks/useTicket';
 import useTicketType from '../hooks/useTicketType';
 
@@ -10,6 +10,7 @@ const EditTicket = ({}) => {
     const {ticket_id} = useParams();
     const {ticketData, ticketError, ticketLoading, ticketResponse, patchTicket} = useTicket();
     const {ticketTypeData, ticketTypeError, ticketTypeLoading} = useTicketType(); 
+    const navigate = useNavigate();
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -17,12 +18,6 @@ const EditTicket = ({}) => {
     const [ticketType, setTicketType] = useState(null);
     const [errorMessages, setErrorMessages] = useState([]);
     const [toastMessages, setToastMessages] = useState([]);
-
-    const severitySelections = {
-        Low: "low",
-        Medium: "medium",
-        Urgent: "urgent",
-    }
 
     useEffect(() => {
         if (ticketData){
@@ -75,10 +70,13 @@ const EditTicket = ({}) => {
         {label: "Edit", link: `/tickets/${ticket_id}/edit`}
     ]
 
-    const ticketTypeSelections = ticketTypeData.reduce((acc, type) => {
-        acc[type.name] = type.id;
-        return acc;
-    }, {});
+    const severitySelections = [
+        {name: "Low", value: "low"},
+        {name: "Medium", value: "medium"},
+        {name: "Urgent", value: "urgent"},
+    ]
+    
+    const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
 
     const handleSubmitTicket = async () => {
         setErrorMessages([]);
@@ -103,14 +101,17 @@ const EditTicket = ({}) => {
         setTitle(ticketData.title);
         setDescription(ticketData.description);
         setSeverity(ticketData.severity);
-        setTicketType(ticketData.ticket_type_details.name)
+        setTicketType(ticketData.ticket_type)
     }
 
     return (
         <>
             <Toast toastMessages={toastMessages} />
-            <div className="flex flex-col">
-                <Title text='Details' />
+            <div className="flex flex-col gap-1">
+                <div className='flex gap-2'>
+                    <Button text='' icon={ArrowLeft} variant='icon' onClick={() => navigate(`/tickets/${ticket_id}`)}/>
+                    <Title text='Details' />
+                </div>
                 <Breadcrumbs breadcrumb={breadcrumb}/>
             </div>
 
@@ -155,8 +156,8 @@ const EditTicket = ({}) => {
                     </div>}
                     
                     <div className='ml-auto flex gap-2'>
-                        <Button text='Reset' onClick={handleResetDetails}/>
-                        <Button text='Finish Editing' onClick={handleSubmitTicket}/>
+                        <Button text='Reset' onClick={handleResetDetails} icon={RotateCcw}/>
+                        <Button text='Save' onClick={handleSubmitTicket}/>
                     </div>
                 </div>
             </div>

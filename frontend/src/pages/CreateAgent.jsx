@@ -51,10 +51,8 @@ const CreateAgent = () => {
     const handleSetEmail = (value) => setEmail(value); 
     const handleSetDepartment = (value) => setDepartment(value); 
 
-    const departmentSelections = departmentData.reduce((acc, type) => {
-        acc[type.name] = type.id;
-        return acc
-    }, {})
+    const departmentSelections = departmentData.map((type) => {return {name: type.name, value: type.id}})
+
 
     const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
     
@@ -74,10 +72,10 @@ const CreateAgent = () => {
     return (
         <>
             <Toast toastMessages={toastMessages} />
-            <Title text='Submit a Ticket' />
+            <Title text='Create a new agent' />
     
             <div className='p-4 bg-main rounded-md shadow-sm'>
-                <Title variant='blockTitle' text='Ticket Information' icon={Pen}/>
+                <Title variant='blockTitle' text='Agent Information' icon={Pen}/>
                 <div className='flex flex-col'>
                     <div className="flex flex-col gap-2">
                         <div className='p-2 flex gap-4'>

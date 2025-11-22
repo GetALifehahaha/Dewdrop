@@ -13,11 +13,15 @@ SelectValue,
 const Dropdown = ({value, selectName, selectItems, onSelect}) => {
 
 	const listItems = selectItems.map((item, index) => <SelectItem className='cursor-pointer hover:bg-main-hover font-medium' key={index} value={item.value}>{item.name}</SelectItem>)
+	const capitalize = (str) => {
+		if (typeof str === "string") return str[0].toUpperCase() + str.slice(1)
+		return str
+	}
 
 	return (
 		<Select onValueChange={(val) => onSelect(val)}>
 			<SelectTrigger className="w-[180px] bg-main border-main-dark ring-main-gray font-medium text-text cursor-pointer py-5 shadow-sm">
-				<SelectValue placeholder={value || selectName} />
+				<SelectValue placeholder={value ? capitalize(value) : selectName} />
 			</SelectTrigger>
 			<SelectContent className='bg-main border-main-dark'>
 				<SelectGroup>

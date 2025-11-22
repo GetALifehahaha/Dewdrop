@@ -49,18 +49,15 @@ const CreateTicket = () => {
     const handleSetSeverity = (value) => setSeverity(value);
     const handleSetTicketType = (value) => setTicketType(value);
 
-    const severitySelections = {
-        Low: "low",
-        Medium: "medium",
-        Urgent: "urgent",
-    }
+    const severitySelections = [
+        {name: "Low", value: "low"},
+        {name: "Medium", value: "medium"},
+        {name: "Urgent", value: "urgent"},
+    ]
+    
+    const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
 
     const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
-
-    const ticketTypeSelections = ticketTypeData.reduce((acc, type) => {
-        acc[type.name] = type.id;
-        return acc;
-    }, {});
 
     const handleSubmitTicket = async () => {
         setErrorMessages([]);

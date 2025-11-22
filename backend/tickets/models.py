@@ -33,7 +33,7 @@ class Ticket(models.Model):
     ]
     title = models.CharField(max_length=100)
     description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField()
     requester = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
     severity = models.CharField(choices=SEVERITY, max_length=6) 
     
@@ -48,7 +48,7 @@ class Ticket(models.Model):
     
     status = models.CharField(choices=STATUS, max_length=10, default='pending')
     resolved_at = models.DateTimeField(null=True, blank=True)
-    ticket_type = models.OneToOneField(TicketType, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.SET_NULL, related_name="tickets", null=True, blank=True)
     
     def __str__(self):
         return self.title
