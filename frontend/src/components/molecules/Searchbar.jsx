@@ -12,6 +12,7 @@ const Searchbar = () => {
     const [search, setSearch] = useState("");
     const [ticketType, setTicketType] = useState();
     const [severity, setSeverity] = useState();
+    const [status, setStatus] = useState();
     const [startDate, setStartDate] = useState()
     const [endDate, setEndDate] = useState()
     const [filters, setFilters] = useState([]);
@@ -28,6 +29,8 @@ const Searchbar = () => {
     const handleSetSeverity = (value) => {
         setSeverity(value);
     }
+    
+    const handleSetStatus = (value) => setStatus(value);
 
     const formatDate = (date) => {
         const year = date.getFullYear();
@@ -54,10 +57,15 @@ const Searchbar = () => {
             params.set("title", search);
             filters.push({ Search: search });
         }
-
+        
         if (severity) {
             params.set("severity", severity);
             filters.push({ Severity: severitySelections.map((sev) => {if (sev.value == severity) return sev.name}) });
+        }
+        
+        if (status) {
+            params.set("status", status);   
+            filters.push({ Status: status });
         }
 
         if (ticketType) {
@@ -83,6 +91,7 @@ const Searchbar = () => {
     const removeFilter = (type) => {
         if (type == "search") {setSearch(); setInput('')};
         if (type == "severity") setSeverity();
+        if (type == "status") setStatus();
         if (type == "ticket type") setTicketType();
         if (type == "start date") setStartDate();
         if (type == "end date") setEndDate();
@@ -92,6 +101,7 @@ const Searchbar = () => {
         setInput("")
         setSearch("");
         setSeverity(null);
+        setStatus(null);
         setTicketType(null);    
         setStartDate(null);
         setEndDate(null);
@@ -103,11 +113,18 @@ const Searchbar = () => {
         {name: "Urgent", value: "urgent"},
     ]
 
+    const statusSelections = [
+        {name: "Pending", value: "pending"},
+        {name: "Assessing", value: "assesssing"},
+        {name: "Assigned", value: "assigned"},
+        {name: "Resolved", value: "resolved"},
+    ]
+
     const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
         
     useEffect(() => {
         handleSetParameters()
-    }, [severity, search, ticketType, startDate, endDate]);
+    }, [severity, search, ticketType, startDate, endDate, status]);
 
     const listFilters = filters?.map((filter, index) => {
             const [key, value] = Object.entries(filter)[0];
@@ -126,6 +143,7 @@ const Searchbar = () => {
                 </form>
                 <Button variant='block' text='' icon={Search} onClick={handleSetSearch}/>
                 <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>
+                <Dropdown value={status} selectName="Status" selectItems={statusSelections} onSelect={handleSetStatus}/>
                 <Dropdown value={ticketType} selectName="Ticket Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
                 <DatePicker label={'Start Date'} date={startDate} onSetDate={handleSetStartDate}/>
                 <DatePicker label={'End Date'} date={endDate} onSetDate={handleSetEndDate}/>

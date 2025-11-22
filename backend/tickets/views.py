@@ -43,6 +43,7 @@ class TicketViewSet(viewsets.ModelViewSet):
         agent_id = self.request.query_params.get('agent_id', None) #type: ignore
         title = self.request.query_params.get('title', None) #type: ignore
         severity = self.request.query_params.get('severity', None) #type: ignore
+        status = self.request.query_params.get('status', None) #type: ignore
         ticket_type = self.request.query_params.get('ticket_type', None)#type: ignore
         start_date = self.request.query_params.get('start_date', None)#type: ignore
         end_date = self.request.query_params.get('end_date', None)#type: ignore
@@ -52,6 +53,9 @@ class TicketViewSet(viewsets.ModelViewSet):
             
         if severity:
             queryset = queryset.filter(severity=severity)
+            
+        if status:
+            queryset = queryset.filter(status=status)
             
         if ticket_type:
             queryset = queryset.filter(ticket_type=ticket_type)
@@ -180,6 +184,7 @@ def send_email(to_emails, subject, html_content):
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all().order_by('last_name')
     permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+    pagination_class = None
     
     def get_serializer_class(self):
         if self.action in ['create', 'update']:

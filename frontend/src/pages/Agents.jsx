@@ -17,19 +17,25 @@ const Agents = () => {
 
     const handleRemoveEditAgentId = () => setEditAgentId(null)
 
-    const listAgents = agentData.results.map((agent, index) => 
+    const listAgents = agentData.map((agent, index) => 
         <div className='relative' key={index}>
-            <div className='flex items-center gap-4 p-6 rounded-md shadow-sm bg-main hover:shadow-lg'>
-                <h5 className='w-8 h-fit aspect-square bg-accent-blue flex justify-center items-center font-bold text-xs text-main rounded-full'>{agent.first_name.toUpperCase().slice(0, 1)}{agent.last_name.toUpperCase().slice(0, 1)}</h5>
-                <div>
-                    <h5 className='font-medium text-text'>{agent.first_name} {agent.last_name}</h5>
-                    <h5 className='font-medium text-text/50 text-sm'>{agent.email}</h5>
+            <div className='flex flex-col items-center gap-4 p-6 rounded-md shadow-sm bg-main hover:shadow-lg'>
+                <div className='flex flex-row w-full justify-between items-center gap-4'>
+                    <h5 className='w-8 h-fit aspect-square bg-accent-blue flex justify-center items-center font-bold text-xs text-main rounded-full'>{agent.first_name.toUpperCase().slice(0, 1)}{agent.last_name.toUpperCase().slice(0, 1)}</h5>
+                    <div>
+                        <h5 className='font-medium text-text'>{agent.first_name} {agent.last_name}</h5>
+                        <h5 className='font-medium text-text/50 text-sm'>{agent.email}</h5>
+                    </div>
+                    <div className='ml-auto flex flex-col justify-between items-start'>
+                        <h5 className='text-text font-medium self-start ml-auto'>{agent.department_details.name}</h5>
+                    </div>
                 </div>
-                <div className='ml-auto flex flex-col justify-between items-end'>
-                    <h5 className='text-text font-medium self-start ml-auto'>{agent.department_details.name}</h5>
+                <div className='flex flex-row items-center w-full gap-1 mr-auto'>
+                    {agent.specializations.map((spec, index) => <h5 key={index} className='text-sm text-text/50 font-semibold'>{spec.name}</h5>)}
+
                     {index == editAgentId 
-                        ? <Edit className='text-text/50 cursor-pointer' size={16} onClick={handleRemoveEditAgentId}/>
-                        : <Edit className='text-text/75 cursor-pointer' size={16} onClick={() => handleEditAgentId(index)}/>
+                        ? <Edit className='ml-auto text-text/50 cursor-pointer' size={16} onClick={handleRemoveEditAgentId}/>
+                        : <Edit className='ml-auto text-text/75 cursor-pointer' size={16} onClick={() => handleEditAgentId(index)}/>
                     }
                 </div>
             </div>
@@ -37,7 +43,7 @@ const Agents = () => {
             {
                 index == editAgentId &&
 
-                <div className='flex items-center gap-4 p-6 rounded-md shadow-sm bg-main hover:shadow-lg absolute bottom-0 translate-y-full w-full'>
+                <div className='flex items-center gap-4 p-6 rounded-md shadow-sm bg-main hover:shadow-lg absolute -bottom-2 translate-y-full w-full'>
                     <div>
                         <h5 className='font-medium text-text'>Edit Agent</h5>
                         <h5 className='font-medium text-text/50 text-sm'>{agent.email}</h5>

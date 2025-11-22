@@ -44,6 +44,11 @@ class AgentSerializer(serializers.ModelSerializer):
         
 class SpecializationSerializer(serializers.ModelSerializer):
     agent_id = serializers.IntegerField(required=False)
+    ticket_type_id = serializers.IntegerField()
+    extra_kwargs = {
+        'id': {'read_only': True},
+        'agent_id': {'read_only': True}
+    }
     
     class Meta:
         model = Specialization
@@ -51,40 +56,64 @@ class SpecializationSerializer(serializers.ModelSerializer):
         
         
 class AgentCreateSerializer(serializers.ModelSerializer):
-    specializations =  SpecializationSerializer(many=True)
+    specializations = SpecializationSerializer(many=True)
     
     class Meta:
         model = Agent
-        fields = ['id', 'name', 'specializations']
+        fields = ['id', 'first_name', 'last_name', 'email', 'department', 'specializations']
+    
+    def validate_specializations(self, value):
+        """Validate that there are no duplicate ticket types."""
+        # 'value' is a list of OrderedDict objects after nested serializer validation
+        print("validate_specializations value:", value)
+        
+        ticket_type_ids = [spec.get('ticket_type_id') for spec in value if 'ticket_type_id' in spec]
+        
+        if len(ticket_type_ids) != len(set(ticket_type_ids)):
+            raise serializers.ValidationError("Duplicate ticket types are not allowed.")
+        
+        return value
     
     def create(self, validated_data):
         specializations_data = validated_data.pop('specializations', [])
-        
-        agent = Agent.objects.create(**validated_data)
-        
-        for specialization in specializations_data:
-            Specialization.objects.create(
-                agent=agent, 
-                ticket_type_id = specialization['ticket_type_id']
-            )
-                
+
+        with transaction.atomic():
+            agent = Agent.objects.create(**validated_data)
+            Specialization.objects.bulk_create([
+                Specialization(agent=agent, ticket_type_id=spec['ticket_type_id']) 
+                for spec in specializations_data
+            ])
+            
         return agent
-    
     
     def update(self, instance, validated_data):
         specializations_data = validated_data.pop('specializations', [])
 
+        # Update agent fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
 
-        instance.specializations.all().delete()
+        # Get new ticket type IDs
+        new_ticket_type_ids = {spec['ticket_type_id'] for spec in specializations_data}
+        
+        # Get existing ticket type IDs
+        existing_specializations = instance.specializations.all()
+        existing_ticket_type_ids = set(existing_specializations.values_list('ticket_type_id', flat=True))
 
-        for specialization in specializations_data:
-            Specialization.objects.create(
-                agent=instance,
-                ticket_type_id=specialization['ticket_type_id']
-            )
+        with transaction.atomic():
+            # Delete removed specializations
+            to_delete = existing_ticket_type_ids - new_ticket_type_ids
+            if to_delete:
+                existing_specializations.filter(ticket_type_id__in=to_delete).delete()
+
+            # Add new specializations
+            to_add = new_ticket_type_ids - existing_ticket_type_ids
+            if to_add:
+                Specialization.objects.bulk_create([
+                    Specialization(agent=instance, ticket_type_id=tid) 
+                    for tid in to_add
+                ])
 
         return instance
                 

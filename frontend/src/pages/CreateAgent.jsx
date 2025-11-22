@@ -2,18 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { Title, Label, Input, Textarea, Dropdown, Button } from '../components/atoms'
 import { Toast } from '../components/molecules'
 import useTicket from '../hooks/useTicket';
-import { X, Pen, Loader2, Check } from 'lucide-react';
+import { X, Pen, Loader2, Check, Plus, Minus } from 'lucide-react';
 import useAgent from '../hooks/useAgent';
 import useDepartment from '../hooks/useDepartment';
+import useTicketType from '../hooks/useTicketType';
 
 const CreateAgent = () => {
     const {agentLoading, agentResponse, agentError, postAgent} = useAgent();
     const {departmentData, departmentLoading, departmentError} = useDepartment();
+    const {ticketTypeData, ticketTypeLoading, ticketTypeError} = useTicketType();
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [department, setDepartment] = useState();
+    const [specializations, setSpecializations] = useState([{ ticket_type_id: null }]);
 
     const [errorMessages, setErrorMessages] = useState([]);
     const [toastMessages, setToastMessages] = useState([]);
@@ -45,14 +48,29 @@ const CreateAgent = () => {
 
     if (departmentLoading) return <h5>Loading departments...</h5>
     if (departmentError) return <h5>Error loading departments...</h5>
+    if (ticketTypeLoading) return <h5>Loading ticket types...</h5>
+    if (ticketTypeError) return <h5>Error loading ticket types...</h5>
 
     const handleSetFirstName = (value) => setFirstName(value); 
     const handleSetLastName = (value) => setLastName(value); 
     const handleSetEmail = (value) => setEmail(value); 
     const handleSetDepartment = (value) => setDepartment(value); 
 
-    const departmentSelections = departmentData.map((type) => {return {name: type.name, value: type.id}})
+    const handleAddSpecialization = () => {
+        setSpecializations(prev => [...prev, { ticket_type_id: null }]);
+    };
 
+    const handleRemoveSpecialization = index => {
+        setSpecializations(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const handleSetSpecialization = (index, value) => {
+        setSpecializations(prev => prev.map((spec, i) => i === index ? { ticket_type_id: value } : spec));
+    };
+
+
+    const departmentSelections = departmentData.map((type) => {return {name: type.name, value: type.id}})
+    const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
 
     const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
     
@@ -63,9 +81,10 @@ const CreateAgent = () => {
         if (!lastName) setErrorMessages(er => [...er, "Please provide the last name of the agent."])
         if (!department) setErrorMessages(er => [...er, "Please select the department of the agent."]);
         if (!email) setErrorMessages(er => [...er, "Please provide the email of the agent. This email will be used to receive notifications from the system"]);
+        if (specializations.some(spec => !spec.ticket_type_id)) setErrorMessages(er => [...er, "All specializations must have a ticket type selected."]);
 
-        if (firstName && lastName && email && department) {
-            await postAgent({first_name: firstName, last_name: lastName, email: email, department: department});
+        if (firstName && lastName && email && department && !specializations.some(spec => !spec.ticket_type_id)) {
+            await postAgent({first_name: firstName, last_name: lastName, email: email, department: department, specializations});
         }
     }
 
@@ -95,6 +114,25 @@ const CreateAgent = () => {
                         <div className='p-2 flex flex-col'>
                             <Label text='Email' required={true}/>
                             <Input placeholder='This will be used for notification purposes' onChange={handleSetEmail}/>
+                        </div>
+                        <div className='flex flex-col gap-2 p-2'>
+                            <Label text='Specializations' required={true} />
+                            {specializations.map((spec, index) => (
+                                <div key={index} className='flex items-center gap-2'>
+                                    <Dropdown
+                                        value={spec.ticket_type_id}
+                                        selectName={`Ticket Type ${index + 1}`}
+                                        selectItems={ticketTypeSelections}
+                                        onSelect={value => handleSetSpecialization(index, value)}
+                                    />
+                                    {specializations.length != 1 &&
+                                        <button type='button' onClick={() => handleRemoveSpecialization(index)}><Minus size={16} /></button>
+                                    }
+                                    {index === specializations.length - 1 && 
+                                        <button type='button' onClick={handleAddSpecialization}><Plus size={16} /></button>
+                                    }
+                                </div>
+                            ))}
                         </div>
                     </div>
 
