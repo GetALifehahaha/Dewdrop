@@ -4,6 +4,7 @@ import DashboardServices from '../services/DashboardServices'
 const useDashboardData = () => {
     const [dashboardCounts, setDashboardCounts] = useState(null);
     const [latestTicket, setLatestTicket] = useState(null);
+    const [mostSent, setMostSent] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -12,7 +13,8 @@ const useDashboardData = () => {
             try {
                 const data = await DashboardServices();
                 setDashboardCounts(data.dashboard_counts);
-                setLatestTicket(data.latest_ticket)
+                setLatestTicket(data.latest_ticket);
+                setMostSent(data.most_sent_ticket_type);
             } catch (err) {
                 setError(err);
             } finally {
@@ -23,7 +25,7 @@ const useDashboardData = () => {
         fetchDashboardData();
     }, [])
 
-    return {dashboardCounts, latestTicket, loading, error}
+    return {dashboardCounts, mostSent, latestTicket, loading, error}
 }
 
 export default useDashboardData;

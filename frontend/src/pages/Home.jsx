@@ -11,7 +11,7 @@ import BarChartLabel from '../components/organisms/BarChart'
 
 const Home = () => {
 	const {user} = useContext(AuthContext);
-	const {dashboardCounts, latestTicket, loading, error} = useDashboardData();
+	const {dashboardCounts, latestTicket, mostSent, loading, error} = useDashboardData();
 	const {ticketData, ticketError, ticketLoading} = useTicket();
 	const navigate = useNavigate();
 
@@ -60,6 +60,16 @@ const Home = () => {
 					<div className='flex flex-col gap-6 flex-1'>
 						<div className='h-fit 2 flex gap-4'>
 							{listDashboardCard}
+
+							{
+								mostSent &&
+
+								<div className='p-6 rounded-lg border border-main-dark shadow-sm'>
+									<h5 className='font-medium text-text'>Popular: <strong>{mostSent.ticket_type}</strong></h5>
+									<h5 className='p-4 text-3xl font-bold'>{mostSent.count}</h5>
+									<h5 className='text-text/50 font-semibold text-sm'>Most popular ticket types this month</h5>
+								</div>
+							}
 						</div>
 						
 						<div className='flex gap-4 items-center '>
@@ -75,10 +85,6 @@ const Home = () => {
 					{ user.groups[0] == "Managers" &&
 						<div className='flex flex-1 flex-col gap-6'>
 							<BarChartLabel />
-
-							<div className='p-2 rounded-md border border-main-dark shadow-sm'>
-								<div></div>
-							</div>
 						</div>
 					}
 				</div>

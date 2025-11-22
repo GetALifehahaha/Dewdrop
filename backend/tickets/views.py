@@ -3,7 +3,7 @@ from decouple import config
 
 from django.forms import DateField
 from django.utils import timezone
-from django.db.models.functions import TruncMonth, Cast
+from django.db.models.functions import TruncMonth
 from datetime import timedelta
 
 from rest_framework import permissions, viewsets, generics
@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
-from .serializers import DepartmentSerializer, TicketSerializer, AgentSerializer, DashboardSerializer, TicketTypeSerializer, TicketMonthlySerializer
+from .serializers import AgentCreateSerializer, DepartmentSerializer, TicketSerializer, AgentSerializer, DashboardSerializer, TicketTypeSerializer, TicketMonthlySerializer
 from .models import Ticket, Agent, TicketType, Department
 from django.db.models import Count, Q
 
@@ -179,8 +179,12 @@ def send_email(to_emails, subject, html_content):
     
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all().order_by('last_name')
-    serializer_class = AgentSerializer
     permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+    
+    def get_serializer_class(self):
+        if self.action in ['create', 'update']:
+            return AgentCreateSerializer
+        return AgentSerializer
     
 
 class DashboardAPIView(APIView):

@@ -1,9 +1,11 @@
-from re import search
+from django.db import transaction, models
 from django.forms import ValidationError
+from django.utils import timezone
 
 from authentication.serializers import UserSerializer
-from .models import Ticket, Agent, Department, TicketType
+from .models import Ticket, Agent, Department, TicketType, Specialization
 from rest_framework import serializers
+from django.db.models import Count
 
 
 class TicketTypeSerializer(serializers.ModelSerializer):
@@ -27,11 +29,65 @@ class TicketMonthlySerializer(serializers.Serializer):
 
 class AgentSerializer(serializers.ModelSerializer):
     department_details = DepartmentSerializer(source='department', read_only=True)
+    specializations = serializers.SerializerMethodField()
+      
+    class Meta:
+        model = Agent
+        fields = ['id', 'first_name', 'last_name', 'email', 'department', 'department_details', 'specializations']
+        read_only_fields = ['id']
+        
+    def get_specializations(self, obj):
+        ticket_types = [spec.ticket_type for spec in obj.specializations.all()]
+        
+        return TicketTypeSerializer(ticket_types, many=True).data
+        
+        
+class SpecializationSerializer(serializers.ModelSerializer):
+    agent_id = serializers.IntegerField(required=False)
+    
+    class Meta:
+        model = Specialization
+        fields = ['id', 'agent_id', 'ticket_type_id']
+        
+        
+class AgentCreateSerializer(serializers.ModelSerializer):
+    specializations =  SpecializationSerializer(many=True)
     
     class Meta:
         model = Agent
-        fields = ['id', 'first_name', 'last_name', 'email', 'department', 'department_details']
-        read_only_fields = ['id']
+        fields = ['id', 'name', 'specializations']
+    
+    def create(self, validated_data):
+        specializations_data = validated_data.pop('specializations', [])
+        
+        agent = Agent.objects.create(**validated_data)
+        
+        for specialization in specializations_data:
+            Specialization.objects.create(
+                agent=agent, 
+                ticket_type_id = specialization['ticket_type_id']
+            )
+                
+        return agent
+    
+    
+    def update(self, instance, validated_data):
+        specializations_data = validated_data.pop('specializations', [])
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        instance.specializations.all().delete()
+
+        for specialization in specializations_data:
+            Specialization.objects.create(
+                agent=instance,
+                ticket_type_id=specialization['ticket_type_id']
+            )
+
+        return instance
+                
         
         
 class TicketSerializer(serializers.ModelSerializer):
@@ -72,7 +128,36 @@ class TicketSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
     
     
+class MostSentTicketTypeSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    count = serializers.IntegerField()
+    
+    
 class DashboardSerializer(serializers.Serializer):
     dashboard_counts = serializers.DictField()
     latest_ticket = TicketSerializer()
-
+    most_sent_ticket_type = serializers.SerializerMethodField()
+    
+    def get_most_sent_ticket_type(self, obj):
+        now = timezone.now()
+        month = now.month
+        year = now.year
+        
+        queryset = (Ticket.objects.filter(
+            created_at__year=year, created_at__month=month
+            )
+            .values('ticket_type__name')
+            .annotate(total=Count('id'))
+            .order_by('-total')
+        )
+        
+        if not queryset:
+            return None
+        
+        top = queryset[0]
+        
+        return {
+            'ticket_type': top['ticket_type__name'],
+            'count': top['total']
+        }

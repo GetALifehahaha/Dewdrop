@@ -7,6 +7,7 @@ class Department(models.Model):
 
     def __str__(self):
         return self.name
+    
 
 class Agent(models.Model):
     first_name = models.CharField(max_length=50)
@@ -16,13 +17,21 @@ class Agent(models.Model):
     
     def __str__(self):
         return self.first_name + ' ' + self.last_name
+    
 
 class TicketType(models.Model):
     name = models.CharField(max_length=50)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="ticket_type")
 
     def __str__(self):
         return self.name
+    
+    
+class Specialization(models.Model):
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name="specializations")
+    ticket_type = models.ForeignKey(TicketType, on_delete=models.CASCADE, related_name="specializations")
+    
+    def __str__(self):
+        return f"{self.agent.first_name} {self.agent.last_name} - {self.ticket_type.name}"
     
     
 class Ticket(models.Model):
