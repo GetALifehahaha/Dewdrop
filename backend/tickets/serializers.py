@@ -128,7 +128,7 @@ class TicketSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Ticket
-        fields = ['id', 'title', 'description', 'requester', 'created_at', 'severity', 'severity_display', 'assigned_agent', 'assigned_agent_details', 'ticket_type', 'ticket_type_details', 'requester_details', 'status_display', 'status', 'resolved_at']
+        fields = ['id', 'title', 'description', 'requester', 'created_at', 'severity', 'severity_display', 'assigned_agent', 'assigned_agent_details', 'ticket_type', 'ticket_type_details', 'requester_details', 'status_display', 'status', 'resolved_at', 'image']
         read_only_fields = ['id', 'resolved_at', 'severity_display', 'status_display', 'assigned_agent_details', 'requester_details']
     
     def get_fields(self):

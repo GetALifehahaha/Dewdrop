@@ -3,8 +3,8 @@ import useTicket from '../hooks/useTicket';
 import useAgent from '../hooks/useAgent';
 import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay, Guard, Toast ,ConfirmationModal } from '../components/molecules';
-import { StatusDisplayBar } from '../components/organisms'
-import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X, Trash2, ALargeSmall } from 'lucide-react';
+import { PreviewImage, StatusDisplayBar } from '../components/organisms'
+import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X, Trash2, ALargeSmall, Image } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
@@ -18,6 +18,7 @@ const TicketDetails = () => {
     const [showAgents, setShowAgents] = useState(false);
     const [chosenAgentId, setChosenAgentId] = useState(-1);
     const [deleted, setDeleted] = useState(false);
+    const [showPreviewImage, setShowPreviewImage] = useState(true);
     
     useEffect(() => {
         if (toastMessages.length > 0) {
@@ -70,10 +71,7 @@ const TicketDetails = () => {
         {label: ticketData.id, link: `/tickets/${ticketData.id}`},
     ]
 
-    console.log(ticketData)
-    console.log(agentData.results)
-
-    const sortedAgents = [...agentData.results].sort((a, b) => {
+    const sortedAgents = [...agentData].sort((a, b) => {
         const matchA = a.department == ticketData.ticket_type_details.department ? 0 : 1
         const matchB = b.department == ticketData.ticket_type_details.department ? 0 : 1
 
@@ -142,6 +140,15 @@ const TicketDetails = () => {
         await patchTicket(ticketData.id, {status: "resolved"});
 
         refresh()
+    }
+
+    const handleShowPreview = () => {
+        console.log("fafa")
+        setShowPreviewImage(true);
+    }
+    
+    const handleClosePreview = () => {
+        setShowPreviewImage(false);
     }
 
     if (deleted) return <div className='flex justify-center items-center w-full h-full flex-col text-text'><Trash className='text-text/50 animate-bounce' /><h5 className='font-semibold text-40'>Ticket has been deleted!</h5></div>
@@ -261,7 +268,15 @@ const TicketDetails = () => {
                         </div>}
                     </div>
                 </div>
+            </div>
 
+
+            {/* Status Block */}
+            <div className='py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4 items-center'>
+                <span className='mr-auto'>
+                    <Title text='Image' variant='blockTitle' icon={Image}/>
+                </span>
+                {ticketData.image ? <img src={ticketData.image} className='cursor-pointer p-2 rounded-md border-2 border-gray-200 object-contain' onClick={handleShowPreview}/> : <h5>No Image Sent</h5>}
             </div>
 
             {/* Status Block */}
@@ -335,6 +350,10 @@ const TicketDetails = () => {
             </div>}
 
             <ConfirmationModal messages={confirmationMessage} onSetResponse={handleDeleteTicket}/>
+
+            {showPreviewImage &&
+                <PreviewImage src={ticketData.image} onClose={handleClosePreview} />
+            }
         </>
     )
 }
