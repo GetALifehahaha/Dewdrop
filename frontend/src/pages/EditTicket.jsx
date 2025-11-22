@@ -4,17 +4,17 @@ import { Label, Title, Dropdown, Button } from '../components/atoms';
 import { Breadcrumbs, Toast } from '../components/molecules';
 import { Pen, X, Check } from 'lucide-react';
 import useTicket from '../hooks/useTicket';
+import useTicketType from '../hooks/useTicketType';
 
 const EditTicket = ({}) => {
     const {ticket_id} = useParams();
     const {ticketData, ticketError, ticketLoading, ticketResponse, patchTicket} = useTicket();
+    const {ticketTypeData, ticketTypeError, ticketTypeLoading} = useTicketType(); 
 
-    const [oldTitle, setOldTitle] = useState("");
     const [title, setTitle] = useState("");
-    const [oldDescription, setOldDescription] = useState("");
-    const [description, setDescription] = useState();
-    const [oldSeverity, setOldSeverity] = useState("");
-    const [severity, setSeverity] = useState();
+    const [description, setDescription] = useState("");
+    const [severity, setSeverity] = useState(null);
+    const [ticketType, setTicketType] = useState(null);
     const [errorMessages, setErrorMessages] = useState([]);
     const [toastMessages, setToastMessages] = useState([]);
 
@@ -23,15 +23,13 @@ const EditTicket = ({}) => {
         Medium: "medium",
         Urgent: "urgent",
     }
-    
+
     useEffect(() => {
         if (ticketData){
             setTitle(ticketData.title);
-            setOldTitle(ticketData.title)
             setDescription(ticketData.description);
-            setOldDescription(ticketData.description);
             setSeverity(ticketData.severity)
-            setOldSeverity(ticketData.severity)
+            setTicketType(ticketData?.ticket_type_details?.name)
         }
     }, [ticketData]);
 
@@ -61,10 +59,13 @@ const EditTicket = ({}) => {
 
     if (ticketLoading) return <p>Loading</p>
     if (ticketError) return <p>Error</p>  
+    if (ticketTypeLoading) return <p>Loading</p>
+    if (ticketTypeError) return <p>Error</p>  
     
     const handleSetTitle = (value) => setTitle(value);
     const handleSetDescription = (value) => setDescription(value);
     const handleSetSeverity = (value) => setSeverity(value);
+    const handleSetTicketType = (value) => setTicketType(value);
     
     const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
 
@@ -73,6 +74,11 @@ const EditTicket = ({}) => {
         {label: ticket_id, link: `/tickets/${ticket_id}`},
         {label: "Edit", link: `/tickets/${ticket_id}/edit`}
     ]
+
+    const ticketTypeSelections = ticketTypeData.reduce((acc, type) => {
+        acc[type.name] = type.id;
+        return acc;
+    }, {});
 
     const handleSubmitTicket = async () => {
         setErrorMessages([]);
@@ -84,18 +90,20 @@ const EditTicket = ({}) => {
         if (title && description && severity) {
             let params = {};
 
-            if (title != oldTitle) params = {title: title};
-            if (description != oldDescription) params = {...params, description: description};
-            if (severity != oldSeverity) params = {...params, severity: severity};
+            if (title != ticketData.title) params = {title: title};
+            if (description != ticketData.description) params = {...params, description: description};
+            if (severity != ticketData.severity) params = {...params, severity: severity};
+            if (ticketType != ticketData.ticket_type) params = {...params, ticket_type: ticketType};
 
             if (params) await patchTicket(ticketData.id, params);
         }
     }
 
     const handleResetDetails = () => {
-        setTitle(oldTitle);
-        setDescription(oldDescription);
-        setSeverity(oldSeverity);
+        setTitle(ticketData.title);
+        setDescription(ticketData.description);
+        setSeverity(ticketData.severity);
+        setTicketType(ticketData.ticket_type_details.name)
     }
 
     return (
@@ -119,9 +127,13 @@ const EditTicket = ({}) => {
                             size={40} 
                             className='px-6 py-2 rounded-md bg-main w-fit shadow-sm focus:shadow-md outline-none focus:outline-none'/> 
                         </div>
-                        <div className='p-2 w-40'>
+                        <div className='p-2'>
                             <Label text='Severity' required={true}/>
-                            <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>    
+                            <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>
+                        </div>
+                        <div className='p-2'>
+                            <Label text='Type' required={true}/>
+                            <Dropdown value={ticketType} selectName="Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
                         </div>
                     </div>
                     <div className='p-2 flex flex-col'>

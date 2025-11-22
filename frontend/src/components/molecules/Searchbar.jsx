@@ -8,27 +8,17 @@ import { DatePicker } from '.'
 const Searchbar = () => {
     const {ticketTypeData, ticketTypeLoading, ticketTypeError} = useTicketType();
     const [searchParams, setSearchParams] = useSearchParams();
-    const [input, setInput] = useState(searchParams.get("title") || "");
-    const [search, setSearch] = useState(searchParams.get("title") || "");
-    const [ticketType, setTicketType] = useState(searchParams.get("ticket_type") || null);
-    const [severity, setSeverity] = useState(searchParams.get("severity") || null);
-    const [startDate, setStartDate] = useState(searchParams.get("start_date") || null)
-    const [endDate, setEndDate] = useState(searchParams.get("end_date") || null)
+    const [input, setInput] = useState("");
+    const [search, setSearch] = useState("");
+    const [ticketType, setTicketType] = useState();
+    const [severity, setSeverity] = useState();
+    const [startDate, setStartDate] = useState()
+    const [endDate, setEndDate] = useState()
     const [filters, setFilters] = useState([]);
 
-    const severitySelections = {
-        Low: "low",
-        Medium: "medium",
-        Urgent: "urgent",
-    }
-
-    const ticketTypeSelections = ticketTypeData.reduce((acc, type) => {
-        acc[type.name] = type.id;
-        return acc;
-    }, {});
-
-    const handleSetSearch = (value) => {
-        setSearch(value);
+    const handleSetSearch = (e) => {
+        e.preventDefault();
+        setSearch(input);
     }
 
     const handleSetInput = (value) => {
@@ -67,15 +57,12 @@ const Searchbar = () => {
 
         if (severity) {
             params.set("severity", severity);
-            filters.push({ Severity: severity });
+            filters.push({ Severity: severitySelections.map((sev) => {if (sev.value == severity) return sev.name}) });
         }
 
         if (ticketType) {
             params.set("ticket_type", ticketType);
-            const ticketName = Object.keys(ticketTypeSelections).find(
-                (key) => ticketTypeSelections[key] === ticketType
-            );
-            filters.push({ "Ticket Type": ticketName });
+            filters.push({ "Ticket Type": ticketTypeSelections.map((type) => {if (type.value == ticketType) return type.name})});
         }
 
         if (startDate) {
@@ -103,13 +90,21 @@ const Searchbar = () => {
 
     const clearParameters = () => {
         setInput("")
-        setSearch();
-        setSeverity();
-        setTicketType();    
-        setStartDate();
-        setEndDate();
+        setSearch("");
+        setSeverity(null);
+        setTicketType(null);    
+        setStartDate(null);
+        setEndDate(null);
     }
-    
+
+    const severitySelections = [
+        {name: "Low", value: "low"},
+        {name: "Medium", value: "medium"},
+        {name: "Urgent", value: "urgent"},
+    ]
+
+    const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
+        
     useEffect(() => {
         handleSetParameters()
     }, [severity, search, ticketType, startDate, endDate]);
@@ -126,8 +121,10 @@ const Searchbar = () => {
     return (
         <div className='flex flex-col gap-1'>
             <div className='flex gap-2'>
-                <Input value={input} placeholder="Search tickets by title" icon={Search} onChange={handleSetInput}/>
-                <Button variant='block' text='' icon={Search} onClick={() => setSearch(input)}/>
+                <form onSubmit={(e) => handleSetSearch(e)}>
+                    <Input value={input} placeholder="Search tickets by title" icon={Search} onChange={handleSetInput}/>
+                </form>
+                <Button variant='block' text='' icon={Search} onClick={handleSetSearch}/>
                 <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>
                 <Dropdown value={ticketType} selectName="Ticket Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
                 <DatePicker label={'Start Date'} date={startDate} onSetDate={handleSetStartDate}/>
