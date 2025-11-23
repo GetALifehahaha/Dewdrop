@@ -25,6 +25,9 @@ import hashlib
 # for priority queue
 from django.db.models import Case, When, Value, IntegerField
 
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.http import require_http_methods
+
 # Create your views here.
 
 class TicketViewSet(viewsets.ModelViewSet):
@@ -125,13 +128,11 @@ class TicketViewSet(viewsets.ModelViewSet):
             
             send_email(requester_email, subject, html)
             
-            def generate_resolve_token(ticket_id, agent_id, secret_key):
-                data = f"{ticket_id}:{agent_id}:{secret_key}"
-                return hashlib.sha256(data.encode()).hexdigest()[:32]    
+            
             
             if agent:
-                token = generate_resolve_token(updated_ticket.id, agent.id, "your-secret-key")
-                resolve_url = f"https://yourserver.com/api/tickets/{updated_ticket.id}/resolve?token={token}&agent_id={agent.id}"
+                token = generate_resolve_token(updated_ticket.id, agent.id, secret_key)
+                resolve_url = f"https://science-copying-lou-pharmacy.trycloudflare.com/tickets/tickets/{updated_ticket.id}/resolve?token={token}&agent_id={agent.id}"   
                 
                 subject = "You have been assigned a ticket!"
                 html = f"""
@@ -180,6 +181,41 @@ class TicketViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
             
 resend.api_key = settings.RESEND_API_KEY
+secret_key = settings.SECRET_KEY
+
+
+
+def generate_resolve_token(ticket_id, agent_id, secret_key):
+                data = f"{ticket_id}:{agent_id}:{secret_key}"
+                return hashlib.sha256(data.encode()).hexdigest()[:32]    
+
+@require_http_methods(["GET"])
+def resolve_ticket(request, ticket_id):
+    token = request.GET.get('token')
+    agent_id = request.GET.get('agent_id')
+    
+    # Verify token
+    expected_token = generate_resolve_token(ticket_id, int(agent_id), secret_key)
+    
+    if token != expected_token:
+        return HttpResponse("<h1>❌ Invalid or expired link</h1>", status=403)
+    
+    # Update ticket status
+    try:
+        ticket = Ticket.objects.get(id=ticket_id)
+        ticket.status = "resolved"
+        ticket.save()
+        
+        return HttpResponse("""
+            <html>
+                <body style="font-family: Arial; text-align: center; padding: 50px;">
+                    <h1 style="color: #4CAF50;">✓ Ticket Marked as Resolved!</h1>
+                    <p>The ticket has been successfully updated.</p>
+                </body>
+            </html>
+        """)
+    except Ticket.DoesNotExist:
+        return HttpResponse("<h1>❌ Ticket not found</h1>", status=404)
 
 def send_email(to_emails, subject, html_content):
     

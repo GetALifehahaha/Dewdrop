@@ -162,5 +162,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # set credentials
 # CHANGE THIS WHEN PUSHING!!!!
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWS_CREDENTIALS = True
+ALLOWED_HOSTS = [
+    'localhost',
+    'science-copying-lou-pharmacy.trycloudflare.com',
+    '127.0.0.1'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://science-copying-lou-pharmacy.trycloudflare.com',
+    'http://localhost:5173',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'https://science-copying-lou-pharmacy.trycloudflare.com',
+    'http://localhost:5173', 
+    'http://localhost:3000', 
+]
+
+CORS_ALLOWS_CREDENTIAL = True
