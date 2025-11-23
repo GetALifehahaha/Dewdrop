@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import useAgent from '../hooks/useAgent';
 import { Title } from '../components/atoms';
-import { Edit, X } from 'lucide-react';
+import { Edit } from 'lucide-react';
+import { EditAgent } from '../components/organisms';
 
 const Agents = () => {
 
     const {agentData, agentError, agentLoading} = useAgent();
-    const [editAgentId, setEditAgentId] = useState(null);
+    const [editAgent, setEditAgent] = useState(null);
 
     if (agentLoading) return <h5>Loading agents...</h5>
     if (agentError) return <h5>Failed to load agent</h5>
 
-    const handleEditAgentId = (value) => {
-        setEditAgentId(value);
+    const handleSetEditAgent = (agent) => {
+        setEditAgent(agent)
     }
 
-    const handleRemoveEditAgentId = () => setEditAgentId(null)
+    const handleConfirmEditAgent = (value) => {
+        
+    }
+
+    const handleRemoveEditAgent = () => setEditAgent(null);
 
     const listAgents = agentData.map((agent, index) => 
         <div className='relative' key={index}>
@@ -33,24 +38,9 @@ const Agents = () => {
                 <div className='flex flex-row items-center w-full gap-4 mr-auto'>
                     {agent.specializations.map((spec, index) => <h5 key={index} className='text-xs text-text/50 font-semibold'>{spec.name}</h5>)}
 
-                    {index == editAgentId 
-                        ? <Edit className='ml-auto text-text/50 cursor-pointer' size={16} onClick={handleRemoveEditAgentId}/>
-                        : <Edit className='ml-auto text-text/75 cursor-pointer' size={16} onClick={() => handleEditAgentId(index)}/>
-                    }
+                    <Edit className='ml-auto text-text/75 cursor-pointer' size={16} onClick={() => handleSetEditAgent(agent)}/>
                 </div>
             </div>
-
-            {
-                index == editAgentId &&
-
-                <div className='flex items-center gap-4 p-6 rounded-md shadow-sm bg-main hover:shadow-lg absolute -bottom-2 translate-y-full w-full'>
-                    <div>
-                        <h5 className='font-medium text-text'>Edit Agent</h5>
-                        <h5 className='font-medium text-text/50 text-sm'>{agent.email}</h5>
-                    </div>
-                    <h5 className='text-text font-medium self-start ml-auto'>{agent.department_details.name}</h5>
-                </div>
-            }
         </div>
     )
 
@@ -61,6 +51,9 @@ const Agents = () => {
             <div className='p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4'>
                 {listAgents}
             </div>
+
+            {editAgent &&
+            <EditAgent agentDetails={editAgent} editAgent={handleConfirmEditAgent} onClose={handleRemoveEditAgent} />}
         </>
     )
 }

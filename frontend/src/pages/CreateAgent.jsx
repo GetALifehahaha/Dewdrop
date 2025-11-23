@@ -68,7 +68,6 @@ const CreateAgent = () => {
         setSpecializations(prev => prev.map((spec, i) => i === index ? { ticket_type_id: value } : spec));
     };
 
-
     const departmentSelections = departmentData.map((type) => {return {name: type.name, value: type.id}})
     const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
 

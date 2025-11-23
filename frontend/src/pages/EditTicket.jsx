@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Label, Title, Dropdown, Button } from '../components/atoms';
 import { Breadcrumbs, Toast } from '../components/molecules';
-import { Pen, X, Check, ArrowLeft, RotateCcw, Upload, Loader2  } from 'lucide-react';
+import { Pen, X, Check, ArrowLeft, Upload, Loader2  } from 'lucide-react';
 import useTicket from '../hooks/useTicket';
 import useTicketType from '../hooks/useTicketType';
 import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '../services/constants';
@@ -16,6 +16,7 @@ const EditTicket = ({}) => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [severity, setSeverity] = useState(null);
+    const [displayType, setDisplayType] = useState(null);
     const [ticketType, setTicketType] = useState(null);
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
@@ -29,7 +30,7 @@ const EditTicket = ({}) => {
             setTitle(ticketData.title);
             setDescription(ticketData.description);
             setSeverity(ticketData.severity)
-            setTicketType(ticketData.ticket_type)
+            setDisplayType(ticketData.ticket_type_details?.name)
             setImage(ticketData.image)
             setImagePreview(ticketData.image)
 
@@ -132,7 +133,7 @@ const EditTicket = ({}) => {
             if (title != ticketData.title) params = {title: title};
             if (description != ticketData.description) params = {...params, description: description};
             if (severity != ticketData.severity) params = {...params, severity: severity};
-            if (ticketType != ticketData.ticket_type) params = {...params, ticket_type: ticketType};
+            if (ticketType) params = {...params, ticket_type: ticketType};
 
             let imageUrl = null;
 
@@ -213,7 +214,7 @@ const EditTicket = ({}) => {
                         </div>
                         <div className='p-2'>
                             <Label text='Type' required={true}/>
-                            <Dropdown value={ticketType} selectName="Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
+                            <Dropdown value={ticketType || displayType} selectName="Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
                         </div>
                     </div>
                     <div className='p-2 flex flex-col'>

@@ -235,7 +235,7 @@ const TicketDetails = () => {
                         </div>}
 
                         {/* Requester Information */}
-                        {user.groups == "Managers" && 
+                        {user.groups == "Managers" && ticketData.requester_details && 
                         <div className='flex flex-col gap-2'>
                             <Title variant='blockTitle' text='Requester' icon={CheckCircleIcon}/>
                             <div className='flex flex-col gap-4'>
@@ -277,7 +277,7 @@ const TicketDetails = () => {
             </div>
 
 
-            {/* Status Block */}
+            {/* Image Block */}
             <div className='py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4 items-center'>
                 <span className='mr-auto'>
                     <Title text='Image' variant='blockTitle' icon={Image}/>
@@ -296,7 +296,7 @@ const TicketDetails = () => {
                 <Title text='Status' variant='blockTitle' icon={Loader2}/>
                 <StatusDisplayBar currentStatus={ticketData.status}/>
             </div>
-
+            
             {/* Agent Block */}
             {user.groups == "Managers" ? 
             <div className='py-6 px-8 bg-main rounded-2xl shadow-sm flex flex-col gap-4'>
