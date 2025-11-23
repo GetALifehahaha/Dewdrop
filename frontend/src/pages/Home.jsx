@@ -62,7 +62,7 @@ const Home = () => {
 							{listDashboardCard}
 
 							{
-								mostSent &&
+								mostSent && user.groups[0] == "Managers" &&
 
 								<div className='p-6 rounded-lg border border-main-dark shadow-sm'>
 									<h5 className='font-medium text-text'>Popular: <strong>{mostSent.ticket_type}</strong></h5>

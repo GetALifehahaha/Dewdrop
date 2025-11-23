@@ -1,10 +1,10 @@
 import React, {useState, useContext, useEffect} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
-import {SquareUser, UserPlus} from 'lucide-react'
+import {Loader2, SquareUser, UserPlus} from 'lucide-react'
 import { AuthContext } from '../../context/AuthContext';
 import { GoogleLoginService } from '../../services';
 import { Toast } from '../molecules';
-import { X } from 'lucide-react';
+import { X, Check } from 'lucide-react';
 
 const LoginSignupForm = ({method}) => {
   // context variables
@@ -16,10 +16,10 @@ const LoginSignupForm = ({method}) => {
   const [username, setUsername] = useState("");
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordAgain, setPasswordAgain] = useState("")
   const [toastMessages, setToastMessages] = useState([]);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
+  const navigate = useNavigate();
   // content variables
   const title = method == 'login' ? 'Welcome back!' : 'Hello there!'
   const greeting = method == 'login' ? 'Log in to continue requesting tickets!' : 'Sign up to start requesting tickets!'
@@ -35,28 +35,60 @@ const LoginSignupForm = ({method}) => {
   // form function
   const submitForm = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
-      if (method == "login") {
-        await login(username, password);
-        navigate('/');
-      } else if (method == "signup") {
-        if ( password != passwordAgain) {
-          alert("Password doesn't match. ");
+      if (method === "login") {
+        const result = await login(username, password);
+
+        if (result.success) {
+          setToastMessages([
+            { message: "Login successful! Redirecting...", status: "success", icon: Check }
+          ]);
+          setTimeout(() => navigate('/'), 1000);
+        } else {
+          setToastMessages([
+            { message: "No account found with this credentials", status: "error", icon: X }
+          ]);
+        }
+        
+      } else if (method === "signup") {
+        if (password !== passwordAgain) {
+          setToastMessages([
+            { message: "Passwords don't match", status: "error", icon: X }
+          ]);
           return;
         }
 
-        await register(username, password, firstName, lastName, emailAddress);
-        navigate('/login');
+        const result = await register(username, password, firstName, lastName, emailAddress);
+        
+        if (result.success) {
+          setToastMessages([
+            { message: "Registration successful! Please login.", status: "success", icon: Check }
+          ]);
+          setTimeout(() => navigate('/login'), 1000);
+        } else {
+          let errorMessage = "Registration failed";
+          
+          if (typeof result.error === 'object') {
+            const firstError = Object.values(result.error)[0];
+            errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
+          } else {
+            errorMessage = result.error || errorMessage;
+          }
+          setToastMessages([
+            { message: errorMessage, status: "error", icon: X }
+          ]);
+        }
       }
-
     } catch (err) {
-      console.log(err)
       setToastMessages([
-            { message: err.response.data.detail, status: "error", icon: X },
+        { message: "An unexpected error occurred. Please try again.", status: "error", icon: X }
       ]);
+    } finally {
+      setLoading(false); // Optional: reset loading state
     }
-  }
+}
 
   return (
     <div className='w-full h-screen flex flex-row justify-between p-6 text-text font-medium'>
@@ -142,23 +174,13 @@ const LoginSignupForm = ({method}) => {
                   Password
                 </h5>
                 <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Enter your password' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
-                {(method == 'signup') ? 
-                  <input onChange={(e) => setPasswordAgain(e.target.value)} type="password" placeholder='Enter password again' className='px-6 py-2 mt-1 bg-main-light w-full rounded-sm shadow-sm'/> : ''
-                }
               </div>
 
-              {/* Other options block */}
-              {(method == 'login') ?  
-                <div className='flex flex-row justify-between text-text/50'>
-                  <div className="flex gap-2">
-                    <input type='checkbox' className='cursor-pointer hover:text-text/75' /> {/* Should be a checkbox */}
-                    <label className='cursor-pointer hover:text-text/75'>Remember me</label>
-                  </div>
-                  <h5 className='cursor-pointer hover:text-text/75'>Forgot Password</h5>
-                </div> : ''
+              {
+                loading
+                ? <div className='flex gap-2 items-center mx-auto py-2 mt-4 font-semibold text-base'><Loader2 size={18} className='animate-spin' /> {method ? <h5 className='animate-pulse'>Logging in...</h5> : <h5 className='animate-pulse'>Signing up...</h5>}</div>
+                : <button type='submit' className='w-fit px-24 py-2 mt-4 mx-auto rounded-2xl bg-accent-deepblue text-main cursor-pointer'>{submitButton}</button>
               }
-
-              <button type='submit' className='w-fit px-24 py-2 mt-4 mx-auto rounded-2xl bg-accent-deepblue text-main cursor-pointer'>{submitButton}</button>
             
               <hr className='text-text/25 my-4 w-7/8 mx-auto rounded-full'/>
 

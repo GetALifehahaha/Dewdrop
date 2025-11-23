@@ -2,9 +2,10 @@ import React, {useState, useEffect} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Label, Title, Dropdown, Button } from '../components/atoms';
 import { Breadcrumbs, Toast } from '../components/molecules';
-import { Pen, X, Check, ArrowLeft, RotateCcw,  } from 'lucide-react';
+import { Pen, X, Check, ArrowLeft, RotateCcw, Upload, Loader2  } from 'lucide-react';
 import useTicket from '../hooks/useTicket';
 import useTicketType from '../hooks/useTicketType';
+import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '../services/constants';
 
 const EditTicket = ({}) => {
     const {ticket_id} = useParams();
@@ -16,6 +17,10 @@ const EditTicket = ({}) => {
     const [description, setDescription] = useState("");
     const [severity, setSeverity] = useState(null);
     const [ticketType, setTicketType] = useState(null);
+    const [image, setImage] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [imageUploading, setImageUploading] = useState(false);
+    const [imageRemoved, setImageRemoved] = useState();
     const [errorMessages, setErrorMessages] = useState([]);
     const [toastMessages, setToastMessages] = useState([]);
 
@@ -24,7 +29,10 @@ const EditTicket = ({}) => {
             setTitle(ticketData.title);
             setDescription(ticketData.description);
             setSeverity(ticketData.severity)
-            setTicketType(ticketData?.ticket_type_details?.name)
+            setTicketType(ticketData.ticket_type)
+            setImage(ticketData.image)
+            setImagePreview(ticketData.image)
+
         }
     }, [ticketData]);
 
@@ -78,6 +86,39 @@ const EditTicket = ({}) => {
     
     const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
 
+    const handleImageChange = (e) => {
+        setImageRemoved(false);
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                setErrorMessages(prev => [...prev, "Please upload a valid image file"]);
+                return;
+            }
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                setErrorMessages(prev => [...prev, "Image size should be less than 5MB"]);
+                return;
+            }
+
+            setImage(file);
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setImageRemoved(true);
+        setImage(null);
+        setImagePreview(null);
+    };
+
     const handleSubmitTicket = async () => {
         setErrorMessages([]);
 
@@ -93,23 +134,61 @@ const EditTicket = ({}) => {
             if (severity != ticketData.severity) params = {...params, severity: severity};
             if (ticketType != ticketData.ticket_type) params = {...params, ticket_type: ticketType};
 
+            let imageUrl = null;
+
+            if (imageRemoved && ticketData.image) {
+                params = {...params, image: null};
+            }
+            else if (image && typeof image !== 'string') {
+                setImageUploading(true);
+                try {
+                    imageUrl = await uploadToCloudinary(image);
+                    params = {...params, image: imageUrl}
+                } catch (error) {
+                    setErrorMessages(prev => [...prev, "Failed to upload image. Please try again."]);
+                    setImageUploading(false);
+                    return;
+                }
+                setImageUploading(false);
+
+            }
+
             if (params) await patchTicket(ticketData.id, params);
         }
     }
 
-    const handleResetDetails = () => {
-        setTitle(ticketData.title);
-        setDescription(ticketData.description);
-        setSeverity(ticketData.severity);
-        setTicketType(ticketData.ticket_type)
-    }
+    const uploadToCloudinary = async (imageFile) => {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+        try {
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error('Failed to upload image');
+            }
+
+            const data = await response.json();
+            return data.secure_url; // Returns the Cloudinary URL
+        } catch (error) {
+            console.error('Cloudinary upload error:', error);
+            throw error;
+        }
+    };
 
     return (
         <>
             <Toast toastMessages={toastMessages} />
             <div className="flex flex-col gap-1">
-                <div className='flex gap-2'>
-                    <Button text='' icon={ArrowLeft} variant='icon' onClick={() => navigate(`/tickets/${ticket_id}`)}/>
+                <div className='flex gap-2 items-center'>
+                    <ArrowLeft className='text-text/75 cursor-pointer' size={18} />
                     <Title text='Details' />
                 </div>
                 <Breadcrumbs breadcrumb={breadcrumb}/>
@@ -147,7 +226,36 @@ const EditTicket = ({}) => {
                         </textarea> 
                     </div>
                     <div className='p-2 flex flex-col'>
-                        <Label text='Images' />
+                        <Label text='Image' />
+                        <div className='mt-2'>
+                            {imagePreview ? (
+                                <div className='relative inline-block'>
+                                    <img 
+                                        src={imagePreview} 
+                                        alt="Preview" 
+                                        className='max-w-xs max-h-48 rounded-md border-2 border-gray-200'
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={handleRemoveImage}
+                                        className='absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 cursor-pointer'
+                                    >
+                                        <X size={16} />
+                                    </button>
+                                </div>
+                            ) : (
+                                <label className='flex items-center gap-2 px-4 py-2 bg-main-white border border-main-dark shadow-sm rounded-md cursor-pointer hover:bg-gray-200 w-fit'>
+                                    <Upload size={16} />
+                                    <span>Upload Image</span>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageChange}
+                                        className='hidden'
+                                    />
+                                </label>
+                            )}
+                        </div>
                     </div>
 
                     {errorMessages && 
@@ -155,9 +263,16 @@ const EditTicket = ({}) => {
                         {listErrorMessages}
                     </div>}
                     
-                    <div className='ml-auto flex gap-2'>
-                        <Button text='Reset' onClick={handleResetDetails} icon={RotateCcw}/>
-                        <Button text='Save' onClick={handleSubmitTicket}/>
+                    <div className='mx-auto mt-18'>
+                        {ticketResponse ? 
+                        <h5 className='text-accent-deepblue font-semibold'>Ticket Edited Successfully!</h5> :
+                            (ticketLoading || imageUploading) ? 
+                            <h5 className='flex gap-2 items-center'>
+                                <Loader2 className='text-accent-blue animate-spin' size={16}/>
+                                {imageUploading ? 'Uploading image...' : 'Submitting your ticket'}
+                            </h5> :
+                            <Button text='Save Changes' onClick={handleSubmitTicket}/>
+                        }
                     </div>
                 </div>
             </div>

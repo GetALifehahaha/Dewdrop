@@ -4,7 +4,7 @@ import useAgent from '../hooks/useAgent';
 import { Title, DateTime, Label, Button } from '../components/atoms';
 import { Breadcrumbs, SeverityDisplay, Guard, Toast ,ConfirmationModal } from '../components/molecules';
 import { PreviewImage, StatusDisplayBar } from '../components/organisms'
-import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X, Trash2, ALargeSmall, Image } from 'lucide-react';
+import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X, Trash2, ALargeSmall, Image, ImageOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
@@ -18,7 +18,7 @@ const TicketDetails = () => {
     const [showAgents, setShowAgents] = useState(false);
     const [chosenAgentId, setChosenAgentId] = useState(-1);
     const [deleted, setDeleted] = useState(false);
-    const [showPreviewImage, setShowPreviewImage] = useState(true);
+    const [showPreviewImage, setShowPreviewImage] = useState(false);
     
     useEffect(() => {
         if (toastMessages.length > 0) {
@@ -72,20 +72,20 @@ const TicketDetails = () => {
     ]
 
     const sortedAgents = [...agentData].sort((a, b) => {
-        const matchA = a.department == ticketData.ticket_type_details.department ? 0 : 1
-        const matchB = b.department == ticketData.ticket_type_details.department ? 0 : 1
+        const matchA = a.specializations.some(spec => spec.name == ticketData.ticket_type_details.name) ? 0 : 1
+        const matchB = b.specializations.some(spec => spec.name == ticketData.ticket_type_details.name) ? 0 : 1
 
-        return matchA - matchB
+        return matchA - matchB 
     })
 
     const listAgents = sortedAgents.map((agent, index) => 
         <div key={index} className={`py-2 px-4 rounded-md shadow-sm 'bg-main' hover:bg-main-hover cursor-pointer flex flex-col gap-1 relative`} onClick={() => handleSetChosenAgent(agent.id)}>
             {chosenAgentId == agent.id && 
-            <div className='content-[""] absolute -left-2 top-1/2 w-4 h-4 aspect-square bg-accent-blue -translate-y-1/2 rounded-full'>
+            <div className='content-[""] absolute -left-2 top-1/2 w-1 h-3/4 bg-accent-blue -translate-y-1/2 rounded-full'>
 
             </div>
             }
-            {agent.department === ticketData.ticket_type_details.department &&
+            {agent.specializations.some(spec => spec.name == ticketData.ticket_type_details.name) &&
                 <h5 className='absolute px-4 py-1 right-4 top-1/2 bg-green-500 shadow-sm -translate-y-1/2 rounded-full text-sm font-bold text-main animate-pulse'>RECOMMENDED</h5>
             }
             <div className='font-semibold flex text-text gap-1'>
@@ -98,10 +98,16 @@ const TicketDetails = () => {
                 <h5 className='ml-4 font-semibold text-text/50'>
                     {agent.department_details.name}
                 </h5>
+
             </div>
+
             <h5 className='font-medium text-text/75'>
                 {agent.email} 
             </h5>
+            <div className='flex gap-2'>
+                {agent.specializations.map((spec) => <h5 className={`${ticketData.ticket_type_details.id === spec.id ? 'text-text font-bold' : 'text-text/50 font-semibold'}  text-sm`}>{spec.name}</h5>)}
+            </div>
+
         </div>)
 
     const handleRedirectToEdit = () => navigate(`edit`);
@@ -276,7 +282,13 @@ const TicketDetails = () => {
                 <span className='mr-auto'>
                     <Title text='Image' variant='blockTitle' icon={Image}/>
                 </span>
-                {ticketData.image ? <img src={ticketData.image} className='cursor-pointer p-2 rounded-md border-2 border-gray-200 object-contain' onClick={handleShowPreview}/> : <h5>No Image Sent</h5>}
+                {ticketData.image 
+                ?   <img src={ticketData.image} className='cursor-pointer p-2 rounded-md border-2 border-gray-200 object-contain' onClick={handleShowPreview}/> 
+                :   <div className='flex flex-col gap-8 justify-center items-center'>
+                        <ImageOff size={96} className='text-text/25 '/>
+                        <h5 className='text-md font-semibold text-text/50'>No Image Sent</h5>
+                    </div>
+                }
             </div>
 
             {/* Status Block */}

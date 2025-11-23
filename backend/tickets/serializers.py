@@ -138,7 +138,7 @@ class TicketSerializer(serializers.ModelSerializer):
         allowed_fields = []
         
         if user.groups.filter(name="Requesters").exists():
-            allowed_fields = ['title', 'description', 'severity', 'ticket_type']
+            allowed_fields = ['title', 'description', 'severity', 'ticket_type', 'image']
                     
         elif user.groups.filter(name="Managers").exists():
             if self.context['request'].method == 'POST':

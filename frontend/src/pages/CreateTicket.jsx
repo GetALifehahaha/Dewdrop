@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Title, Label, Input, Textarea, Dropdown, Button } from '../components/atoms'
 import { Toast } from '../components/molecules'
+import { X, Pen, Upload, Loader2, Check, } from 'lucide-react';
 import useTicket from '../hooks/useTicket';
-import { X, Pen, Upload, Loader2, Check, Image as ImageIcon  } from 'lucide-react';
 import useTicketType from '../hooks/useTicketType';
 import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '../services/constants';
 
@@ -144,7 +144,7 @@ const CreateTicket = () => {
                 setImageUploading(false);
             }
 
-            console.log ({title: title, description: description, severity: severity, ticket_type: ticketType, image: imageUrl});
+            await postTicket({title: title, description: description, severity: severity, ticket_type: ticketType, image: imageUrl});
         }
     }
 

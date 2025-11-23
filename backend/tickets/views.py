@@ -19,6 +19,8 @@ from django.db.models import Count, Q
 # for email
 import resend
 from django.conf import settings
+import secrets
+import hashlib
 
 # for priority queue
 from django.db.models import Case, When, Value, IntegerField
@@ -123,7 +125,14 @@ class TicketViewSet(viewsets.ModelViewSet):
             
             send_email(requester_email, subject, html)
             
+            def generate_resolve_token(ticket_id, agent_id, secret_key):
+                data = f"{ticket_id}:{agent_id}:{secret_key}"
+                return hashlib.sha256(data.encode()).hexdigest()[:32]    
+            
             if agent:
+                token = generate_resolve_token(updated_ticket.id, agent.id, "your-secret-key")
+                resolve_url = f"https://yourserver.com/api/tickets/{updated_ticket.id}/resolve?token={token}&agent_id={agent.id}"
+                
                 subject = "You have been assigned a ticket!"
                 html = f"""
                     <h2>Hello, {agent_full_name}</h2>
@@ -131,6 +140,15 @@ class TicketViewSet(viewsets.ModelViewSet):
                     <p>Severity: {updated_ticket.severity}</p>
                     <p>Description: {updated_ticket.description}</p>
                     <p>Requester: {requester_name}</p>
+                    
+                    <p style="margin-top: 20px;">
+                        <a href="{resolve_url}" 
+                        style="background-color: #4CAF50; color: white; padding: 10px 20px; 
+                                text-decoration: none; border-radius: 5px; display: inline-block;">
+                            Mark as Resolved
+                        </a>
+                    </p>
+                    
                     <p>Thank you for using Dewdrop!</p>
                 """ 
                 

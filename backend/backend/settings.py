@@ -55,6 +55,7 @@ SIMPLE_JWT = {
 }
 
 RESEND_API_KEY = config('RESEND_EMAIL_API')
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
 
 
 # Application definition

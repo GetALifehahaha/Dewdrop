@@ -30,8 +30,8 @@ const Agents = () => {
                         <h5 className='text-text font-medium self-start ml-auto'>{agent.department_details.name}</h5>
                     </div>
                 </div>
-                <div className='flex flex-row items-center w-full gap-1 mr-auto'>
-                    {agent.specializations.map((spec, index) => <h5 key={index} className='text-sm text-text/50 font-semibold'>{spec.name}</h5>)}
+                <div className='flex flex-row items-center w-full gap-4 mr-auto'>
+                    {agent.specializations.map((spec, index) => <h5 key={index} className='text-xs text-text/50 font-semibold'>{spec.name}</h5>)}
 
                     {index == editAgentId 
                         ? <Edit className='ml-auto text-text/50 cursor-pointer' size={16} onClick={handleRemoveEditAgentId}/>

@@ -11,22 +11,9 @@ export const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
     const [isAuthorized, setIsAuthorized] = useState(null);
     const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const initApp = async () => {
-            try {
-                await auth();
-            } catch {
-                setIsAuthorized(false);
-                setUser(null);
-                navigate('/login');
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        initApp();
+        auth().finally(() => setLoading(false));
     }, []);
 
     const auth = async () => {
@@ -38,15 +25,21 @@ export const AuthProvider = ({children}) => {
             return;        
         }
 
-        const decodedToken = jwtDecode(accessToken);
-        const tokenExpiration = decodedToken.exp;
-        const currentDate = Date.now() / 1000;
+        try {
+            const decodedToken = jwtDecode(accessToken);
+            const tokenExpiration = decodedToken.exp;
+            const currentDate = Date.now() / 1000;
 
-        if (tokenExpiration < currentDate){
-            await refreshToken();
-        } else {
-            await getUserData();
-            setIsAuthorized(true);
+            if (tokenExpiration < currentDate){
+                await refreshToken();
+            } else {
+                await getUserData();
+                setIsAuthorized(true);
+            }
+        } catch (err) {
+            console.error('Authentication failed:', err);
+            setUser(null);
+            setIsAuthorized(false);
         }
     }
 
@@ -67,6 +60,9 @@ export const AuthProvider = ({children}) => {
             await getUserData();
             setIsAuthorized(true);
         } catch (err) {
+            // Clear invalid tokens
+            localStorage.removeItem(ACCESS_TOKEN);
+            localStorage.removeItem(REFRESH_TOKEN);
             setUser(null);
             setIsAuthorized(false);
         }
@@ -83,23 +79,35 @@ export const AuthProvider = ({children}) => {
     }
 
     const login = async (username, password) => {
-        const response = await api.post('/authentication/token/', {username, password});
+        try {
+            const response = await api.post('/authentication/token/', {username, password});
 
-        localStorage.setItem(ACCESS_TOKEN, response.data.access);
-        localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+            localStorage.setItem(ACCESS_TOKEN, response.data.access);
+            localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
 
-        await getUserData();
-        setIsAuthorized(true);
+            await getUserData();
+            setIsAuthorized(true);
+            return { success: true };
+        } catch (err) {
+            console.error('Login failed:', err);
+            return { success: false, error: err.response?.data || err.message };
+        }
     }
 
     const googleLogin = async (token) => {
-        const response = await api.post('/authentication/google-auth/', {token: token});
+        try {
+            const response = await api.post('/authentication/google-auth/', {token: token});
 
-        localStorage.setItem(ACCESS_TOKEN, response.data.access);
-        localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
+            localStorage.setItem(ACCESS_TOKEN, response.data.access);
+            localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
 
-        await getUserData();
-        setIsAuthorized(true);
+            await getUserData();
+            setIsAuthorized(true);
+            return { success: true };
+        } catch (err) {
+            console.error('Google login failed:', err);
+            return { success: false, error: err.response?.data || err.message };
+        }
     }
     
     const logout = () => {
@@ -111,14 +119,18 @@ export const AuthProvider = ({children}) => {
 
     const register = async (username, password, first_name, last_name, email) => {
         try {
-            const response = await api.post('/authentication/user/register/', {username, password, first_name, last_name, email});
+            await api.post('/authentication/user/register/', {
+                username, password, first_name, last_name, email
+            });
+            return { success: true };
         } catch (err) {
-            alert(err)
+            console.error('Registration failed:', err);
+            return { success: false, error: err.response?.data || err.message };
         }
     }
 
     return (
-        <AuthContext.Provider value={{user, isAuthorized, setUser, login, googleLogin, register, setIsAuthorized, loading}}>
+        <AuthContext.Provider value={{user, isAuthorized, setUser, login, googleLogin, register, setIsAuthorized, loading, logout}}>
             {children}
         </AuthContext.Provider>
     )

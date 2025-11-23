@@ -22,8 +22,13 @@ const GoogleLoginService = ({method}) => {
     
     return (
         <GoogleLogin
+        type='standard'
+        text='continue_with'
+        theme='outline'
+        shape='pill'
         onSuccess={handleSuccess}
         onError={handleError}
+        locale="en"
         />
     )
 }

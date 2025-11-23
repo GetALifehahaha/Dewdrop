@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.models import User
+from django.conf import settings
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework import viewsets, generics
@@ -34,25 +35,57 @@ class GoogleAuthView(APIView):
     
     def post(self, request):
         token = request.data.get("token")
-        
-        print(token)
-        
         if not token:
             return Response({"error": "Token Missing"}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            id = id_token.verify_oauth2_token(token, requests.Request())
+            idinfo = id_token.verify_oauth2_token(
+                token, 
+                requests.Request(), 
+                settings.GOOGLE_CLIENT_ID,
+                clock_skew_in_seconds=10
+            )
             
-            email = id.get("email")
+            if idinfo['aud'] != settings.GOOGLE_CLIENT_ID:
+                print(f"✗ Audience mismatch!")
+                return Response({"error": "Invalid token audience"}, status=status.HTTP_400_BAD_REQUEST)
             
-            user = get_object_or_404(User, email=email)
+            email = idinfo.get("email")
+            
+            if not email:
+                print(f"✗ No email in token")
+                return Response({"error": "Email not found"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={
+                    'username': email.split('@')[0],
+                    'first_name': idinfo.get('given_name', ''),
+                    'last_name': idinfo.get('family_name', ''),
+                }
+            )
+            
+            print(f"✓ User {'created' if created else 'found'}: {user.email}")
             
             refresh = RefreshToken.for_user(user)
+            
+            print(f"✓ Tokens generated successfully")
+            print("=" * 50)
             
             return Response({
                 "access": str(refresh.access_token),
                 "refresh": str(refresh)
             })
             
-        except ValueError: 
-            return Response({"error": "Invalid Google Token"}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError as e:
+            print(f"✗ ValueError during token verification: {e}")
+            print(f"Error type: {type(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response({"error": f"Invalid Google Token: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(f"✗ Unexpected error: {e}")
+            print(f"Error type: {type(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response({"error": f"Authentication failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
