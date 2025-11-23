@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.conf import settings
 from rest_framework import status
 from rest_framework.views import APIView
@@ -65,12 +65,11 @@ class GoogleAuthView(APIView):
                 }
             )
             
-            print(f"✓ User {'created' if created else 'found'}: {user.email}")
+            if created:
+                requester, _ = Group.objects.get_or_create(name="Requesters")
+                user.groups.add(requester)
             
             refresh = RefreshToken.for_user(user)
-            
-            print(f"✓ Tokens generated successfully")
-            print("=" * 50)
             
             return Response({
                 "access": str(refresh.access_token),
@@ -78,14 +77,6 @@ class GoogleAuthView(APIView):
             })
             
         except ValueError as e:
-            print(f"✗ ValueError during token verification: {e}")
-            print(f"Error type: {type(e)}")
-            import traceback
-            traceback.print_exc()
             return Response({"error": f"Invalid Google Token: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            print(f"✗ Unexpected error: {e}")
-            print(f"Error type: {type(e)}")
-            import traceback
-            traceback.print_exc()
             return Response({"error": f"Authentication failed: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
