@@ -33,7 +33,7 @@ from django.views.decorators.http import require_http_methods
 class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
-    permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
         user = self.request.user
@@ -237,7 +237,7 @@ def send_email(to_emails, subject, html_content):
     
 class AgentViewSet(viewsets.ModelViewSet):
     queryset = Agent.objects.all().order_by('last_name')
-    permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
     
     def get_serializer_class(self):
@@ -271,14 +271,14 @@ class DashboardAPIView(APIView):
 class TicketTypeViewSet(viewsets.ModelViewSet):
     queryset = TicketType.objects.all()
     serializer_class = TicketTypeSerializer
-    permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
 
 
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
-    permission_classes = [permissions.DjangoModelPermissions, permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = None
     
     
