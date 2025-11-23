@@ -7,6 +7,7 @@ import { PreviewImage, StatusDisplayBar } from '../components/organisms'
 import { Hourglass, UserCircle, Loader2, ScrollText, Calendar, CheckCircleIcon, Trash, Pen, Check, X, Trash2, ALargeSmall, Image, ImageOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import emailjs from '@emailjs/browser';
 
 const TicketDetails = () => {
     const {user} = useContext(AuthContext);
@@ -19,6 +20,31 @@ const TicketDetails = () => {
     const [chosenAgentId, setChosenAgentId] = useState(-1);
     const [deleted, setDeleted] = useState(false);
     const [showPreviewImage, setShowPreviewImage] = useState(false);
+    const requesterTemplate = import.meta.env.VITE_REQUESTER_TEMPLATE_ID
+    const agentTemplate = import.meta.env.VITE_AGENT_TEMPLATE_ID
+    const serviceId = import.meta.env.VITE_EMAIL_SERVICE_ID
+
+    const sendEmail = async (templateId, templateParams) => {
+        console.log(templateParams)
+
+        try {
+            await emailjs.send(
+                serviceId,
+                templateId,
+                templateParams
+            );
+
+            console.log("Good!")
+        } catch (error) {
+            console.log({Bad: error})
+            setToastMessages([{
+                message: "Failed to send email: ", error,
+                status: "error",
+                icon: X
+            }]);
+        }
+    };
+
     
     useEffect(() => {
         if (toastMessages.length > 0) {
@@ -29,7 +55,27 @@ const TicketDetails = () => {
 
     const handlePatchTicket = async (method) => {
         if (method == "assessing") {
-            await patchTicket(ticketData.id, {status: "assessing"});
+            try {
+                await patchTicket(ticketData.id, {status: "assessing"});
+
+                const payload = {
+                    requester_email: ticketData.requester_details.email, 
+                    ticket_title: ticketData.title, 
+                    status: "Assessing", 
+                    requester_name: ticketData.requester_details.first_name, 
+                    header_message: `Your ticket: ${ticketData.title} is now under assessment.`,
+                    second_message: "Please wait for the Manager to assign an agent."
+                }
+
+                await sendEmail(requesterTemplate, payload)
+            } catch (err) {
+                setToastMessages({
+                    message: `Something went wrong: ${err}`,
+                    status: "error",
+                    icon: X
+                })
+            }
+
         }
         refresh();
     }
@@ -115,7 +161,7 @@ const TicketDetails = () => {
     const handleSetDeleteTicket = () => {
         setConfirmationMessage(["Are you sure you want to delete this ticket? This action cannot be undone."])
     }
-
+    
     const handleDeleteTicket = async (response) => {
         if (response) {
             await deleteTicket(ticketData.id)
@@ -136,20 +182,67 @@ const TicketDetails = () => {
     }
     
     const handleAssignAgent = async () => {
-        await patchTicket(ticketData.id, {assigned_agent: chosenAgentId, status: "assigned"});
+        const response = await patchTicket(ticketData.id, {assigned_agent: chosenAgentId, status: "assigned"});
+
+        if (!response || !response.data) {
+            console.error("Patch failed, stopping email send.");
+            return; 
+        }
+
+        const emailContext = response.data.email_context;
+        const resolveUrl = emailContext ? emailContext.resolve_url : null;
+
+        // 1. Send Email to Requester
+        const requesterPayload = {
+            requester_email: ticketData.requester_details.email,
+            ticket_title: ticketData.title,
+            status: "Assigned",
+            requester_name: `${ticketData.requester_details.first_name} ${ticketData.requester_details.last_name}`,
+            header_message: `Update here! Your ticket: ${ticketData.title} has been assigned to ${emailContext.agent_name}.`,
+            second_message: "Please wait for the agent to finish the task at hand"
+        };
+
+        await sendEmail(requesterTemplate, requesterPayload);
+
+        if (resolveUrl) {
+            const agentPayload = {
+                agent_name: emailContext.agent_name, 
+                agent_email: emailContext.agent_email,
+                ticket_title: ticketData.title,
+                header_message: `Hello there, agent! You have been assigned the ticket: ${ticketData.title}`,
+                second_message: 'Click the link below if you have resolved the ticket. Good luck!',
+                resolve_link: resolveUrl, 
+            };
+
+            await sendEmail(agentTemplate, agentPayload);
+        }
 
         refresh();
         setShowAgents(false);
     }
 
     const handleResolveTicket = async () => {
-        await patchTicket(ticketData.id, {status: "resolved"});
+        const response = await patchTicket(ticketData.id, {status: "resolved"});
 
-        refresh()
+        if (!response) {
+            console.error("Failed to resolve ticket in DB. Skipping email.");
+            return; 
+        }
+
+        const payload = {
+            requester_email: ticketData.requester_details.email,
+            ticket_title: ticketData.title,
+            status: "Resolved",
+            requester_name: `${ticketData.requester_details.first_name} ${ticketData.requester_details.last_name}`,
+            header_message: `Good news! Your ticket: ${ticketData.title} has been resolved.`,
+            second_message: "If you have further issues, please submit a new ticket."
+        };
+
+        await sendEmail(requesterTemplate, payload);
+        refresh();
     }
 
     const handleShowPreview = () => {
-        console.log("fafa")
         setShowPreviewImage(true);
     }
     
@@ -242,7 +335,7 @@ const TicketDetails = () => {
                                 <div>
                                     <Label variant='small' text='Full Name' />
 
-                                    <h5 className='text-text font-medium'>{ticketData.requester_details.first_name} {ticketData.requester_details.last_name}</h5>
+                                    <h5 className='text-text font-medium'>{ticketData.requester_details.first_name} {ticketData.requester_details?.last_name || null}</h5>
                                 </div>
                                 <div>
                                     <Label variant='small' text='Email' />

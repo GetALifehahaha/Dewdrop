@@ -44,10 +44,12 @@ export default function useTicket() {
         setTicketLoading(true);
 
         try {
-            const res = TicketServices(params, id, "PATCH");
+            const res =await TicketServices(params, id, "PATCH");
 
             setTicketResponse({status: "success", detail: "Ticket edited successfully."});
 			fetchTickets();
+
+            return res;
         } catch (err) {
             setTicketError({status: "error", detail: "Failed to edit ticket."});
             setTicketResponse(null);

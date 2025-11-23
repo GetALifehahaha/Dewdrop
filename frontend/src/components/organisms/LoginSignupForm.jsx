@@ -176,7 +176,9 @@ const LoginSignupForm = ({method}) => {
             
               <hr className='text-text/25 my-4 w-7/8 mx-auto rounded-full'/>
 
-              <GoogleLoginService type={method} />
+              <span className='mx-auto'>
+                <GoogleLoginService type={method} />
+              </span>
             </form>
 
 
