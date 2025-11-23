@@ -53,20 +53,12 @@ const LoginSignupForm = ({method}) => {
         }
         
       } else if (method === "signup") {
-        if (password !== passwordAgain) {
-          setToastMessages([
-            { message: "Passwords don't match", status: "error", icon: X }
-          ]);
-          return;
-        }
-
         const result = await register(username, password, firstName, lastName, emailAddress);
-        
+
         if (result.success) {
           setToastMessages([
             { message: "Registration successful! Please login.", status: "success", icon: Check }
           ]);
-          setTimeout(() => navigate('/login'), 1000);
         } else {
           let errorMessage = "Registration failed";
           
@@ -178,7 +170,7 @@ const LoginSignupForm = ({method}) => {
 
               {
                 loading
-                ? <div className='flex gap-2 items-center mx-auto py-2 mt-4 font-semibold text-base'><Loader2 size={18} className='animate-spin' /> {method ? <h5 className='animate-pulse'>Logging in...</h5> : <h5 className='animate-pulse'>Signing up...</h5>}</div>
+                ? <div className='flex gap-2 items-center mx-auto py-2 mt-4 font-semibold text-base'><Loader2 size={18} className='animate-spin' /> {method == "login" ? <h5 className='animate-pulse'>Logging in...</h5> : <h5 className='animate-pulse'>Signing up...</h5>}</div>
                 : <button type='submit' className='w-fit px-24 py-2 mt-4 mx-auto rounded-2xl bg-accent-deepblue text-main cursor-pointer'>{submitButton}</button>
               }
             
