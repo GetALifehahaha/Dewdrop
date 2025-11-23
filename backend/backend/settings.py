@@ -39,7 +39,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+
 
 # setup rest_framework classes
 REST_FRAMEWORK = {
@@ -164,21 +164,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # set credentials
 # CHANGE THIS WHEN PUSHING!!!!
-ALLOWED_HOSTS = [
-    'localhost',
-    'science-copying-lou-pharmacy.trycloudflare.com',
-    '127.0.0.1'
-]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://science-copying-lou-pharmacy.trycloudflare.com',
-    'http://localhost:5173',
-]
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', cast=Csv())
 
-CORS_ALLOWED_ORIGINS = [
-    'https://science-copying-lou-pharmacy.trycloudflare.com',
-    'http://localhost:5173', 
-    'http://localhost:3000', 
-]
+CORS_ALLOWED_ORIGINS = config('CORS_ALLOWED_ORIGINS', cast=Csv())
 
 CORS_ALLOWS_CREDENTIAL = True
