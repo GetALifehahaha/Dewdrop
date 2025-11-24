@@ -1,17 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Label, Title, Dropdown, Button } from '../components/atoms';
 import { Breadcrumbs, Toast } from '../components/molecules';
-import { Pen, X, Check, ArrowLeft, Upload, Loader2  } from 'lucide-react';
+import { Pen, X, Check, ArrowLeft, Upload, Loader2 } from 'lucide-react';
 import useTicket from '../hooks/useTicket';
 import useTicketType from '../hooks/useTicketType';
 import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '../services/constants';
 
-const EditTicket = ({}) => {
-    const {ticket_id} = useParams();
-    const {ticketData, ticketError, ticketLoading, ticketResponse, patchTicket} = useTicket();
-    const {ticketTypeData, ticketTypeError, ticketTypeLoading} = useTicketType(); 
-    const navigate = useNavigate();
+const EditTicket = ({ }) => {
+    const { ticket_id } = useParams();
+    const { ticketData, ticketError, ticketLoading, ticketResponse, patchTicket } = useTicket();
+    const { ticketTypeData, ticketTypeError, ticketTypeLoading } = useTicketType();
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -26,7 +25,7 @@ const EditTicket = ({}) => {
     const [toastMessages, setToastMessages] = useState([]);
 
     useEffect(() => {
-        if (ticketData){
+        if (ticketData) {
             setTitle(ticketData.title);
             setDescription(ticketData.description);
             setSeverity(ticketData.severity)
@@ -61,31 +60,32 @@ const EditTicket = ({}) => {
         }
     }, [toastMessages])
 
-    if (ticketLoading) return <p>Loading</p>
-    if (ticketError) return <p>Error</p>  
-    if (ticketTypeLoading) return <p>Loading</p>
-    if (ticketTypeError) return <p>Error</p>  
-    
+    if (ticketLoading || ticketTypeLoading) return <div className='absolute top-0 left-0 w-full h-screen z-10 flex justify-center items-center bg-black/5'>
+        <Loader2 className='text-main animate-spin' size={60} />
+    </div>
+    if (ticketError) return <p>Error loading tickets...</p>
+    if (ticketTypeError) return <p>Error loading ticket types...</p>
+
     const handleSetTitle = (value) => setTitle(value);
     const handleSetDescription = (value) => setDescription(value);
     const handleSetSeverity = (value) => setSeverity(value);
     const handleSetTicketType = (value) => setTicketType(value);
-    
+
     const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
 
     const breadcrumb = [
-        {label: "Tickets", link: '/tickets'},
-        {label: ticket_id, link: `/tickets/${ticket_id}`},
-        {label: "Edit", link: `/tickets/${ticket_id}/edit`}
+        { label: "Tickets", link: '/tickets' },
+        { label: ticket_id, link: `/tickets/${ticket_id}` },
+        { label: "Edit", link: `/tickets/${ticket_id}/edit` }
     ]
 
     const severitySelections = [
-        {name: "Low", value: "low"},
-        {name: "Medium", value: "medium"},
-        {name: "Urgent", value: "urgent"},
+        { name: "Low", value: "low" },
+        { name: "Medium", value: "medium" },
+        { name: "Urgent", value: "urgent" },
     ]
-    
-    const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
+
+    const ticketTypeSelections = ticketTypeData.map((type) => { return { name: type.name, value: type.id } })
 
     const handleImageChange = (e) => {
         setImageRemoved(false);
@@ -104,7 +104,7 @@ const EditTicket = ({}) => {
             }
 
             setImage(file);
-            
+
             // Create preview
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -130,28 +130,27 @@ const EditTicket = ({}) => {
         if (title && description && severity) {
             let params = {};
 
-            if (title != ticketData.title) params = {title: title};
-            if (description != ticketData.description) params = {...params, description: description};
-            if (severity != ticketData.severity) params = {...params, severity: severity};
-            if (ticketType) params = {...params, ticket_type: ticketType};
+            if (title != ticketData.title) params = { title: title };
+            if (description != ticketData.description) params = { ...params, description: description };
+            if (severity != ticketData.severity) params = { ...params, severity: severity };
+            if (ticketType) params = { ...params, ticket_type: ticketType };
 
             let imageUrl = null;
 
             if (imageRemoved && ticketData.image) {
-                params = {...params, image: null};
+                params = { ...params, image: null };
             }
             else if (image && typeof image !== 'string') {
                 setImageUploading(true);
                 try {
                     imageUrl = await uploadToCloudinary(image);
-                    params = {...params, image: imageUrl}
+                    params = { ...params, image: imageUrl }
                 } catch (error) {
                     setErrorMessages(prev => [...prev, "Failed to upload image. Please try again."]);
                     setImageUploading(false);
                     return;
                 }
                 setImageUploading(false);
-
             }
 
             if (params) await patchTicket(ticketData.id, params);
@@ -192,48 +191,48 @@ const EditTicket = ({}) => {
                     <ArrowLeft className='text-text/75 cursor-pointer' size={18} />
                     <Title text='Details' />
                 </div>
-                <Breadcrumbs breadcrumb={breadcrumb}/>
+                <Breadcrumbs breadcrumb={breadcrumb} />
             </div>
 
             <div className='p-4 bg-main rounded-md shadow-sm'>
-                <Title variant='blockTitle' text='Ticket Information' icon={Pen}/>
+                <Title variant='blockTitle' text='Ticket Information' icon={Pen} />
                 <div className='flex flex-col'>
                     <div className="flex gap-2">
                         <div className='p-2 flex flex-col'>
-                            <Label text='Title' required={true}/>
-                            <input 
-                            value={title} 
-                            type='text' 
-                            onChange={(e) => handleSetTitle(e.target.value)} 
-                            size={40} 
-                            className='px-6 py-2 rounded-md bg-main w-fit shadow-sm focus:shadow-md outline-none focus:outline-none'/> 
+                            <Label text='Title' required={true} />
+                            <input
+                                value={title}
+                                type='text'
+                                onChange={(e) => handleSetTitle(e.target.value)}
+                                size={40}
+                                className='px-6 py-2 rounded-md bg-main w-fit shadow-sm focus:shadow-md outline-none focus:outline-none' />
                         </div>
                         <div className='p-2'>
-                            <Label text='Severity' required={true}/>
-                            <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>
+                            <Label text='Severity' required={true} />
+                            <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity} />
                         </div>
                         <div className='p-2'>
-                            <Label text='Type' required={true}/>
-                            <Dropdown value={ticketType || displayType} selectName="Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
+                            <Label text='Type' required={true} />
+                            <Dropdown value={ticketType || displayType} selectName="Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType} />
                         </div>
                     </div>
                     <div className='p-2 flex flex-col'>
-                        <Label text='Description' type='textbox' required={true}/>
-                        <textarea 
-                            value={description} 
-                            onChange={(e) => handleSetDescription(e.target.value)} 
+                        <Label text='Description' type='textbox' required={true} />
+                        <textarea
+                            value={description}
+                            onChange={(e) => handleSetDescription(e.target.value)}
                             rows={8}
                             className='px-6 py-2 rounded-md bg-main w-full shadow-sm focus:shadow-md outline-none focus:outline-none'>
-                        </textarea> 
+                        </textarea>
                     </div>
                     <div className='p-2 flex flex-col'>
                         <Label text='Image' />
                         <div className='mt-2'>
                             {imagePreview ? (
                                 <div className='relative inline-block'>
-                                    <img 
-                                        src={imagePreview} 
-                                        alt="Preview" 
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
                                         className='max-w-xs max-h-48 rounded-md border-2 border-gray-200'
                                     />
                                     <button
@@ -259,20 +258,20 @@ const EditTicket = ({}) => {
                         </div>
                     </div>
 
-                    {errorMessages && 
-                    <div className='flex flex-col gap-1 p-2'>
-                        {listErrorMessages}
-                    </div>}
-                    
+                    {errorMessages &&
+                        <div className='flex flex-col gap-1 p-2'>
+                            {listErrorMessages}
+                        </div>}
+
                     <div className='mx-auto mt-18'>
-                        {ticketResponse ? 
-                        <h5 className='text-accent-deepblue font-semibold'>Ticket Edited Successfully!</h5> :
-                            (ticketLoading || imageUploading) ? 
-                            <h5 className='flex gap-2 items-center'>
-                                <Loader2 className='text-accent-blue animate-spin' size={16}/>
-                                {imageUploading ? 'Uploading image...' : 'Submitting your ticket'}
-                            </h5> :
-                            <Button text='Save Changes' onClick={handleSubmitTicket}/>
+                        {ticketResponse ?
+                            <h5 className='text-accent-deepblue font-semibold'>Ticket Edited Successfully!</h5> :
+                            (ticketLoading || imageUploading) ?
+                                <h5 className='flex gap-2 items-center'>
+                                    <Loader2 className='text-accent-blue animate-spin' size={16} />
+                                    {imageUploading ? 'Uploading image...' : 'Submitting your ticket'}
+                                </h5> :
+                                <Button text='Save Changes' onClick={handleSubmitTicket} />
                         }
                     </div>
                 </div>

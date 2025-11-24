@@ -7,8 +7,8 @@ import useTicketType from '../hooks/useTicketType';
 import { CLOUDINARY_CLOUD_NAME, CLOUDINARY_UPLOAD_PRESET } from '../services/constants';
 
 const CreateTicket = () => {
-    const {postTicket, ticketResponse, ticketError, ticketLoading} = useTicket();
-    const {ticketTypeData, ticketTypeLoading, ticketTypeError} = useTicketType();
+    const { postTicket, ticketResponse, ticketError, ticketLoading } = useTicket();
+    const { ticketTypeData, ticketTypeLoading, ticketTypeError } = useTicketType();
 
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -69,7 +69,7 @@ const CreateTicket = () => {
             }
 
             setImage(file);
-            
+
             // Create preview
             const reader = new FileReader();
             reader.onloadend = () => {
@@ -85,12 +85,12 @@ const CreateTicket = () => {
     };
 
     const severitySelections = [
-        {name: "Low", value: "low"},
-        {name: "Medium", value: "medium"},
-        {name: "Urgent", value: "urgent"},
+        { name: "Low", value: "low" },
+        { name: "Medium", value: "medium" },
+        { name: "Urgent", value: "urgent" },
     ]
-    
-    const ticketTypeSelections = ticketTypeData.map((type) => {return {name: type.name, value: type.id}})
+
+    const ticketTypeSelections = ticketTypeData.map((type) => { return { name: type.name, value: type.id } })
 
     const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
 
@@ -144,44 +144,44 @@ const CreateTicket = () => {
                 setImageUploading(false);
             }
 
-            await postTicket({title: title, description: description, severity: severity, ticket_type: ticketType, image: imageUrl});
+            await postTicket({ title: title, description: description, severity: severity, ticket_type: ticketType, image: imageUrl });
         }
     }
 
     return (
-        <>  
+        <>
             <Toast toastMessages={toastMessages} />
             <Title text='Submit a Ticket' />
-    
+
             <div className='p-4 bg-main rounded-md shadow-sm'>
-                <Title variant='blockTitle' text='Ticket Information' icon={Pen}/>
+                <Title variant='blockTitle' text='Ticket Information' icon={Pen} />
                 <div className='flex flex-col'>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 flex-wrap">
                         <div className='p-2 flex flex-col'>
-                            <Label text='Title' required={true}/>
-                            <Input placeholder='What is this request all about?' onChange={handleSetTitle}/>
+                            <Label text='Title' required={true} />
+                            <Input placeholder='What is this request all about?' onChange={handleSetTitle} />
                         </div>
                         <div className='p-2'>
-                            <Label text='Severity' required={true}/>
-                            <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity}/>
+                            <Label text='Severity' required={true} />
+                            <Dropdown value={severity} selectName="Severity" selectItems={severitySelections} onSelect={handleSetSeverity} />
                         </div>
                         <div className='p-2'>
-                            <Label text='Type' required={true}/>
-                            <Dropdown value={ticketType} selectName="Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType}/>
+                            <Label text='Type' required={true} />
+                            <Dropdown value={ticketType} selectName="Type" selectItems={ticketTypeSelections} onSelect={handleSetTicketType} />
                         </div>
                     </div>
                     <div className='p-2 flex flex-col'>
-                        <Label text='Description' type='textbox' required={true}/>
-                        <Textarea placeholder='What would be the content of this ticket request?' onChange={handleSetDescription}/>
+                        <Label text='Description' type='textbox' required={true} />
+                        <Textarea placeholder='What would be the content of this ticket request?' onChange={handleSetDescription} />
                     </div>
-                     <div className='p-2 flex flex-col'>
+                    <div className='p-2 flex flex-col'>
                         <Label text='Image' />
                         <div className='mt-2'>
                             {imagePreview ? (
                                 <div className='relative inline-block'>
-                                    <img 
-                                        src={imagePreview} 
-                                        alt="Preview" 
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
                                         className='max-w-xs max-h-48 rounded-md border-2 border-gray-200'
                                     />
                                     <button
@@ -207,20 +207,20 @@ const CreateTicket = () => {
                         </div>
                     </div>
 
-                    {errorMessages && 
-                    <div className='flex flex-col gap-1 p-2'>
-                        {listErrorMessages}
-                    </div>}
+                    {errorMessages &&
+                        <div className='flex flex-col gap-1 p-2'>
+                            {listErrorMessages}
+                        </div>}
 
                     <div className='mx-auto mt-18'>
-                        {ticketResponse ? 
-                        <h5 className='text-accent-deepblue font-semibold'>Ticket Submitted Successfully!</h5> :
-                            (ticketLoading || imageUploading) ? 
-                            <h5 className='flex gap-2 items-center'>
-                                <Loader2 className='text-accent-blue animate-spin' size={16}/>
-                                {imageUploading ? 'Uploading image...' : 'Submitting your ticket'}
-                            </h5> :
-                            <Button text='Submit Your Ticket' onClick={handleSubmitTicket}/>
+                        {ticketResponse ?
+                            <h5 className='text-accent-deepblue font-semibold'>Ticket Submitted Successfully!</h5> :
+                            (ticketLoading || imageUploading) ?
+                                <h5 className='flex gap-2 items-center'>
+                                    <Loader2 className='text-accent-blue animate-spin' size={16} />
+                                    {imageUploading ? 'Uploading image...' : 'Submitting your ticket'}
+                                </h5> :
+                                <Button text='Submit Your Ticket' onClick={handleSubmitTicket} />
                         }
                     </div>
                 </div>
