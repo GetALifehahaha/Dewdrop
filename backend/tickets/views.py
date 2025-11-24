@@ -11,6 +11,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.decorators import permission_classes
 
 from .serializers import AgentCreateSerializer, DepartmentSerializer, TicketSerializer, AgentSerializer, DashboardSerializer, TicketTypeSerializer, TicketMonthlySerializer
 from .models import Ticket, Agent, TicketType, Department
@@ -106,7 +107,7 @@ class TicketViewSet(viewsets.ModelViewSet):
             if agent:
                 # Generate the secure link here
                 token = generate_resolve_token(updated_ticket.id, agent.id, secret_key)
-                resolve_url = f"https://dewdrop-gamma.vercel.app/tickets/tickets/{updated_ticket.id}/resolve/?token={token}&agent_id={agent.id}"
+                resolve_url = f"https://dewdrop-gamma.vercel.app/resolve/{updated_ticket.id}?token={token}&agent_id={agent.id}"
                 
                 # Pass this URL to the frontend so it can put it in the email
                 response_data['email_context']['resolve_url'] = resolve_url
@@ -117,78 +118,8 @@ class TicketViewSet(viewsets.ModelViewSet):
             updated_ticket.resolved_at = timezone.now()
             updated_ticket.save()
 
-        # We verify everything saved, simply return the data
         return Response(response_data, status=status.HTTP_200_OK)
         
-        # requester_email = updated_ticket.requester.email
-        # requester_name = f"{updated_ticket.requester.first_name} {updated_ticket.requester.last_name}"
-        
-        
-        # agent = getattr(updated_ticket, "assigned_agent", None)
-        # agent_email = agent.email if agent else None
-        # agent_full_name = f"{agent.first_name} {agent.last_name}" if agent else None
-        
-        # if old_status == "pending" and new_status == "assessing":
-        #     subject = "Ticket Update: Assessment"
-        #     html = f"""
-        #         <h2>Hello, {requester_name}</h2>
-        #         <p>Your ticket: <strong>{updated_ticket.title}</strong> is now under assessment by the Manager. </p>
-        #         <p>Please wait for the Manager to assign an Agent to your ticket</p>
-        #         <p>Thank you for using Dewdrop!</p>
-        #     """ 
-            
-        #     send_email(requester_email, subject, html)
-            
-        # elif old_status == "assessing" and new_status == "assigned":
-        #     subject = "Ticket Update: Assigned."
-        #     html = f"""
-        #         <h2>Hello, {requester_name}</h2>
-        #         <p>Your ticket: <strong>{updated_ticket.title}</strong> is has now been assigned with an agent!. </p>
-        #         <p>Your agent, {agent_full_name} is tasked with resolving your ticket</p>
-        #         <p>Please wait while the ticket is underway with your task</p>
-        #         <p>Thank you for using Dewdrop!</p>
-        #     """ 
-            
-        #     send_email(requester_email, subject, html)
-            
-            
-            
-        #     if agent:
-        #         token = generate_resolve_token(updated_ticket.id, agent.id, secret_key)
-        #         resolve_url = f"https://science-copying-lou-pharmacy.trycloudflare.com/tickets/tickets/{updated_ticket.id}/resolve?token={token}&agent_id={agent.id}"   
-                
-        #         subject = "You have been assigned a ticket!"
-        #         html = f"""
-        #             <h2>Hello, {agent_full_name}</h2>
-        #             <p>You have been assigned by the Manager with the ticket: <strong>{updated_ticket.title}</strong></p>
-        #             <p>Severity: {updated_ticket.severity}</p>
-        #             <p>Description: {updated_ticket.description}</p>
-        #             <p>Requester: {requester_name}</p>
-                    
-        #             <p style="margin-top: 20px;">
-        #                 <a href="{resolve_url}" 
-        #                 style="background-color: #4CAF50; color: white; padding: 10px 20px; 
-        #                         text-decoration: none; border-radius: 5px; display: inline-block;">
-        #                     Mark as Resolved
-        #                 </a>
-        #             </p>
-                    
-        #             <p>Thank you for using Dewdrop!</p>
-        #         """ 
-                
-        #         send_email(agent_email, subject, html)
-        
-        # elif old_status == "assigned" and new_status == "resolved":
-        #     subject = "Ticket Update: Resolved"
-        #     html = f"""
-        #         <h2>Hello {requester_name},</h2>
-        #         <p>Your ticket <strong>{updated_ticket.title}</strong> has been resolved.</p>
-        #         <p>If you have any further tickets, please continue using the application.</p>
-        #         <p>Thank you for using Dewdrop!</p>
-        #     """
-        #     send_email(requester_email, subject, html)
-
-        # return Response(serialized_data.data, status=status.HTTP_200_OK)
     
     def destroy(self, request, *args, **kwargs):
         user = self.request.user
@@ -211,6 +142,7 @@ def generate_resolve_token(ticket_id, agent_id, secret_key):
     return hashlib.sha256(data.encode()).hexdigest()[:32]    
 
 @require_http_methods(["GET"])
+@permission_classes[permissions.AllowAny]
 def resolve_ticket(request, ticket_id):
     token = request.GET.get('token')
     agent_id = request.GET.get('agent_id')

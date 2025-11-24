@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import emailjs from "@emailjs/browser";
-import api from "../services/api";
 import { Check, Hourglass, X } from "lucide-react";
+import axios from 'axios'
 
 const ResolveTicket = () => {
 	const { id } = useParams();
@@ -12,12 +12,13 @@ const ResolveTicket = () => {
 	const [status, setStatus] = useState("loading");
 	const serviceId = import.meta.env.VITE_EMAIL_SERVICE_ID
 	const requesterTemplate = import.meta.env.VITE_REQUESTER_TEMPLATE_ID
+	const url = import.meta.env.VITE_API_URL
 
 	useEffect(() => {
 		const resolveTheTicket = async () => {
 			try {
-				const res = await api.get(
-					`/tickets/tickets/${id}/resolve/?token=${token}&agent_id=${agentId}`
+				const res = await axios.get(
+					`${url}tickets/tickets/${id}/resolve/?token=${token}&agent_id=${agentId}`
 				);
 
 				if (res.status === 200) {
