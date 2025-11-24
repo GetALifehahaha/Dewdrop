@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
-const Header = ({title="Dewdrop", name="User", onClick}) => {
+const Header = ({ title = "Dewdrop", name = "User", onClick }) => {
 
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -9,7 +9,7 @@ const Header = ({title="Dewdrop", name="User", onClick}) => {
 		setIsDropdownOpen(!isDropdownOpen);
 	}
 
-  	return (
+	return (
 		<div className='w-full px-6 py-2 flex justify-between items-center bg-main'>
 			<h1 className='text-accent-blue font-semibold tracking-tight text-lg'>
 				{title}

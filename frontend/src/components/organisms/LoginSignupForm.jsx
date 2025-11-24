@@ -1,14 +1,14 @@
-import React, {useState, useContext, useEffect} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import {Loader2, SquareUser, UserPlus} from 'lucide-react'
+import React, { useState, useContext, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Loader2, SquareUser, UserPlus } from 'lucide-react'
 import { AuthContext } from '../../context/AuthContext';
 import { GoogleLoginService } from '../../services';
 import { Toast } from '../molecules';
 import { X, Check } from 'lucide-react';
 
-const LoginSignupForm = ({method}) => {
+const LoginSignupForm = ({ method }) => {
   // context variables
-  const {login, register} = useContext(AuthContext);
+  const { login, register } = useContext(AuthContext);
 
   // state variables
   const [firstName, setFirstName] = useState("");
@@ -26,10 +26,10 @@ const LoginSignupForm = ({method}) => {
   const submitButton = method == 'login' ? 'Login' : 'Get Started!'
 
   useEffect(() => {
-      if (toastMessages.length > 0) {
-          const timer = setTimeout(() => setToastMessages([]), 3000);
-          return () => clearTimeout(timer);
-      }
+    if (toastMessages.length > 0) {
+      const timer = setTimeout(() => setToastMessages([]), 3000);
+      return () => clearTimeout(timer);
+    }
   }, [toastMessages]);
 
   // form function
@@ -51,7 +51,7 @@ const LoginSignupForm = ({method}) => {
             { message: "No account found with this credentials", status: "error", icon: X }
           ]);
         }
-        
+
       } else if (method === "signup") {
         const result = await register(username, password, firstName, lastName, emailAddress);
 
@@ -61,7 +61,7 @@ const LoginSignupForm = ({method}) => {
           ]);
         } else {
           let errorMessage = "Registration failed";
-          
+
           if (typeof result.error === 'object') {
             const firstError = Object.values(result.error)[0];
             errorMessage = Array.isArray(firstError) ? firstError[0] : firstError;
@@ -80,109 +80,128 @@ const LoginSignupForm = ({method}) => {
     } finally {
       setLoading(false); // Optional: reset loading state
     }
-}
+  }
 
   return (
     <div className='w-full h-screen flex flex-row justify-between p-6 text-text font-medium'>
       <Toast toastMessages={toastMessages} />
-      
-      <div className='basis-3/5 p-12 h-[100%] flex flex-col justify-between'>
+
+      <div className='basis-3/5 p-12 h-[100%] flex-col justify-between hidden md:flex'>
         {/* Top Part */}
         <div className="flex flex-row justify-between">
           <h5 className='text-main text-2xl font-medium'>Dewdrop</h5>
-            {
-              (method == "login") ? 
+          {
+            (method == "login") ?
               <div className='flex flex-row items-center gap-2 text-main-dark'>
                 <SquareUser strokeWidth={1} />
                 <Link to={'/signup'} className='px-2 py-1 rounded-md bg-main-dark text-text'>Sign Up</Link>
               </div>
-              : 
+              :
               <div className='flex flex-row items-center gap-2 text-main-dark'>
                 <Link to={'/login'} className='px-2 py-1 rounded-md bg-main-dark text-text'>Log In</Link>
                 <UserPlus strokeWidth={1} />
               </div>
-            }
+          }
         </div>
 
         {/* Bottom Part */}
         <div className='text-main/25 font-medium flex text-sm'>
-          <h5>Powered By: React | Django | Tailwind CSS</h5>
+          <h5>Powered By: React | Django | Tailwind CSS | REST | EmailJS | Shadcn | Google | Rechart</h5>
         </div>
       </div>
-      
+
       {/* Input Form */}
-      <div className='basis-2/5 bg-main rounded-xl p-16 flex flex-col'>
-            {/* Welcome block */}
-            <div className='flex flex-col gap-0.5'>
-              <h1 className='text-4xl font-extrabold'>{title}</h1>
-              <h5 className='text-lg'>{greeting}</h5>
-            </div> 
-
-            {/* Input blocks */}
-            <form onSubmit={submitForm} className='flex flex-col gap-2 my-8'>
-
-              {/* First name input block */}
-              {(method == 'signup') ?
-                <div className=''>
-                  <h5 className='ml-2'>
-                    First name
-                  </h5>
-                  <input onChange={(e) => setFirstName(e.target.value)} type="text" placeholder='Enter your first name' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
-                </div> : ''
-              }
-
-              {/* Last name input block */}
-              {(method == 'signup') ?
-                <div className=''>
-                  <h5 className='ml-2'>
-                    Last name
-                  </h5>
-                  <input onChange={(e) => setLastName(e.target.value)} type="text" placeholder='Enter your last name' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
-                </div> : ''
-              }
-
-              {/* Email input block */}
-              {(method == 'signup') ?
-                <div className=''>
-                  <h5 className='ml-2'>
-                    Email Address
-                  </h5>
-                  <input onChange={(e) => setEmailAddress(e.target.value)} type="text" placeholder='Enter your email address' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
-                </div> : ''
-              }
-
-              
-              {/* Username input block */}
-              <div className=''>
-                <h5 className='ml-2'>
-                  Username
-                </h5>
-                <input onChange={(e) => setUsername(e.target.value)} type="text" placeholder='Enter your username' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
+      <div className='flex-1 sm:basis-2/5 bg-main rounded-xl p-16 flex flex-col'>
+        <div className="flex md:hidden flex-row items-center justify-between mb-8">
+          <h5 className='text-text text-lg font-medium'>Dewdrop</h5>
+          {
+            (method == "login") ?
+              <div className='flex flex-row items-center gap-2 text-text'>
+                <SquareUser strokeWidth={1} />
+                <Link to={'/signup'} className='px-2 py-1 rounded-md bg-text text-main'>Sign Up</Link>
               </div>
-
-              {/* Password input block */}
-              <div>
-                <h5 className='ml-2'>
-                  Password
-                </h5>
-                <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Enter your password' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm'/>
+              :
+              <div className='flex flex-row items-center gap-2 text-text'>
+                <Link to={'/login'} className='px-2 py-1 rounded-md bg-text text-main'>Log In</Link>
+                <UserPlus strokeWidth={1} />
               </div>
+          }
+        </div>
 
-              {
-                loading
-                ? <div className='flex gap-2 items-center mx-auto py-2 mt-4 font-semibold text-base'><Loader2 size={18} className='animate-spin' /> {method == "login" ? <h5 className='animate-pulse'>Logging in...</h5> : <h5 className='animate-pulse'>Signing up...</h5>}</div>
-                : <button type='submit' className='w-fit px-24 py-2 mt-4 mx-auto rounded-2xl bg-accent-deepblue text-main cursor-pointer'>{submitButton}</button>
-              }
-            
-              <hr className='text-text/25 my-4 w-7/8 mx-auto rounded-full'/>
+        {/* Welcome block */}
+        <div className='flex flex-col gap-0.5'>
+          <h1 className='text-4xl font-extrabold'>{title}</h1>
+          <h5 className='text-lg'>{greeting}</h5>
+        </div>
 
-              <span className='mx-auto'>
-                <GoogleLoginService type={method} />
-              </span>
-            </form>
+        {/* Input blocks */}
+        <form onSubmit={submitForm} className='flex flex-col gap-2 my-8 p-4 overflow-y-auto'>
+
+          {/* First name input block */}
+          {(method == 'signup') ?
+            <div className=''>
+              <h5 className='ml-2'>
+                First name
+              </h5>
+              <input onChange={(e) => setFirstName(e.target.value)} type="text" placeholder='Enter your first name' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm' />
+            </div> : ''
+          }
+
+          {/* Last name input block */}
+          {(method == 'signup') ?
+            <div className=''>
+              <h5 className='ml-2'>
+                Last name
+              </h5>
+              <input onChange={(e) => setLastName(e.target.value)} type="text" placeholder='Enter your last name' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm' />
+            </div> : ''
+          }
+
+          {/* Email input block */}
+          {(method == 'signup') ?
+            <div className=''>
+              <h5 className='ml-2'>
+                Email Address
+              </h5>
+              <input onChange={(e) => setEmailAddress(e.target.value)} type="text" placeholder='Enter your email address' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm' />
+            </div> : ''
+          }
 
 
+          {/* Username input block */}
+          <div className=''>
+            <h5 className='ml-2'>
+              Username
+            </h5>
+            <input onChange={(e) => setUsername(e.target.value)} type="text" placeholder='Enter your username' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm' />
           </div>
+
+          {/* Password input block */}
+          <div>
+            <h5 className='ml-2'>
+              Password
+            </h5>
+            <input onChange={(e) => setPassword(e.target.value)} type="password" placeholder='Enter your password' className='px-6 py-2 bg-main-light w-full rounded-sm shadow-sm' />
+          </div>
+
+          {
+            loading
+              ? <div className='flex gap-2 items-center mx-auto py-2 mt-4 font-semibold text-base'><Loader2 size={18} className='animate-spin' /> {method == "login" ? <h5 className='animate-pulse'>Logging in...</h5> : <h5 className='animate-pulse'>Signing up...</h5>}</div>
+              : <button type='submit' className='w-fit px-24 py-2 mt-4 mx-auto rounded-2xl bg-accent-deepblue text-main cursor-pointer'>{submitButton}</button>
+          }
+
+
+
+        </form>
+        <hr className='text-text/25 my-4 w-7/8 mx-auto rounded-full' />
+        <span className='mx-auto'>
+          <GoogleLoginService type={method} />
+        </span>
+
+        <div className='md:hidden text-text/25 text-[0.7rem] mt-auto font-semibold flex'>
+          <h5>Powered By: React | Django | Tailwind CSS | REST | EmailJS | Shadcn | Google | Rechart</h5>
+        </div>
+      </div>
     </div>
   )
 }

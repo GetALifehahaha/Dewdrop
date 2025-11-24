@@ -1,18 +1,20 @@
-import React, {useDebugValue, useState} from 'react'
+import React, { useDebugValue, useState } from 'react'
 import { Button, Dropdown, Title } from '../atoms'
-import { X, Minus, Plus } from 'lucide-react'
+import { X, Minus, Plus, Loader2 } from 'lucide-react'
 import useDepartment from '../../hooks/useDepartment'
 import useTicketType from '../../hooks/useTicketType'
 
-const EditAgent = ({agentDetails, onClose, editAgent}) => {
+const EditAgent = ({ agentDetails, onClose, editAgent }) => {
 
 	const [firstName, setFirstName] = useState(agentDetails.first_name);
 	const [lastName, setLastName] = useState(agentDetails.last_name);
 	const [email, setEmail] = useState(agentDetails.email);
 	const [department, setDepartment] = useState({
-		id: agentDetails.department.id,
+		id: agentDetails.department_details.id,
 		changed: false
 	});
+
+	console.log(agentDetails)
 	const [specializations, setSpecializations] = useState(
 		agentDetails.specializations.map(spec => ({
 			id: spec.id,
@@ -22,13 +24,13 @@ const EditAgent = ({agentDetails, onClose, editAgent}) => {
 	);
 	const [errorMessages, setErrorMessages] = useState([]);
 
-	const {departmentData, departmentLoading, departmentError} = useDepartment();
-	const {ticketTypeData, ticketTypeLoading, ticketTypeError} = useTicketType();
+	const { departmentData, departmentLoading, departmentError } = useDepartment();
+	const { ticketTypeData, ticketTypeLoading, ticketTypeError } = useTicketType();
 
-	const handleSetFirstName = (e) => setFirstName(e.target.value); 
-    const handleSetLastName = (e) => setLastName(e.target.value); 
-    const handleSetEmail = (e) => setEmail(e.target.value); 
-    const handleSetDepartment = (value) => {
+	const handleSetFirstName = (e) => setFirstName(e.target.value);
+	const handleSetLastName = (e) => setLastName(e.target.value);
+	const handleSetEmail = (e) => setEmail(e.target.value);
+	const handleSetDepartment = (value) => {
 		setDepartment({
 			id: value,
 			changed: true
@@ -36,20 +38,20 @@ const EditAgent = ({agentDetails, onClose, editAgent}) => {
 	};
 
 	const handleAddSpecialization = () => {
-        setSpecializations(prev => [...prev, { id: null, name: null, changed: true }]);
-    };
+		setSpecializations(prev => [...prev, { id: null, name: null, changed: true }]);
+	};
 
-    const handleRemoveSpecialization = index => {
-        setSpecializations(prev => prev.filter((_, i) => i !== index));
-    };
+	const handleRemoveSpecialization = index => {
+		setSpecializations(prev => prev.filter((_, i) => i !== index));
+	};
 
-    const handleSetSpecialization = (index, value) => {
-        setSpecializations(prev => prev.map((spec, i) => 
-			i === index 
-				? { id: value, name: ticketTypeData.find(t => t.id === value)?.name, changed: true } 
+	const handleSetSpecialization = (index, value) => {
+		setSpecializations(prev => prev.map((spec, i) =>
+			i === index
+				? { id: value, name: ticketTypeData.find(t => t.id === value)?.name, changed: true }
 				: spec
 		));
-    };
+	};
 
 	const handleSubmit = () => {
 		// Reset error messages
@@ -92,14 +94,14 @@ const EditAgent = ({agentDetails, onClose, editAgent}) => {
 			payload.email = email;
 		}
 		if (department.changed) {
-			payload.department_id = department.id;
+			payload.department = department.id;
 		}
 
 		// Check if specializations have changed
 		const originalIds = agentDetails.specializations.map(s => s.id).sort();
 		const currentIds = specializations.map(s => s.id).sort();
-		const hasSpecializationsChanged = 
-			originalIds.length !== currentIds.length || 
+		const hasSpecializationsChanged =
+			originalIds.length !== currentIds.length ||
 			originalIds.some((id, index) => id !== currentIds[index]) ||
 			specializations.some(spec => spec.changed);
 
@@ -107,77 +109,83 @@ const EditAgent = ({agentDetails, onClose, editAgent}) => {
 			// Only include IDs of specializations, filter out any null values
 			payload.specializations = specializations
 				.filter(spec => spec.id !== null)
-				.map(spec => spec.id);
+				.map(spec => { return { ticket_type_id: spec.id, name: spec.name } });
 		}
 
-		console.log('Payload to send:', payload);
-		// editAgent(payload); // Uncomment when ready to use
+		if (Object.keys(payload).length <= 0) {
+			onClose();
+			return;
+		}
+
+		editAgent(agentDetails.id, payload)
 	};
 
 	if (departmentLoading || ticketTypeLoading) {
 		return (
-			<p className='text-text'>Loading...</p>
+			<div className='absolute top-0 left-0 w-full h-screen z-10 flex justify-center items-center bg-black/5'>
+				<Loader2 className='text-main animate-spin' size={60} />
+			</div>
 		);
 	}
 
 	if (departmentError || ticketTypeError) {
 		return (
-			<p className='text-red-500'>Error loading data. Please try again.</p>
+			<p className='text-red-500 text-center'>Error loading data. Please try again.</p>
 		);
 	}
 
-	const departmentSelections = departmentData?.map((type) => {return {name: type.name, value: type.id}}) || [];
-    const ticketTypeSelections = ticketTypeData?.map((type) => {return {name: type.name, value: type.id}}) || [];
+	const departmentSelections = departmentData?.map((type) => { return { name: type.name, value: type.id } }) || [];
+	const ticketTypeSelections = ticketTypeData?.map((type) => { return { name: type.name, value: type.id } }) || [];
 
 	const listErrorMessages = errorMessages.map((message, index) => <h5 key={index} className='text-sm text-red-400 font-medium flex items-center gap-2'><X size={14} />{message}</h5>)
-	
+
 
 	return (
 		<div className='absolute w-full h-screen top-0 left-0 bg-black/20 backdrop-blur-xs flex justify-center items-center gap-2'>
 			<div className='bg-main p-4 rounded-sm'>
 				<div className='flex items-center justify-between'>
 					<h5 className='text-text font-semibold'>Edit Agent Details</h5>
-					<X size={18} className='text-text cursor-pointer' onClick={onClose}/>
+					<X size={18} className='text-text cursor-pointer' onClick={onClose} />
 				</div>
 
 				<div className='mt-2 flex gap-2'>
-					<input 
-						type='text' 
-						onChange={handleSetFirstName} 
-						value={firstName} 
+					<input
+						type='text'
+						onChange={handleSetFirstName}
+						value={firstName}
 						className='p-2 rounded-md bg-main shadow-sm border border-main-dark'
 						placeholder='First Name'
 					/>
-					<input 
-						type='text' 
-						onChange={handleSetLastName} 
-						value={lastName} 
+					<input
+						type='text'
+						onChange={handleSetLastName}
+						value={lastName}
 						className='p-2 rounded-md bg-main shadow-sm border border-main-dark'
 						placeholder='Last Name'
 					/>
 				</div>
 				<div className='mt-2 flex gap-2'>
-					<input 
-						type='email' 
-						onChange={handleSetEmail} 
-						value={email} 
+					<input
+						type='email'
+						onChange={handleSetEmail}
+						value={email}
 						className='p-2 rounded-md bg-main shadow-sm border border-main-dark w-full'
 						placeholder='Email'
 					/>
 				</div>
 				<div className='my-3'>
 					<Dropdown
-						value={department.changed ? department.id : departmentSelections.find(dept => dept.id === department.id)?.name}
+						value={department.changed ? department.id : departmentSelections.find(dept => dept.value === department.id)?.name}
 						selectName='Department'
 						selectItems={departmentSelections}
 						onSelect={handleSetDepartment}
 					/>
 				</div>
 
-				{errorMessages.length > 0 && 
+				{errorMessages.length > 0 &&
 					<div className='flex flex-col gap-1 p-2'>
-                        {listErrorMessages}
-                    </div>
+						{listErrorMessages}
+					</div>
 				}
 
 				{specializations.map((spec, index) => (
@@ -189,17 +197,17 @@ const EditAgent = ({agentDetails, onClose, editAgent}) => {
 							onSelect={value => handleSetSpecialization(index, value)}
 						/>
 						{specializations.length !== 1 &&
-							<button 
-								type='button' 
+							<button
+								type='button'
 								onClick={() => handleRemoveSpecialization(index)}
 								className='text-text hover:text-red-500'
 							>
 								<Minus size={16} />
 							</button>
 						}
-						{index === specializations.length - 1 && 
-							<button 
-								type='button' 
+						{index === specializations.length - 1 &&
+							<button
+								type='button'
 								onClick={handleAddSpecialization}
 								className='text-text hover:text-green-500'
 							>
@@ -210,12 +218,12 @@ const EditAgent = ({agentDetails, onClose, editAgent}) => {
 				))}
 
 				<div className='mt-12 flex gap-2 justify-end'>
-					<Button variant='outline' text='Cancel' onClick={onClose}/>
-					<Button variant='block' text='Save Changes' onClick={handleSubmit}/>
+					<Button variant='outline' text='Cancel' onClick={onClose} />
+					<Button variant='block' text='Save Changes' onClick={handleSubmit} />
 				</div>
 			</div>
 		</div>
-  	)
+	)
 }
 
 export default EditAgent

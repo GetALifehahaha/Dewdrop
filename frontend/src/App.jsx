@@ -1,4 +1,4 @@
-import {Login, Signup, Layout, Home, Tickets, TicketDetails, NotFound, CreateTicket, EditTicket, CreateAgent, Agents} from './pages'
+import {Login, Signup, Layout, Home, Tickets, TicketDetails, NotFound, CreateTicket, EditTicket, CreateAgent, Agents, ResolveTicket} from './pages'
 import { ProtectedRoute } from './components/organisms';
 import {Routes, Route, Navigate} from 'react-router-dom'
 

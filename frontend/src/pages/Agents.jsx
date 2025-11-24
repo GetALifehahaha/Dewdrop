@@ -3,26 +3,59 @@ import useAgent from '../hooks/useAgent';
 import { Title } from '../components/atoms';
 import { Edit } from 'lucide-react';
 import { EditAgent } from '../components/organisms';
+import { Loader2, Check, X } from 'lucide-react';
+import { Toast } from '../components/molecules';
 
 const Agents = () => {
 
-    const {agentData, agentError, agentLoading} = useAgent();
+    const { agentData, patchAgent, agentError, agentLoading, agentResponse } = useAgent();
     const [editAgent, setEditAgent] = useState(null);
+    const [toastMessages, setToastMessages] = useState([]);
 
-    if (agentLoading) return <h5>Loading agents...</h5>
+    useEffect(() => {
+        if (agentResponse) {
+            setToastMessages([{
+                message: agentResponse.detail,
+                status: agentResponse.status,
+                icon: Check
+            }])
+        }
+        if (agentError) {
+            setToastMessages([{
+                message: agentError.detail,
+                status: agentError.status,
+                icon: X
+            }])
+        }
+    }, [agentResponse, agentError]);
+
+    useEffect(() => {
+        if (toastMessages.length > 0) {
+            const timer = setTimeout(() => setToastMessages([]), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [toastMessages])
+
+    if (agentLoading) return <div className='absolute top-0 left-0 w-full h-screen z-10 flex justify-center items-center bg-black/5'>
+        <Loader2 className='text-main animate-spin' size={60} />
+    </div>
     if (agentError) return <h5>Failed to load agent</h5>
+
 
     const handleSetEditAgent = (agent) => {
         setEditAgent(agent)
     }
 
-    const handleConfirmEditAgent = (value) => {
-        
+    const handleConfirmEditAgent = async (id, payload) => {
+        await patchAgent(id, payload);
+
+        handleRemoveEditAgent();
     }
+
 
     const handleRemoveEditAgent = () => setEditAgent(null);
 
-    const listAgents = agentData.map((agent, index) => 
+    const listAgents = agentData.map((agent, index) =>
         <div className='relative' key={index}>
             <div className='flex flex-col items-center gap-4 p-6 rounded-md shadow-sm bg-main hover:shadow-lg'>
                 <div className='flex flex-row w-full justify-between items-center gap-4'>
@@ -38,7 +71,7 @@ const Agents = () => {
                 <div className='flex flex-row items-center w-full gap-4 mr-auto'>
                     {agent.specializations.map((spec, index) => <h5 key={index} className='text-xs text-text/50 font-semibold'>{spec.name}</h5>)}
 
-                    <Edit className='ml-auto text-text/75 cursor-pointer' size={16} onClick={() => handleSetEditAgent(agent)}/>
+                    <Edit className='ml-auto text-text/75 cursor-pointer' size={16} onClick={() => handleSetEditAgent(agent)} />
                 </div>
             </div>
         </div>
@@ -46,14 +79,15 @@ const Agents = () => {
 
     return (
         <>
-            <Title text='Agents'/>
+            <Toast toastMessages={toastMessages} />
+            <Title text='Agents' />
 
             <div className='p-4 grid md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4'>
                 {listAgents}
             </div>
 
             {editAgent &&
-            <EditAgent agentDetails={editAgent} editAgent={handleConfirmEditAgent} onClose={handleRemoveEditAgent} />}
+                <EditAgent agentDetails={editAgent} editAgent={handleConfirmEditAgent} onClose={handleRemoveEditAgent} />}
         </>
     )
 }

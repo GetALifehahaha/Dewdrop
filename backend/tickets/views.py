@@ -106,7 +106,7 @@ class TicketViewSet(viewsets.ModelViewSet):
             if agent:
                 # Generate the secure link here
                 token = generate_resolve_token(updated_ticket.id, agent.id, secret_key)
-                resolve_url = f"https://dewdrop.onrender.com/tickets/tickets/{updated_ticket.id}/resolve/?token={token}&agent_id={agent.id}"
+                resolve_url = f"https://dewdrop-gamma.vercel.app/tickets/tickets/{updated_ticket.id}/resolve/?token={token}&agent_id={agent.id}"
                 
                 # Pass this URL to the frontend so it can put it in the email
                 response_data['email_context']['resolve_url'] = resolve_url
@@ -215,26 +215,22 @@ def resolve_ticket(request, ticket_id):
     token = request.GET.get('token')
     agent_id = request.GET.get('agent_id')
     
-    # Verify token
     expected_token = generate_resolve_token(ticket_id, int(agent_id), secret_key)
     
     if token != expected_token:
         return HttpResponse("<h1>❌ Invalid or expired link</h1>", status=403)
     
-    # Update ticket status
     try:
         ticket = Ticket.objects.get(id=ticket_id)
         ticket.status = "resolved"
         ticket.save()
         
-        return HttpResponse("""
-            <html>
-                <body style="font-family: Arial; text-align: center; padding: 50px;">
-                    <h1 style="color: #4CAF50;">✓ Ticket Marked as Resolved!</h1>
-                    <p>The ticket has been successfully updated.</p>
-                </body>
-            </html>
-        """)
+        return Response({
+            "message": "Success",
+            "ticket_title": ticket.title,
+            "requester_email": ticket.requester.email,
+            "requester_name": ticket.requester.first_name
+        }, status=200)
     except Ticket.DoesNotExist:
         return HttpResponse("<h1>❌ Ticket not found</h1>", status=404)
 
@@ -262,7 +258,7 @@ class AgentViewSet(viewsets.ModelViewSet):
     pagination_class = None
     
     def get_serializer_class(self):
-        if self.action in ['create', 'update']:
+        if self.action in ['create', 'update', 'partial_update']:
             return AgentCreateSerializer
         return AgentSerializer
     

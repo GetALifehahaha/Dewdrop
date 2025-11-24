@@ -1,37 +1,37 @@
 import React from 'react'
-import {SquareArrowOutUpRightIcon} from 'lucide-react'
-import {Button} from '../atoms';
+import { SquareArrowOutUpRightIcon } from 'lucide-react'
+import { Button } from '../atoms';
 import { useNavigate } from 'react-router-dom';
 
-const LatestTicketCard = ({latestTicket}) => {
+const LatestTicketCard = ({ latestTicket }) => {
 
     const navigate = useNavigate();
 
-    const openTicketDetails = () => navigate('/tickets/'+latestTicket.id)
+    const openTicketDetails = () => navigate('/tickets/' + latestTicket.id)
 
     const formatDateFromIso = (dateString) => {
-		let unformattedDate = new Date(dateString);
-		
-		const date = unformattedDate.toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		});
+        let unformattedDate = new Date(dateString);
 
-		return date;
-	}
+        const date = unformattedDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
 
-	const formatTimeFromIso = (dateString) => {
-		let unformattedDate = new Date(dateString);
+        return date;
+    }
 
-		const time = unformattedDate.toLocaleTimeString('en-US', {
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: true
-		});
+    const formatTimeFromIso = (dateString) => {
+        let unformattedDate = new Date(dateString);
 
-		return time;
-	}
+        const time = unformattedDate.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        });
+
+        return time;
+    }
 
     return (
         <div className='bg-main shadow-md border border-main-dark rounded-md font-medium flex-1 flex flex-col relative
@@ -58,11 +58,11 @@ const LatestTicketCard = ({latestTicket}) => {
                 </div>
 
                 <div className=''>
-                    <h3 className='text-text font-medium text-lg'>{latestTicket.description}</h3>
+                    <h3 className='text-text font-medium text-lg line-clamp-3'>{latestTicket.description}</h3>
                 </div>
 
                 <div className='mt-10 border-t-1 border-text/25 flex pt-4 items-center justify-end'>
-                    <Button text='Details' icon={SquareArrowOutUpRightIcon} onClick={openTicketDetails}/>
+                    <Button text='Details' icon={SquareArrowOutUpRightIcon} onClick={openTicketDetails} />
                 </div>
             </div>
         </div>

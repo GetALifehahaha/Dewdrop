@@ -13,5 +13,5 @@ router.register(r'stats', TicketStatsViewSet, basename="stats")
 urlpatterns = [
     path('', include(router.urls)),
     path('dashboard/', DashboardAPIView.as_view(), name='dashboard'),
-    path('tickets/<int:ticket_id>/resolve', resolve_ticket, name='resolve_ticket'),
+    path('tickets/<int:ticket_id>/resolve/', resolve_ticket, name='resolve_ticket'),
 ]
