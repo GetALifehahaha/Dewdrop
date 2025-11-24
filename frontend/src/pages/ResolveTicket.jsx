@@ -37,10 +37,12 @@ const ResolveTicket = () => {
 						serviceId,
 						requesterTemplate,
 						emailPayload,
+						"uBPIrx3sHJC5Wib6B"
 					);
 					setStatus("success");
 				}
 			} catch (error) {
+				console.log({error})
 				setStatus("error");
 			}
 		};

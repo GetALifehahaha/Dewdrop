@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, api_view
 
 from .serializers import AgentCreateSerializer, DepartmentSerializer, TicketSerializer, AgentSerializer, DashboardSerializer, TicketTypeSerializer, TicketMonthlySerializer
 from .models import Ticket, Agent, TicketType, Department
@@ -27,7 +27,6 @@ import hashlib
 from django.db.models import Case, When, Value, IntegerField
 
 from django.http import JsonResponse, HttpResponse
-from django.views.decorators.http import require_http_methods
 
 # Create your views here.
 
@@ -141,7 +140,7 @@ def generate_resolve_token(ticket_id, agent_id, secret_key):
     data = f"{ticket_id}:{agent_id}:{secret_key}"
     return hashlib.sha256(data.encode()).hexdigest()[:32]    
 
-@require_http_methods(["GET"])
+@api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def resolve_ticket(request, ticket_id):
     token = request.GET.get('token')
