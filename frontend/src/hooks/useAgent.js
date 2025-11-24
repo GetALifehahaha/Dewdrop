@@ -38,22 +38,17 @@ export default function useAgent() {
 
     // UPDATE
     const patchAgent = async (id, params) => {
-        console.log("Start")
         setAgentLoading(true);
         try {
-            console.log("Doing")
             await AgentServices(params, id, "PATCH");
             setAgentResponse({ status: "success", detail: "Agent updated successfully." });
             fetchAgents();
-            console.log("Success")
         } catch (err) {
             setAgentError({ status: "error", detail: "Failed to update agent." });
             setAgentResponse(null);
-            console.log("Error")
         } finally {
             setAgentLoading(false);
         }
-        console.log("End")
     };
 
     // DELETE

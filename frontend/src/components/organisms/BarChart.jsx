@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/chart"
 
 import useTicketStats from "../../hooks/useTicketStats"
+import { useEffect } from "react"
 
 export const description = "A bar chart with a label"
 
@@ -29,7 +30,7 @@ const chartConfig = {
 }
 
 const BarChartLabel = () => {
-  const {ticketStatsData, ticketStatsError, ticketStatsLoading} = useTicketStats();
+  const { ticketStatsData, ticketStatsError, ticketStatsLoading } = useTicketStats();
 
   if (ticketStatsLoading) return <h5>Loading stats</h5>
   if (ticketStatsError) return <h5>Error loading</h5>
@@ -43,12 +44,12 @@ const BarChartLabel = () => {
   // Correct percentage relative to previous count
   const ticketDiffRate = (ticketDiff / prevCount) * 100;
 
-  const chartData = ticketStatsData.map((stat, index) => {return {month: new Date(stat.month).toLocaleString('en-CA', {month: "short"}), count: stat.count }})
+  const chartData = ticketStatsData.map((stat, index) => { return { month: new Date(stat.month).toLocaleString('en-CA', { month: "short" }), count: stat.count } })
 
   const date = new Date();
   const currentYear = date.getFullYear()
-  const currentMonth = date.toLocaleDateString('en-CA', {month: "long"})
-  const sixMonthsAgo = new Date(date.getFullYear(), date.getMonth()-6, 1).toLocaleDateString('en-CA', {month: "long"})
+  const currentMonth = date.toLocaleDateString('en-CA', { month: "long" })
+  const sixMonthsAgo = new Date(date.getFullYear(), date.getMonth() - 6, 1).toLocaleDateString('en-CA', { month: "long" })
   return (
     <Card className="bg-main border-main-dark border font-medium">
       <CardHeader>
@@ -89,8 +90,8 @@ const BarChartLabel = () => {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
-          {ticketDiff >= 0 
-            ? `Trending up by ${ticketDiffRate.toFixed(2)}%` 
+          {ticketDiff >= 0
+            ? `Trending up by ${ticketDiffRate.toFixed(2)}%`
             : `Trending down by ${Math.abs(ticketDiffRate).toFixed(2)}%`}
           {ticketDiff >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
         </div>

@@ -87,6 +87,7 @@ class AgentCreateSerializer(serializers.ModelSerializer):
         return agent
     
     def update(self, instance, validated_data):
+        print("Hello you are updating")
         specializations_data = validated_data.pop('specializations', [])
 
         # Update agent fields
