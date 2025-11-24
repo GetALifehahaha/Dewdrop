@@ -142,7 +142,7 @@ def generate_resolve_token(ticket_id, agent_id, secret_key):
     return hashlib.sha256(data.encode()).hexdigest()[:32]    
 
 @require_http_methods(["GET"])
-@permission_classes[permissions.AllowAny]
+@permission_classes([permissions.AllowAny])
 def resolve_ticket(request, ticket_id):
     token = request.GET.get('token')
     agent_id = request.GET.get('agent_id')
